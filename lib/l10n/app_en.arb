@@ -1,0 +1,513 @@
+{
+  "@@locale": "en",
+  "settingsContextLineTitle": "Context line",
+  "settingsContextLineSubtitle": "Adds the shot’s date, direction and pressure to Sound strip and Poster.",
+  "viewfinderMomentTooltip": "Auto shot: takes the photo on a loud sound or sudden move",
+  "@viewfinderMomentTooltip": {
+    "description": "Tooltip and semantic label of the Auto shot button."
+  },
+  "viewfinderMomentArmed": "Waiting for a loud sound or a sudden move",
+  "@viewfinderMomentArmed": {
+    "description": "Small label shown while the camera waits for the peak."
+  },
+  "stylePickCalmBright": "Calm and bright: {style}",
+  "@stylePickCalmBright": {
+    "description": "One-line explanation of the style chosen from the current ambience.",
+    "placeholders": {
+      "style": {
+        "type": "String",
+        "example": "Static"
+      }
+    }
+  },
+  "stylePickCalmDark": "Calm and dark: {style}",
+  "@stylePickCalmDark": {
+    "description": "One-line explanation of the style chosen from the current ambience.",
+    "placeholders": {
+      "style": {
+        "type": "String",
+        "example": "Static"
+      }
+    }
+  },
+  "stylePickLoud": "Loud place: {style}",
+  "@stylePickLoud": {
+    "description": "One-line explanation of the style chosen from the current ambience.",
+    "placeholders": {
+      "style": {
+        "type": "String",
+        "example": "Static"
+      }
+    }
+  },
+  "stylePickMoving": "In motion: {style}",
+  "@stylePickMoving": {
+    "description": "One-line explanation of the style chosen from the current ambience.",
+    "placeholders": {
+      "style": {
+        "type": "String",
+        "example": "Static"
+      }
+    }
+  },
+  "stylePickMixed": "Mixed ambience: {style}",
+  "@stylePickMixed": {
+    "description": "One-line explanation of the style chosen from the current ambience.",
+    "placeholders": {
+      "style": {
+        "type": "String",
+        "example": "Static"
+      }
+    }
+  },
+  "onboardingHeadline": "A camera that lets the place distort the photo",
+  "@onboardingHeadline": {
+    "description": "Title of the first screen."
+  },
+  "onboardingIdea": "The noise, the light and the movement around you are measured and used to distort the picture.",
+  "@onboardingIdea": {
+    "description": "One sentence explaining the idea of the app."
+  },
+  "onboardingPrivacy": "Audio is never recorded. Only the volume level is read, in memory, and it never leaves the phone.",
+  "@onboardingPrivacy": {
+    "description": "One sentence explaining that no audio is recorded."
+  },
+  "onboardingGrant": "Allow camera and microphone",
+  "@onboardingGrant": {
+    "description": "Button that asks for the camera and microphone permissions."
+  },
+  "onboardingCameraDenied": "The camera permission is needed to take a photo.",
+  "@onboardingCameraDenied": {
+    "description": "Shown when the camera permission was refused."
+  },
+  "onboardingMicrophoneDeniedNotice": "No microphone: the noise stays at zero and the photo only shows the light and the movement.",
+  "@onboardingMicrophoneDeniedNotice": {
+    "description": "Small notice shown when only the microphone permission was refused."
+  },
+  "onboardingPermanentlyDenied": "Permission refused. Enable it in the system settings to continue.",
+  "@onboardingPermanentlyDenied": {
+    "description": "Shown when a permission is permanently denied."
+  },
+  "onboardingOpenSettings": "Open system settings",
+  "@onboardingOpenSettings": {
+    "description": "Button that opens the system settings page of the app."
+  },
+  "onboardingSkip": "Continue without microphone",
+  "@onboardingSkip": {
+    "description": "Button that continues when the microphone was refused."
+  },
+  "viewfinderShutterTooltip": "Take a photo",
+  "@viewfinderShutterTooltip": {
+    "description": "Tooltip of the shutter button."
+  },
+  "viewfinderFlipTooltip": "Switch camera",
+  "@viewfinderFlipTooltip": {
+    "description": "Tooltip of the flip camera button."
+  },
+  "viewfinderSettingsTooltip": "Settings",
+  "@viewfinderSettingsTooltip": {
+    "description": "Tooltip of the settings button."
+  },
+  "viewfinderCapturing": "Capturing…",
+  "@viewfinderCapturing": {
+    "description": "Short non blocking progress message while the photo is taken."
+  },
+  "viewfinderCameraError": "The camera could not be started.",
+  "@viewfinderCameraError": {
+    "description": "Message shown when the camera fails to start."
+  },
+  "viewfinderLegendNoiseTooltip": "Noise: how loud the place is",
+  "@viewfinderLegendNoiseTooltip": {
+    "description": "Tooltip of the icon of the noise level."
+  },
+  "viewfinderLegendLightTooltip": "Light: bright or in shadow",
+  "@viewfinderLegendLightTooltip": {
+    "description": "Tooltip of the icon of the light level."
+  },
+  "viewfinderLegendMotionTooltip": "Movement: how much the phone shakes",
+  "@viewfinderLegendMotionTooltip": {
+    "description": "Tooltip of the icon of the movement level."
+  },
+  "viewfinderLegendNoiseBody": "Noise is how loud the place is. The louder it is, the more the photo breaks.",
+  "@viewfinderLegendNoiseBody": {
+    "description": "Explanation of the noise level in the sheet."
+  },
+  "viewfinderLegendLightBody": "Light is whether the scene is bright or in shadow. The darker it is, the stronger the effect.",
+  "@viewfinderLegendLightBody": {
+    "description": "Explanation of the light level in the sheet."
+  },
+  "viewfinderLegendMotionBody": "Movement is how much the phone is being shaken. The more it moves, the more the photo breaks.",
+  "@viewfinderLegendMotionBody": {
+    "description": "Explanation of the movement level in the sheet."
+  },
+  "viewfinderTipDismiss": "Dismiss the tip",
+  "@viewfinderTipDismiss": {
+    "description": "Tooltip and semantics label of the button that closes the tip."
+  },
+  "levelNoise": "Noise",
+  "@levelNoise": {
+    "description": "Label of the noise level indicator."
+  },
+  "levelLight": "Light",
+  "@levelLight": {
+    "description": "Label of the light level indicator."
+  },
+  "levelMotion": "Movement",
+  "@levelMotion": {
+    "description": "Label of the movement level indicator."
+  },
+  "stylesTitle": "Styles",
+  "@stylesTitle": {
+    "description": "Title of the styles screen."
+  },
+  "stylesSelected": "Selected",
+  "@stylesSelected": {
+    "description": "Badge shown next to the selected style."
+  },
+  "resultTitle": "Photo",
+  "@resultTitle": {
+    "description": "Title of the result screen."
+  },
+  "resultNoiseLabel": "Noise: about {db} dB (approximate)",
+  "@resultNoiseLabel": {
+    "description": "Measured noise level. The dB figure is not calibrated.",
+    "placeholders": {
+      "db": {
+        "type": "int",
+        "example": "72"
+      }
+    }
+  },
+  "resultLightLabel": "Light: {level}",
+  "@resultLightLabel": {
+    "description": "Measured light level.",
+    "placeholders": {
+      "level": {
+        "type": "String",
+        "example": "medium"
+      }
+    }
+  },
+  "resultMotionLabel": "Movement: {level}",
+  "@resultMotionLabel": {
+    "description": "Measured movement level.",
+    "placeholders": {
+      "level": {
+        "type": "String",
+        "example": "high"
+      }
+    }
+  },
+  "resultLevelLow": "low",
+  "@resultLevelLow": {
+    "description": "Low level label."
+  },
+  "resultLevelMedium": "medium",
+  "@resultLevelMedium": {
+    "description": "Medium level label."
+  },
+  "resultLevelHigh": "high",
+  "@resultLevelHigh": {
+    "description": "High level label."
+  },
+  "resultFormatLabel": "Format",
+  "@resultFormatLabel": {
+    "description": "Label of the export format selector."
+  },
+  "resultFormatOriginal": "Original",
+  "@resultFormatOriginal": {
+    "description": "Original aspect ratio."
+  },
+  "resultFormatSquare": "Square 1:1",
+  "@resultFormatSquare": {
+    "description": "Square crop."
+  },
+  "resultFormatPortrait": "Portrait 4:5",
+  "@resultFormatPortrait": {
+    "description": "Portrait crop."
+  },
+  "resultFormatStory": "Story 9:16",
+  "@resultFormatStory": {
+    "description": "Vertical crop for the stories."
+  },
+  "resultLayoutLabel": "Layout",
+  "@resultLayoutLabel": {
+    "description": "Label of the export layout selector."
+  },
+  "resultLayoutFull": "Full",
+  "@resultLayoutFull": {
+    "description": "Layout with the picture alone."
+  },
+  "resultLayoutSoundStrip": "Sound strip",
+  "@resultLayoutSoundStrip": {
+    "description": "Layout with a band of the measured values under the picture."
+  },
+  "resultLayoutPoster": "Poster",
+  "@resultLayoutPoster": {
+    "description": "Layout with a frame and the measured values."
+  },
+  "resultShowProcessedTooltip": "Show the processed photo",
+  "@resultShowProcessedTooltip": {
+    "description": "Tooltip of the button that brings the processed photo back."
+  },
+  "resultCompareTooltip": "Compare with the original (or hold the photo)",
+  "@resultCompareTooltip": {
+    "description": "Tooltip and semantics label of the button that compares the photo with the original one."
+  },
+  "resultSave": "Save",
+  "@resultSave": {
+    "description": "Button that saves the photo in the gallery."
+  },
+  "resultShare": "Share",
+  "@resultShare": {
+    "description": "Button that shares the photo."
+  },
+  "resultRetake": "Retake",
+  "@resultRetake": {
+    "description": "Button that goes back to the viewfinder."
+  },
+  "resultSaved": "Photo saved in the gallery.",
+  "@resultSaved": {
+    "description": "Snackbar shown after saving the photo."
+  },
+  "resultShared": "Shared.",
+  "@resultShared": {
+    "description": "Snackbar shown after sharing the photo."
+  },
+  "resultSaveFailed": "The photo could not be saved.",
+  "@resultSaveFailed": {
+    "description": "Snackbar shown when saving fails."
+  },
+  "resultShareFailed": "The photo could not be shared.",
+  "@resultShareFailed": {
+    "description": "Snackbar shown when sharing fails."
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title of the settings screen."
+  },
+  "settingsCameraSectionTitle": "Camera",
+  "@settingsCameraSectionTitle": {
+    "description": "Title of the section of the settings of the camera."
+  },
+  "settingsTroubleshootingTitle": "Troubleshooting",
+  "@settingsTroubleshootingTitle": {
+    "description": "Title of the section of the settings that help when something goes wrong."
+  },
+  "settingsWatermarkTitle": "Watermark",
+  "@settingsWatermarkTitle": {
+    "description": "Title of the watermark switch."
+  },
+  "settingsWatermarkSubtitle": "Adds a discreet \"sonoglitch\" signature to the exported photo.",
+  "@settingsWatermarkSubtitle": {
+    "description": "Subtitle of the watermark switch."
+  },
+  "settingsDiagnosticsTitle": "Diagnostics",
+  "@settingsDiagnosticsTitle": {
+    "description": "Title of the diagnostics switch."
+  },
+  "settingsDiagnosticsSubtitle": "Shows the on screen panel with the measured values.",
+  "@settingsDiagnosticsSubtitle": {
+    "description": "Subtitle of the diagnostics switch."
+  },
+  "settingsMomentKeepArmedTitle": "Auto shot: keep waiting",
+  "@settingsMomentKeepArmedTitle": {
+    "description": "Title of the switch that keeps the auto shot mode armed."
+  },
+  "settingsMomentKeepArmedSubtitle": "Keeps waiting after every photo, so the next peak is caught too.",
+  "@settingsMomentKeepArmedSubtitle": {
+    "description": "Subtitle of the switch that keeps the auto shot mode armed."
+  },
+  "settingsTipsTitle": "Show tips again",
+  "@settingsTipsTitle": {
+    "description": "Title of the row that brings the tip of the viewfinder back."
+  },
+  "settingsTipsSubtitle": "Brings back the tip that explains the three controls.",
+  "@settingsTipsSubtitle": {
+    "description": "Subtitle of the row that brings the tip back."
+  },
+  "settingsTipsReset": "The tip will show again on the camera screen.",
+  "@settingsTipsReset": {
+    "description": "Snackbar shown after the tip is brought back."
+  },
+  "settingsExportReportTitle": "Export diagnostic report",
+  "@settingsExportReportTitle": {
+    "description": "Title of the row that exports the diagnostic report."
+  },
+  "settingsExportReportSubtitle": "Shares a JSON report and the log file.",
+  "@settingsExportReportSubtitle": {
+    "description": "Subtitle of the diagnostic report row."
+  },
+  "settingsAboutTitle": "About",
+  "@settingsAboutTitle": {
+    "description": "Title of the about section."
+  },
+  "settingsVersion": "Version {version}",
+  "@settingsVersion": {
+    "description": "Application version.",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "0.1.0"
+      }
+    }
+  },
+  "settingsLicense": "Licence: {license}",
+  "@settingsLicense": {
+    "description": "Licence of the application.",
+    "placeholders": {
+      "license": {
+        "type": "String",
+        "example": "Apache-2.0"
+      }
+    }
+  },
+  "settingsPrivacyTitle": "Privacy",
+  "@settingsPrivacyTitle": {
+    "description": "Title of the privacy statement."
+  },
+  "settingsPrivacyBody": "Everything happens on the phone. No accounts, no servers, no analytics. The microphone is only read for the volume level: no audio is stored or sent.",
+  "@settingsPrivacyBody": {
+    "description": "Body of the privacy statement."
+  },
+  "settingsSupportTitle": "Support the project",
+  "@settingsSupportTitle": {
+    "description": "Title of the optional donation row."
+  },
+  "debugCopyReport": "Copy report",
+  "@debugCopyReport": {
+    "description": "Button that copies the diagnostic report to the clipboard."
+  },
+  "debugShareLogs": "Share logs",
+  "@debugShareLogs": {
+    "description": "Button that shares the log file."
+  },
+  "debugReportCopied": "Report copied to the clipboard.",
+  "@debugReportCopied": {
+    "description": "Snackbar shown after copying the report."
+  },
+  "debugShareFailed": "The logs could not be shared.",
+  "@debugShareFailed": {
+    "description": "Snackbar shown when sharing the logs fails."
+  },
+  "debugAuto": "Auto",
+  "@debugAuto": {
+    "description": "Badge of the diagnostics panel when the values are measured."
+  },
+  "debugManual": "Manual",
+  "@debugManual": {
+    "description": "Label of the switch and badge of the manual mode of the diagnostics panel."
+  },
+  "commonClose": "Close",
+  "@commonClose": {
+    "description": "Close button."
+  },
+  "settingsQualityTitle": "Photo quality",
+  "settingsQualitySubtitle": "Standard: up to 2048 px. High: up to 4096 px. Maximum: native size, up to 24 MP. Device limits may reduce the size. PNG preserves the exported pixels.",
+  "qualityStandard": "Standard",
+  "qualityHigh": "High",
+  "qualityMaximum": "Maximum",
+  "settingsFileTypeTitle": "File type",
+  "settingsFileTypeSubtitle": "PNG is lossless and keeps every exported pixel. JPEG is smaller and is encoded by the phone at quality 95.",
+  "fileTypePng": "PNG (lossless)",
+  "fileTypeJpeg": "JPEG (high quality)",
+  "processingMegapixels": "Processing {megapixels} MP…",
+  "@processingMegapixels": {
+    "placeholders": {
+      "megapixels": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsIntensityTitle": "Intensity",
+  "settingsIntensitySubtitle": "How strongly noise and movement affect your photos. Light is not affected.",
+  "intensitySubtle": "Subtle",
+  "intensityNormal": "Normal",
+  "intensityExtreme": "Extreme",
+  "viewfinderStyleButton": "Style: {name}. Tap to choose",
+  "@viewfinderStyleButton": {
+    "description": "Semantics label of the button that opens the sheet of the styles.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Static"
+      }
+    }
+  },
+  "viewfinderPrevStyle": "Previous style",
+  "@viewfinderPrevStyle": {
+    "description": "Tooltip and semantics label of the button that selects the previous style."
+  },
+  "viewfinderNextStyle": "Next style",
+  "@viewfinderNextStyle": {
+    "description": "Tooltip and semantics label of the button that selects the next style."
+  },
+  "viewfinderMetersTooltip": "Live sound, light and movement. Tap for help",
+  "@viewfinderMetersTooltip": {
+    "description": "Tooltip and semantics label of the card of the three levels."
+  },
+  "viewfinderHint": "Sound, light and movement bend the picture. Swipe to change style.",
+  "@viewfinderHint": {
+    "description": "Text of the hint that is shown the first time the viewfinder is opened."
+  },
+  "helpTitle": "How it works",
+  "@helpTitle": {
+    "description": "Title of the sheet that explains how the app works."
+  },
+  "helpOpen": "How it works",
+  "@helpOpen": {
+    "description": "Label of the button that opens the sheet that explains how the app works."
+  },
+  "helpSwipe": "Swipe left or right on the picture, or use the arrows, to change style.",
+  "@helpSwipe": {
+    "description": "Explanation of how the style is changed, in the help sheet."
+  },
+  "helpAutoShot": "Auto shot waits and takes the photo by itself on a loud sound or a sudden move.",
+  "@helpAutoShot": {
+    "description": "Explanation of the auto shot mode, in the help sheet."
+  },
+  "styleSheetRandom": "Random",
+  "@styleSheetRandom": {
+    "description": "Button that selects a random style."
+  },
+  "styleSheetMatch": "Match this place",
+  "@styleSheetMatch": {
+    "description": "Button that selects the style that fits the place."
+  },
+  "styleDescStatic": "Digital bands and tearing",
+  "@styleDescStatic": {
+    "description": "One-line description of the Static style."
+  },
+  "styleDescTape": "Worn VHS: wobble, lines and grain",
+  "@styleDescTape": {
+    "description": "One-line description of the Tape style."
+  },
+  "styleDescPhosphor": "Old CRT screen with green trails",
+  "@styleDescPhosphor": {
+    "description": "One-line description of the Phosphor style."
+  },
+  "styleDescRipple": "Sound spreads like waves on water",
+  "@styleDescRipple": {
+    "description": "One-line description of the Ripple style."
+  },
+  "styleDescThermal": "Heat-camera colours and contours",
+  "@styleDescThermal": {
+    "description": "One-line description of the Thermal style."
+  },
+  "styleDescPrism": "Flowing warp that splits colours",
+  "@styleDescPrism": {
+    "description": "One-line description of the Prism style."
+  },
+  "resultLayoutHintFull": "Just the photo.",
+  "@resultLayoutHintFull": {
+    "description": "Hint that explains the layout with the picture alone."
+  },
+  "resultLayoutHintSoundStrip": "Adds a band with the sound, light and movement.",
+  "@resultLayoutHintSoundStrip": {
+    "description": "Hint that explains the layout with the band of the measured values."
+  },
+  "resultLayoutHintPoster": "A framed print with the style and readings.",
+  "@resultLayoutHintPoster": {
+    "description": "Hint that explains the layout with the frame."
+  }
+}

@@ -1,0 +1,25 @@
+Sonoglitch es una cámara gratuita y de código abierto que deja que el lugar donde estás destroce tu foto. El nivel de sonido, la luz y el movimiento de la escena y del móvil dan forma a la imagen, en directo en el visor y en la foto que guardas.
+
+CÓMO FUNCIONA
+• El ruido marca la intensidad de la perturbación.
+• La luz marca el tono y el contraste.
+• El movimiento marca cuánto se mueve la imagen y deja estelas.
+Cada estilo usa estos tres controles a su manera. El efecto está acotado, así que el sujeto sigue siendo reconocible.
+
+CADA FOTO ES ÚNICA
+Cada disparo parte de una firma aleatoria nueva. Los graves, medios y agudos del sonido, junto con unas pistas sutiles del momento y del lugar (la hora del día, la fecha y la fase de la luna, hacia dónde apunta el móvil, el ritmo y la inclinación del sonido, lo colorida que es la escena), remodelan el patrón, de modo que dos disparos no están pensados para repetir la misma composición. Son pistas aproximadas que solo añaden pequeñas variaciones; no se guarda ni se envía nada. Un ID corto de foto, como A3F9-17C2, puede aparecer en las composiciones exportadas como referencia visual.
+
+SEIS ESTILOS
+Static, Tape, Phosphor, Ripple, Thermal y Prism. El botón de estilo abre la lista, con las acciones «Al azar» y «Según el lugar»; las flechas que lo rodean y un deslizamiento sobre la imagen también cambian de estilo. El disparo auto deja la cámara preparada para que haga la foto sola cuando el sonido supera un umbral tras un segundo de calma, o cuando la escena da un salto brusco. Una guía breve explica con palabras sencillas los tres controles.
+
+CAPTURA Y EXPORTACIÓN
+• PNG (sin pérdida) o JPEG, con calidad Estándar, Alta o Máxima (hasta el tamaño nativo del sensor, con un máximo de 24 megapíxeles).
+• Proporción original, recorte cuadrado 1:1, vertical 4:5 o 9:16 para historias.
+• Composiciones: solo la foto, una banda de sonido con los valores medidos o un póster con el nombre del estilo. Una línea de contexto opcional añade la fecha, la hora, la fase de la luna y el rumbo de la brújula de la foto.
+• Mantén pulsada la foto para compararla con el original.
+• Guarda en la galería o comparte con el menú del sistema. La pequeña marca de agua de Sonoglitch se puede desactivar en Ajustes.
+
+PRIVACIDAD
+Todo se procesa en tu dispositivo. No hay anuncios, cuentas ni analítica, y la aplicación no tiene acceso a la red. El audio nunca se graba, almacena ni transmite: solo se leen en memoria el nivel de sonido y la energía de tres bandas de frecuencias. El permiso de micrófono es opcional; sin él, el control de ruido permanece en cero y los detalles basados en el sonido quedan neutros. Los niveles de sonido son lecturas relativas, no mediciones calibradas.
+
+Requiere Android 10 (API 29) o posterior. El comportamiento de la cámara y el rendimiento pueden variar según el dispositivo. Sonoglitch se distribuye con la licencia Apache-2.0.

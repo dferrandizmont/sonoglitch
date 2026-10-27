@@ -1,0 +1,1 @@
+New application id (es.sonoglitch.app) ready for Google Play. Older alpha builds are separate apps and do not update to this one. Updated store descriptions and privacy policy. Android 10 or newer.

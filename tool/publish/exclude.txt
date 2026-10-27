@@ -1,0 +1,2 @@
+# Paths (relative to the repository root) that are not published.
+# The tracked tree is already public-ready; list here anything added later that must stay private.

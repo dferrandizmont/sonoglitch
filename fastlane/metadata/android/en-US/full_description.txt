@@ -1,0 +1,25 @@
+Sonoglitch is a free, open source camera that lets the place you are in tear your photo apart. The sound level, the light and the movement of the scene and of your phone shape the picture, live in the viewfinder and in the photo you save.
+
+HOW IT WORKS
+• Noise sets how strong the disturbance is.
+• Light sets the tone and the contrast.
+• Motion sets how much the picture moves and leaves trails.
+Each style uses these three controls in its own way. The effect is bounded, so your subject stays recognisable.
+
+EVERY PHOTO IS ITS OWN
+Each shot starts from a new random signature. The bass, mid and treble of the sound, plus a few subtle clues from the moment and the place (time of day, date and moon phase, the direction the phone faces, the rhythm and the tilt of the sound, how colourful the scene is), reshape the pattern, so two shots are not meant to repeat the same layout. These clues are approximate and only add small variations; nothing is stored or sent. A short photo ID such as A3F9-17C2 can appear on the exported layouts as a visual reference.
+
+SIX STYLES
+Static, Tape, Phosphor, Ripple, Thermal and Prism. The style button opens the list, with the actions Random and Match this place; the arrows beside it and a swipe on the picture also change the style. Auto shot arms the camera, which then takes the photo by itself when the sound crosses a threshold after a quiet second, or when the scene jumps suddenly. A short guide in plain words explains the three controls.
+
+CAPTURE AND EXPORT
+• PNG (lossless) or JPEG, in Standard, High or Maximum quality (up to the native size of the sensor, never above 24 megapixels).
+• Original, square 1:1, portrait 4:5 or story 9:16 crop.
+• Layouts: the picture alone, a sound strip with the measured values, or a poster with the style name. An optional context line adds the date, time, moon phase and compass heading of the shot.
+• Press and hold the photo to compare it with the original.
+• Save to the gallery or share through the system share sheet. A small Sonoglitch watermark can be switched off in Settings.
+
+PRIVACY
+Everything is processed on your device. There are no ads, accounts or analytics, and the app has no network access. Audio is never recorded, stored or transmitted: only the volume level and the energy of three frequency bands are read in memory. Microphone permission is optional; without it the noise control stays at zero and the sound-based details are neutral. Sound levels are relative readings, not calibrated measurements.
+
+Requires Android 10 (API 29) or newer. Camera behaviour and performance may vary by device. Sonoglitch is licensed under Apache-2.0.
