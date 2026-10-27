@@ -55,6 +55,19 @@ class AppSettings extends ChangeNotifier {
     await store.setString(exportLayoutKey, value.name);
   }
 
+  /// Key of the readings that the sound strip and the poster print.
+  static const exportReadingsModeKey = 'settings.exportReadingsMode';
+  ExportReadingsMode _exportReadingsMode = ExportReadingsMode.full;
+  ExportReadingsMode get exportReadingsMode => _exportReadingsMode;
+
+  /// Remembers which readings the export prints.
+  Future<void> setExportReadingsMode(ExportReadingsMode value) async {
+    if (_exportReadingsMode == value) return;
+    _exportReadingsMode = value;
+    notifyListeners();
+    await store.setString(exportReadingsModeKey, value.name);
+  }
+
   /// Key of the type of the file that is written.
   static const fileTypeKey = 'settings.fileType';
   ExportFileType _fileType = ExportFileType.png;
@@ -144,6 +157,11 @@ class AppSettings extends ChangeNotifier {
     _exportLayout = ExportLayout.values.firstWhere(
       (value) => value.name == layout,
       orElse: () => ExportLayout.full,
+    );
+    final readingsMode = await store.getString(exportReadingsModeKey);
+    _exportReadingsMode = ExportReadingsMode.values.firstWhere(
+      (value) => value.name == readingsMode,
+      orElse: () => ExportReadingsMode.full,
     );
     final fileType = await store.getString(fileTypeKey);
     _fileType = ExportFileType.values.firstWhere(

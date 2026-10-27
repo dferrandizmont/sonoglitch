@@ -1,0 +1,1 @@
+Nuevo selector de lecturas para la Banda de sonido y el Póster (completas, solo números u ocultas) y un cargador glitch mientras se procesa la foto. Android 10 o superior.

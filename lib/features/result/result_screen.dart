@@ -19,6 +19,7 @@ import '../../export/photo_export.dart';
 import '../../features/settings/app_settings.dart';
 import '../../l10n/app_localizations.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/glitch_loader.dart';
 import '../../theme/micro_label.dart';
 import 'capture_result.dart';
 import 'result_cache.dart';
@@ -68,6 +69,7 @@ class ResultScreen extends StatefulWidget {
 class _ResultScreenState extends State<ResultScreen> {
   ExportFormat _format = ExportFormat.original;
   ExportLayout _layout = ExportLayout.full;
+  ExportReadingsMode _readingsMode = ExportReadingsMode.full;
   ui.Image? _composed;
   File? _file;
 
@@ -98,6 +100,10 @@ class _ResultScreenState extends State<ResultScreen> {
     capture: widget.result,
     format: _format,
     layout: _layout,
+    // The full layout has no readings: its picture does not depend on the mode.
+    readingsMode: _layout == ExportLayout.full
+        ? ExportReadingsMode.full
+        : _readingsMode,
     watermark: widget.settings.watermarkEnabled,
     contextLine: widget.settings.contextLineEnabled,
     fileType: widget.settings.fileType,
@@ -131,6 +137,7 @@ class _ResultScreenState extends State<ResultScreen> {
   void initState() {
     super.initState();
     _layout = widget.settings.exportLayout;
+    _readingsMode = widget.settings.exportReadingsMode;
     _quality = widget.result.quality;
     _settingsQuality = widget.settings.exportQuality;
     _capture = _CaptureLease(widget.result, widget.onSourceReleased);
@@ -157,6 +164,7 @@ class _ResultScreenState extends State<ResultScreen> {
       _quality = widget.result.quality;
       _format = ExportFormat.original;
       _layout = widget.settings.exportLayout;
+      _readingsMode = widget.settings.exportReadingsMode;
       _originalLatched = false;
       _holding = false;
       _loadOriginal();
@@ -207,6 +215,7 @@ class _ResultScreenState extends State<ResultScreen> {
     styleName: _styleName(widget.result.styleId),
     context: widget.settings.contextLineEnabled ? widget.result.context : null,
     photoId: widget.result.identity?.displayId,
+    readingsMode: _readingsMode,
   );
 
   /// The name of the style that was used, for the poster.
@@ -341,6 +350,7 @@ class _ResultScreenState extends State<ResultScreen> {
           photoWidth: crop.width.toInt(),
           photoHeight: crop.height.toInt(),
           readings: hasExportReadings(values),
+          readingsMode: values.readingsMode,
           context: values.context?.hasItems ?? false,
           watermark: key.watermark,
           photoId: values.photoId,
@@ -600,6 +610,20 @@ class _ResultScreenState extends State<ResultScreen> {
     widget.settings.setExportLayout(layout);
   }
 
+  /// Picks which readings the strip and the poster print and composes again.
+  void _selectReadingsMode(ExportReadingsMode mode) {
+    if (mode == _readingsMode || _busy || _closing) {
+      return;
+    }
+    setState(() {
+      _readingsMode = mode;
+      _processing = true;
+    });
+    // The choice is remembered, so the next photo starts with it.
+    _compose();
+    widget.settings.setExportReadingsMode(mode);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -631,15 +655,32 @@ class _ResultScreenState extends State<ResultScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (_processingPixels != null)
-                    Padding(
-                      padding: const EdgeInsets.all(AppTheme.spaceSm),
-                      child: Text(
-                        l10n.processingMegapixels(
-                          (_processingPixels! / 1000000).toStringAsFixed(1),
-                        ),
-                      ),
-                    ),
+                  // The slot keeps its height, so the controls below do not
+                  // jump when the loader appears or goes away.
+                  SizedBox(
+                    height: _processingSlotHeight,
+                    child: _processingPixels == null
+                        ? null
+                        : Padding(
+                            padding: const EdgeInsets.all(AppTheme.spaceSm),
+                            child: Row(
+                              children: [
+                                const GlitchLoader(),
+                                const SizedBox(width: AppTheme.spaceSm),
+                                Expanded(
+                                  child: Text(
+                                    l10n.processingMegapixels(
+                                      (_processingPixels! / 1000000)
+                                          .toStringAsFixed(1),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppTheme.spaceMd,
@@ -701,6 +742,21 @@ class _ResultScreenState extends State<ResultScreen> {
                                     : null,
                               ),
                           ],
+                        ),
+                        // The readings only exist in the strip and the poster.
+                        AnimatedSize(
+                          duration: AppTheme.motionDuration(
+                            context,
+                            AppTheme.sheetDuration,
+                          ),
+                          curve: AppTheme.motionCurve,
+                          alignment: Alignment.topLeft,
+                          child: _layout == ExportLayout.full
+                              ? const SizedBox(
+                                  width: double.infinity,
+                                  height: 0,
+                                )
+                              : _readingsSelector(l10n, theme),
                         ),
                         const SizedBox(height: AppTheme.spaceMd),
                       ],
@@ -765,10 +821,59 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 
+  /// The selector of the readings, under the chips of the layout.
+  Widget _readingsSelector(AppLocalizations l10n, ThemeData theme) => Column(
+    key: const ValueKey('res-readings'),
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const SizedBox(height: AppTheme.spaceMd),
+      MicroLabel(l10n.resultReadingsLabel),
+      const SizedBox(height: AppTheme.spaceXs),
+      Text(
+        _readingsHint(l10n, _readingsMode),
+        key: const ValueKey('res-readings-hint'),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: AppTheme.textSecondary,
+        ),
+      ),
+      const SizedBox(height: AppTheme.spaceXs),
+      Wrap(
+        spacing: AppTheme.spaceSm - AppTheme.space2xs,
+        runSpacing: AppTheme.spaceSm - AppTheme.space2xs,
+        children: [
+          for (final mode in ExportReadingsMode.values)
+            _SelectorChip(
+              key: ValueKey('res-readings-${mode.name}'),
+              label: _readingsLabel(l10n, mode),
+              selected: mode == _readingsMode,
+              onTap: _selectorsEnabled ? () => _selectReadingsMode(mode) : null,
+            ),
+        ],
+      ),
+    ],
+  );
+
+  String _readingsLabel(AppLocalizations l10n, ExportReadingsMode mode) =>
+      switch (mode) {
+        ExportReadingsMode.full => l10n.resultReadingsFull,
+        ExportReadingsMode.numbers => l10n.resultReadingsNumbers,
+        ExportReadingsMode.hidden => l10n.resultReadingsHidden,
+      };
+
+  /// The line that explains what the chosen readings mode does.
+  String _readingsHint(AppLocalizations l10n, ExportReadingsMode mode) =>
+      switch (mode) {
+        ExportReadingsMode.full => l10n.resultReadingsHintFull,
+        ExportReadingsMode.numbers => l10n.resultReadingsHintNumbers,
+        ExportReadingsMode.hidden => l10n.resultReadingsHintHidden,
+      };
+
   /// The picture on screen, with the button that shows the original.
   Widget _picture(AppLocalizations l10n) {
     final image = _showOriginal && _original != null ? _original : _composed;
-    if (image == null) return const CircularProgressIndicator();
+    if (image == null) return const GlitchLoader();
     // Fit the stack to the image so Compare follows the actual photo corner.
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -851,6 +956,9 @@ class _ResultScreenState extends State<ResultScreen> {
       },
     );
   }
+
+  /// Height of the line of the loader and the megapixels text.
+  static const double _processingSlotHeight = AppTheme.spaceSm * 2 + 20;
 
   bool get _selectorsEnabled => !_busy && !_closing;
 

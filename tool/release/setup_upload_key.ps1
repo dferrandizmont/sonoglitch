@@ -3,7 +3,7 @@
 # Run it yourself in a PowerShell window from the repository root:
 #   powershell -ExecutionPolicy Bypass -File tool/release/setup_upload_key.ps1
 #
-# The key is created OUTSIDE the repository (default: %USERPROFILE%\sonoglitch-keys).
+# The key is created OUTSIDE the repository (default: %USERPROFILE%\claves, next to the other apps).
 # The passwords are typed here, never stored in the repository history, and
 # android/key.properties is ignored by git. Back up the .jks file and the
 # passwords (password manager plus an offline copy): without them you cannot
@@ -36,7 +36,7 @@ if (Test-Path $propsPath) {
 }
 
 $keytool = Find-Keytool
-$dir = Join-Path $env:USERPROFILE 'sonoglitch-keys'
+$dir = Join-Path $env:USERPROFILE 'claves'
 New-Item -ItemType Directory -Force -Path $dir | Out-Null
 $store = Join-Path $dir 'sonoglitch-upload.jks'
 if (Test-Path $store) { throw "$store already exists. Move it away or reuse it." }

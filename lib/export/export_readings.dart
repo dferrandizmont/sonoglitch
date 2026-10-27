@@ -24,7 +24,9 @@ double exportLevel(double value) =>
 
 /// Missing instruments never masquerade as a zero reading or camera lux.
 List<ExportReading> readingsOf(ExportLayoutValues? values) {
-  if (values == null) return const [];
+  if (values == null || values.readingsMode == ExportReadingsMode.hidden) {
+    return const [];
+  }
   final db = values.noiseDb;
   final lux = values.lux;
   final accel = values.accel;
@@ -62,5 +64,22 @@ String formatLux(double lux) => lux >= 10000
     ? lux.toStringAsFixed(1)
     : '${lux.round()}';
 
+/// Whether the little square ladders under the numbers are printed.
+bool showsExportLadders(ExportLayoutValues? values) =>
+    (values?.readingsMode ?? ExportReadingsMode.full) ==
+    ExportReadingsMode.full;
+
+/// Whether the three ladders of the spectrum are printed.
+bool showsExportSpectrum(ExportLayoutValues? values) =>
+    showsExportLadders(values) && (values?.spectrumAvailable ?? false);
+
+/// Whether anything of the readings is printed in the chosen mode.
 bool hasExportReadings(ExportLayoutValues? values) =>
-    readingsOf(values).isNotEmpty || (values?.spectrumAvailable ?? false);
+    readingsOf(values).isNotEmpty || showsExportSpectrum(values);
+
+/// The mode that decides the sizes of the layout for these values.
+ExportReadingsMode exportReadingsTier(ExportLayoutValues? values) =>
+    ExportLayoutPlan.resolveMode(
+      values?.readingsMode ?? ExportReadingsMode.full,
+      readings: hasExportReadings(values),
+    );

@@ -245,5 +245,37 @@
   "resultLayoutHintPoster": "Un marco con el estilo y las lecturas.",
   "@resultLayoutHintPoster": {
     "description": "Hint that explains the layout with the frame."
+  },
+  "processingLabel": "Procesando",
+  "@processingLabel": {
+    "description": "Accessibility label of the glitch loader shown while the picture is processed."
+  },
+  "resultReadingsLabel": "Lecturas",
+  "@resultReadingsLabel": {
+    "description": "Label of the selector of the readings printed by the sound strip and the poster."
+  },
+  "resultReadingsFull": "Completas",
+  "@resultReadingsFull": {
+    "description": "Readings mode: numbers, ladders and spectrum."
+  },
+  "resultReadingsNumbers": "Solo números",
+  "@resultReadingsNumbers": {
+    "description": "Readings mode: only the numbers and their labels."
+  },
+  "resultReadingsHidden": "Ocultas",
+  "@resultReadingsHidden": {
+    "description": "Readings mode: no readings."
+  },
+  "resultReadingsHintFull": "Números, escalas y espectro.",
+  "@resultReadingsHintFull": {
+    "description": "Hint that explains the full readings mode."
+  },
+  "resultReadingsHintNumbers": "Solo los números y sus etiquetas.",
+  "@resultReadingsHintNumbers": {
+    "description": "Hint that explains the numbers readings mode."
+  },
+  "resultReadingsHintHidden": "Sin lecturas. El ID de la foto se queda.",
+  "@resultReadingsHintHidden": {
+    "description": "Hint that explains the hidden readings mode."
   }
 }

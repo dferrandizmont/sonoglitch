@@ -20,6 +20,21 @@ enum ExportLayout {
   poster,
 }
 
+/// Which readings the sound strip and the poster print.
+///
+/// The photo ID, the name of the style, the signature and the context line do
+/// not depend on it. The full layout has no readings and ignores the mode.
+enum ExportReadingsMode {
+  /// The numbers with their little square ladders, and the spectrum ladders.
+  full,
+
+  /// The numbers and their labels only: no ladders and no spectrum.
+  numbers,
+
+  /// No readings at all.
+  hidden,
+}
+
 /// The size of a layout, in pixels.
 ///
 /// The picture is never resized for a layout: the extra room is added around
@@ -45,6 +60,49 @@ class ExportLayoutPlan {
   /// The height of the caption of the poster, as a fraction of the shorter
   /// side of the picture.
   static const double captionHeightRatio = 0.21;
+
+  /// The height of the band of the sound strip with the numbers alone.
+  static const double bandNumbersHeightRatio = 0.135;
+
+  /// The height of the band of the sound strip without readings.
+  static const double bandCompactHeightRatio = 0.075;
+
+  /// The height of the caption of the poster with the numbers alone.
+  static const double captionNumbersHeightRatio = 0.18;
+
+  /// The height of the caption of the poster without readings.
+  static const double captionCompactHeightRatio = 0.11;
+
+  /// The mode that decides the sizes: a mode that prints nothing, or numbers
+  /// when there are none, shrinks the layout to its compact form.
+  static ExportReadingsMode resolveMode(
+    ExportReadingsMode mode, {
+    required bool readings,
+  }) =>
+      mode == ExportReadingsMode.hidden ||
+          (mode == ExportReadingsMode.numbers && !readings)
+      ? ExportReadingsMode.hidden
+      : mode;
+
+  /// The height of the band of a resolved mode, as a fraction of U.
+  static double bandRatio(ExportReadingsMode resolved) => switch (resolved) {
+    ExportReadingsMode.full => bandHeightRatio,
+    ExportReadingsMode.numbers => bandNumbersHeightRatio,
+    ExportReadingsMode.hidden => bandCompactHeightRatio,
+  };
+
+  /// The height of the caption of a resolved mode, as a fraction of U.
+  ///
+  /// The full mode without any reading keeps the compact caption it always had.
+  static double captionRatio(
+    ExportReadingsMode resolved, {
+    required bool readings,
+  }) => switch (resolved) {
+    ExportReadingsMode.full =>
+      readings ? captionHeightRatio : captionCompactHeightRatio,
+    ExportReadingsMode.numbers => captionNumbersHeightRatio,
+    ExportReadingsMode.hidden => captionCompactHeightRatio,
+  };
 
   /// The width of the whole export.
   final int width;
@@ -72,10 +130,12 @@ class ExportLayoutPlan {
     required int photoWidth,
     required int photoHeight,
     bool readings = true,
+    ExportReadingsMode readingsMode = ExportReadingsMode.full,
     bool context = false,
     bool watermark = true,
     String? photoId,
   }) {
+    final resolved = resolveMode(readingsMode, readings: readings);
     if (photoWidth <= 0 || photoHeight <= 0) {
       throw ArgumentError('The size of the picture must be positive');
     }
@@ -105,7 +165,7 @@ class ExportLayoutPlan {
       case ExportLayout.soundStrip:
         final band = math.max(
           1,
-          (shorterSide * (bandHeightRatio + (context ? .048 : 0))).round(),
+          (shorterSide * (bandRatio(resolved) + (context ? .048 : 0))).round(),
         );
         return ExportLayoutPlan(
           width: photoWidth,
@@ -125,7 +185,7 @@ class ExportLayoutPlan {
         final caption = math.max(
           1,
           (shorterSide *
-                  ((readings ? captionHeightRatio : .11) +
+                  (captionRatio(resolved, readings: readings) +
                       (context ? .045 : 0)))
               .round(),
         );
@@ -165,6 +225,7 @@ class ExportLayoutValues {
     this.mid = 0,
     this.treble = 0,
     this.spectrumAvailable = false,
+    this.readingsMode = ExportReadingsMode.full,
     this.photoId,
     this.context,
   });
@@ -208,6 +269,9 @@ class ExportLayoutValues {
   /// Whether the three bands of the spectrum are drawn.
   final bool spectrumAvailable;
 
+  /// Which readings are printed.
+  final ExportReadingsMode readingsMode;
+
   /// The values of a capture.
   ///
   /// The spectrum is drawn when it carries energy: a phone without a
@@ -218,6 +282,7 @@ class ExportLayoutValues {
     required String styleName,
     ExportContext? context,
     String? photoId,
+    ExportReadingsMode readingsMode = ExportReadingsMode.full,
   }) {
     final spectrum = ambient.bass > 0 || ambient.mid > 0 || ambient.treble > 0;
     return ExportLayoutValues(
@@ -235,6 +300,7 @@ class ExportLayoutValues {
       mid: ambient.mid,
       treble: ambient.treble,
       spectrumAvailable: spectrum,
+      readingsMode: readingsMode,
     );
   }
 }

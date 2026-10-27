@@ -428,4 +428,29 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get resultLayoutHintPoster => 'Un marco con el estilo y las lecturas.';
+
+  @override
+  String get processingLabel => 'Procesando';
+
+  @override
+  String get resultReadingsLabel => 'Lecturas';
+
+  @override
+  String get resultReadingsFull => 'Completas';
+
+  @override
+  String get resultReadingsNumbers => 'Solo números';
+
+  @override
+  String get resultReadingsHidden => 'Ocultas';
+
+  @override
+  String get resultReadingsHintFull => 'Números, escalas y espectro.';
+
+  @override
+  String get resultReadingsHintNumbers => 'Solo los números y sus etiquetas.';
+
+  @override
+  String get resultReadingsHintHidden =>
+      'Sin lecturas. El ID de la foto se queda.';
 }

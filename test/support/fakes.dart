@@ -306,6 +306,9 @@ class FakeExportService extends ExportService {
 
   /// The layouts that were composed, in order.
   final List<ExportLayout> layouts = [];
+
+  /// The readings modes that were composed, in order.
+  final List<ExportReadingsMode> readingsModes = [];
   final List<bool> watermarks = [];
   final List<ExportFileType> fileTypes = [];
   final List<ui.Image> previewInputs = [];
@@ -386,6 +389,7 @@ class FakeExportService extends ExportService {
     sources.add(source);
     composed.add(format);
     layouts.add(layout);
+    readingsModes.add(values?.readingsMode ?? ExportReadingsMode.full);
     watermarks.add(watermark);
     if (index < gates.length) {
       final gate = gates[index];

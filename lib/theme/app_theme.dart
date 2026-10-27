@@ -179,6 +179,10 @@ class AppTheme {
   static const double fringeTextAlpha = 0.9;
   static const double fringeRingOffset = 1.5;
 
+  /// Side and gap of the square cells of the segmented meters, without radius.
+  static const double meterSegmentSize = 4;
+  static const double meterSegmentGap = 1;
+
   /// Viewfinder geometry, typography and motion.
   static const double stylePillMaxWidth = 220;
   static const double diagnosticsMinWidth = 420;

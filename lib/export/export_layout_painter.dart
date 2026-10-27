@@ -66,7 +66,8 @@ class ExportLayoutPainter {
     final geometry = SoundStripGeometry.compute(
       plan,
       readings,
-      spectrum: values?.spectrumAvailable ?? false,
+      spectrum: showsExportSpectrum(values),
+      mode: exportReadingsTier(values),
     );
     canvas.drawRect(geometry.band, Paint()..color = AppTheme.background);
     canvas.save();
@@ -76,7 +77,13 @@ class ExportLayoutPainter {
       Paint()..color = const Color(0x14FFFFFF),
     );
     for (var i = 0; i < readings.length; i++) {
-      _reading(canvas, readings[i], geometry.slots[i], onPaper: false);
+      _reading(
+        canvas,
+        readings[i],
+        geometry.slots[i],
+        onPaper: false,
+        ladder: showsExportLadders(values),
+      );
     }
     _spectrum(canvas, geometry.ladders, onPaper: false);
     if (watermark) {
@@ -92,10 +99,10 @@ class ExportLayoutPainter {
       _text(
         canvas,
         id,
-        Offset(geometry.band.right - .045 * u, geometry.band.top + .138 * u),
+        geometry.idBaseline,
         .019 * u,
         AppTheme.textSecondary,
-        right: true,
+        right: geometry.idAtRight,
         tracking: .1,
       );
     }
@@ -115,7 +122,7 @@ class ExportLayoutPainter {
     final geometry = PosterGeometry.compute(
       plan,
       readings,
-      spectrum: values?.spectrumAvailable ?? false,
+      spectrum: showsExportSpectrum(values),
     );
     canvas.save();
     canvas.clipRect(
@@ -180,7 +187,13 @@ class ExportLayoutPainter {
       );
     }
     for (var i = 0; i < readings.length; i++) {
-      _reading(canvas, readings[i], geometry.slots[i], onPaper: true);
+      _reading(
+        canvas,
+        readings[i],
+        geometry.slots[i],
+        onPaper: true,
+        ladder: showsExportLadders(values),
+      );
     }
     _spectrum(canvas, geometry.ladders, onPaper: true);
     _context(canvas, onPaper: true);
@@ -192,6 +205,7 @@ class ExportLayoutPainter {
     ExportReading reading,
     ReadingGeometry geometry, {
     required bool onPaper,
+    bool ladder = true,
   }) {
     final color = onPaper ? reading.paper : reading.dark;
     canvas.drawRect(geometry.key, Paint()..color = color);
@@ -211,6 +225,7 @@ class ExportLayoutPainter {
       onPaper ? ink : AppTheme.textPrimary,
       tracking: -.01,
     );
+    if (!ladder) return;
     final lit = (reading.level * 8).round();
     for (var i = 0; i < 8; i++) {
       canvas.drawRect(
@@ -265,7 +280,13 @@ class ExportLayoutPainter {
     final items = contextItems(context);
     if (items.isEmpty) return;
     final color = onPaper ? paperSecondary : AppTheme.textSecondary;
-    final base = onPaper ? (hasExportReadings(values) ? .21 : .11) : .155;
+    final tier = exportReadingsTier(values);
+    final base = onPaper
+        ? ExportLayoutPlan.captionRatio(
+            tier,
+            readings: hasExportReadings(values),
+          )
+        : ExportLayoutPlan.bandRatio(tier);
     final top = plan.photo.bottom + base * u;
     final left = plan.photo.left + (onPaper ? 0 : .045 * u);
     final right = plan.photo.right - (onPaper ? 0 : .045 * u);

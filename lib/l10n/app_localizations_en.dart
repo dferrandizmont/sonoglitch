@@ -428,4 +428,28 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get resultLayoutHintPoster =>
       'A framed print with the style and readings.';
+
+  @override
+  String get processingLabel => 'Processing';
+
+  @override
+  String get resultReadingsLabel => 'Readings';
+
+  @override
+  String get resultReadingsFull => 'Full';
+
+  @override
+  String get resultReadingsNumbers => 'Numbers';
+
+  @override
+  String get resultReadingsHidden => 'Hidden';
+
+  @override
+  String get resultReadingsHintFull => 'Numbers, ladders and spectrum.';
+
+  @override
+  String get resultReadingsHintNumbers => 'Only the numbers and their labels.';
+
+  @override
+  String get resultReadingsHintHidden => 'No readings. The photo ID stays.';
 }

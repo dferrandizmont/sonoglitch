@@ -13,6 +13,7 @@ typedef ResultCacheKey = ({
   CaptureResult capture,
   ExportFormat format,
   ExportLayout layout,
+  ExportReadingsMode readingsMode,
   bool watermark,
   bool contextLine,
   ExportFileType fileType,

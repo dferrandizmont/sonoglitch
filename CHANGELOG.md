@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions use prerelease identifiers while the app is in early development.
 
+## [0.1.0-alpha.20] - 2026-10-28
+
+### Added
+
+- A Readings selector for the Sound strip and the Poster: full (numbers and square ladders), numbers only, or hidden. The photo ID stays in every mode and the last choice is remembered.
+- A glitch loader (a row of square cells with a chromatic fringe) replaces the round spinner while a photo is processed; it stays still when reduced motion is on.
+
 ## [0.1.0-alpha.19] - 2026-10-27
 
 ### Changed

@@ -97,6 +97,7 @@ class ExportService {
       photoWidth: crop.width.round().clamp(1, 100000),
       photoHeight: crop.height.round().clamp(1, 100000),
       readings: hasExportReadings(values),
+      readingsMode: values?.readingsMode ?? ExportReadingsMode.full,
       context: values?.context?.hasItems ?? false,
       watermark: watermark,
       photoId: values?.photoId,

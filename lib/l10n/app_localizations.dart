@@ -829,6 +829,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A framed print with the style and readings.'**
   String get resultLayoutHintPoster;
+
+  /// Accessibility label of the glitch loader shown while the picture is processed.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing'**
+  String get processingLabel;
+
+  /// Label of the selector of the readings printed by the sound strip and the poster.
+  ///
+  /// In en, this message translates to:
+  /// **'Readings'**
+  String get resultReadingsLabel;
+
+  /// Readings mode: numbers, ladders and spectrum.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get resultReadingsFull;
+
+  /// Readings mode: only the numbers and their labels.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers'**
+  String get resultReadingsNumbers;
+
+  /// Readings mode: no readings.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden'**
+  String get resultReadingsHidden;
+
+  /// Hint that explains the full readings mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers, ladders and spectrum.'**
+  String get resultReadingsHintFull;
+
+  /// Hint that explains the numbers readings mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the numbers and their labels.'**
+  String get resultReadingsHintNumbers;
+
+  /// Hint that explains the hidden readings mode.
+  ///
+  /// In en, this message translates to:
+  /// **'No readings. The photo ID stays.'**
+  String get resultReadingsHintHidden;
 }
 
 class _AppLocalizationsDelegate

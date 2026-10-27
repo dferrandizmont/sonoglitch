@@ -78,6 +78,8 @@ class SoundStripGeometry {
     this.wordmarkOrigin,
     this.wordmarkSize,
     this.wordmarkWidth,
+    this.idBaseline,
+    this.idAtRight,
   );
   final Rect band;
   final List<ReadingGeometry> slots;
@@ -86,19 +88,34 @@ class SoundStripGeometry {
   final double wordmarkSize;
   final double wordmarkWidth;
 
+  /// Where the photo ID sits and whether it ends there or starts there.
+  final Offset idBaseline;
+  final bool idAtRight;
+
+  /// [mode] is the resolved mode of [ExportLayoutPlan.resolveMode]. Without
+  /// readings the ID and the signature share one centred row.
   static SoundStripGeometry compute(
     ExportLayoutPlan plan,
     List<ExportReading> readings, {
     bool spectrum = true,
+    ExportReadingsMode mode = ExportReadingsMode.full,
   }) {
+    final compact = mode == ExportReadingsMode.hidden;
+    final numbers = mode == ExportReadingsMode.numbers;
     final u = math.min(plan.photo.width, plan.photo.height);
     final f = math.max(12.0, .028 * u);
     final right = plan.photo.right - .045 * u;
-    final leftBlockRight = plan.photo.left + (.045 + 2 * .205 + .171) * u;
+    final leftBlockRight =
+        plan.photo.left + (compact ? .045 + .2 : .045 + 2 * .205 + .171) * u;
     // Preserve a gap after the third slot even with a very wide fallback font.
     final wordWidth = math.min(
       GlitchWordmark.measure(f).width,
-      math.max(.0015 * u, right - leftBlockRight - (.020 + .114 + .034) * u),
+      math.max(
+        .0015 * u,
+        right -
+            leftBlockRight -
+            (compact || numbers ? .034 : .020 + .114 + .034) * u,
+      ),
     );
     final wordX = right - wordWidth;
     final spectrumX = wordX - (.034 + .114) * u;
@@ -133,9 +150,13 @@ class SoundStripGeometry {
               ),
             )
           : const [],
-      Offset(wordX, plan.photo.bottom + .090 * u),
+      Offset(wordX, plan.photo.bottom + (compact ? .047 : .090) * u),
       f,
       wordWidth,
+      compact
+          ? Offset(plan.photo.left + .045 * u, plan.photo.bottom + .047 * u)
+          : Offset(right, plan.photo.bottom + (numbers ? .118 : .138) * u),
+      !compact,
     );
   }
 }

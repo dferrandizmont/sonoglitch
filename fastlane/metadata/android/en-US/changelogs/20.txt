@@ -1,0 +1,1 @@
+New Readings selector for the Sound strip and Poster (full, numbers only or hidden) and a glitch loader while a photo is processed. Android 10 or newer.

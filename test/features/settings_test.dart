@@ -690,6 +690,22 @@ void main() {
     },
   );
 
+  test('the readings mode defaults to full and survives a reload', () async {
+    final store = InMemoryPreferencesStore();
+    final settings = AppSettings(store: store);
+    await settings.load();
+    expect(settings.exportReadingsMode, ExportReadingsMode.full);
+    for (final mode in ExportReadingsMode.values) {
+      await settings.setExportReadingsMode(mode);
+      final restored = AppSettings(store: store);
+      await restored.load();
+      expect(restored.exportReadingsMode, mode);
+    }
+    await store.setString(AppSettings.exportReadingsModeKey, 'obsolete-value');
+    await settings.load();
+    expect(settings.exportReadingsMode, ExportReadingsMode.full);
+  });
+
   testWidgets('the file type can be chosen in Settings', (tester) async {
     final store = InMemoryPreferencesStore();
     final settings = AppSettings(store: store);

@@ -509,5 +509,37 @@
   "resultLayoutHintPoster": "A framed print with the style and readings.",
   "@resultLayoutHintPoster": {
     "description": "Hint that explains the layout with the frame."
+  },
+  "processingLabel": "Processing",
+  "@processingLabel": {
+    "description": "Accessibility label of the glitch loader shown while the picture is processed."
+  },
+  "resultReadingsLabel": "Readings",
+  "@resultReadingsLabel": {
+    "description": "Label of the selector of the readings printed by the sound strip and the poster."
+  },
+  "resultReadingsFull": "Full",
+  "@resultReadingsFull": {
+    "description": "Readings mode: numbers, ladders and spectrum."
+  },
+  "resultReadingsNumbers": "Numbers",
+  "@resultReadingsNumbers": {
+    "description": "Readings mode: only the numbers and their labels."
+  },
+  "resultReadingsHidden": "Hidden",
+  "@resultReadingsHidden": {
+    "description": "Readings mode: no readings."
+  },
+  "resultReadingsHintFull": "Numbers, ladders and spectrum.",
+  "@resultReadingsHintFull": {
+    "description": "Hint that explains the full readings mode."
+  },
+  "resultReadingsHintNumbers": "Only the numbers and their labels.",
+  "@resultReadingsHintNumbers": {
+    "description": "Hint that explains the numbers readings mode."
+  },
+  "resultReadingsHintHidden": "No readings. The photo ID stays.",
+  "@resultReadingsHintHidden": {
+    "description": "Hint that explains the hidden readings mode."
   }
 }

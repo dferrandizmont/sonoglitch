@@ -96,6 +96,8 @@ void main() {
     await tester.ensureVisible(chip);
     await tester.tap(chip);
     await tester.pump();
+    // Let the readings selector finish its size animation.
+    await tester.pump(const Duration(milliseconds: 300));
   }
 
   ui.Image displayed(WidgetTester tester) =>
@@ -114,6 +116,7 @@ void main() {
         CaptureResult? identity,
         ExportFormat format = ExportFormat.original,
         ExportLayout layout = ExportLayout.full,
+        ExportReadingsMode readingsMode = ExportReadingsMode.full,
         bool watermark = true,
         bool contextLine = false,
         ExportFileType fileType = ExportFileType.png,
@@ -123,6 +126,7 @@ void main() {
         capture: identity ?? capture,
         format: format,
         layout: layout,
+        readingsMode: readingsMode,
         watermark: watermark,
         contextLine: contextLine,
         fileType: fileType,
@@ -133,6 +137,8 @@ void main() {
         key(),
         key(format: ExportFormat.square),
         key(layout: ExportLayout.poster),
+        key(readingsMode: ExportReadingsMode.numbers),
+        key(readingsMode: ExportReadingsMode.hidden),
         key(watermark: false),
         key(contextLine: true),
         key(fileType: ExportFileType.jpeg),
@@ -145,7 +151,7 @@ void main() {
             styleId: 'static',
           ),
         ),
-      }, hasLength(9));
+      }, hasLength(11));
     },
   );
 
@@ -171,6 +177,7 @@ void main() {
       capture: capture,
       format: ExportFormat.original,
       layout: ExportLayout.full,
+      readingsMode: ExportReadingsMode.full,
       watermark: true,
       contextLine: false,
       fileType: ExportFileType.png,
@@ -196,6 +203,7 @@ void main() {
       capture: capture,
       format: ExportFormat.original,
       layout: ExportLayout.full,
+      readingsMode: ExportReadingsMode.full,
       watermark: true,
       contextLine: false,
       fileType: ExportFileType.png,
@@ -230,6 +238,7 @@ void main() {
       capture: capture,
       format: format,
       layout: ExportLayout.full,
+      readingsMode: ExportReadingsMode.full,
       watermark: true,
       contextLine: false,
       fileType: ExportFileType.png,
@@ -308,6 +317,68 @@ void main() {
     );
     expect(export.written.every((file) => !file.existsSync()), isTrue);
   });
+
+  testWidgets(
+    'the readings selector exists for the strip and the poster only',
+    (tester) async {
+      await prepare(tester);
+      await pumpResult(tester);
+      expect(find.byKey(const ValueKey('res-readings-full')), findsNothing);
+      await select(tester, 'res-layout-soundStrip');
+      for (final mode in ExportReadingsMode.values) {
+        expect(find.byKey(ValueKey('res-readings-${mode.name}')), findsOne);
+      }
+      expect(find.text('READINGS'), findsOneWidget);
+      expect(find.text('Hidden'), findsOneWidget);
+      await select(tester, 'res-layout-poster');
+      expect(find.byKey(const ValueKey('res-readings-numbers')), findsOne);
+      await select(tester, 'res-layout-full');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('res-readings-numbers')), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'a readings mode re-renders from the same effect, is cached and persisted',
+    (tester) async {
+      await prepare(tester);
+      settings = AppSettings(store: InMemoryPreferencesStore());
+      await settings.load();
+      await pumpResult(tester);
+      await select(tester, 'res-layout-poster');
+      await select(tester, 'res-readings-numbers');
+      await select(tester, 'res-readings-hidden');
+      expect(export.layouts, [
+        ExportLayout.full,
+        ExportLayout.poster,
+        ExportLayout.poster,
+        ExportLayout.poster,
+      ]);
+      expect(export.readingsModes, [
+        ExportReadingsMode.full,
+        ExportReadingsMode.full,
+        ExportReadingsMode.numbers,
+        ExportReadingsMode.hidden,
+      ]);
+      // The effect is not run again: every composition starts from the
+      // picture that the effect already produced.
+      expect(
+        export.sources.every((s) => identical(s, capture.rendered)),
+        isTrue,
+      );
+      expect(settings.exportReadingsMode, ExportReadingsMode.hidden);
+      // Going back is a cache hit.
+      final hidden = displayed(tester);
+      await select(tester, 'res-readings-numbers');
+      await select(tester, 'res-readings-hidden');
+      expect(displayed(tester), same(hidden));
+      expect(export.composed, hasLength(4));
+      // What is previewed is what is saved.
+      await tester.tap(find.text('Save'));
+      await tester.pump();
+      expect(export.savedFiles.single, export.written.last);
+    },
+  );
 
   testWidgets('a cache hit wins over a late render for another key', (
     tester,
