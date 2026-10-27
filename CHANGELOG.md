@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions use prerelease identifiers while the app is in early development.
 
+## [0.1.0-alpha.21] - 2026-10-28
+
+### Changed
+
+- The glitch loader now sits over the photo area while a picture is processed, so it stays in view when the controls below are scrolled.
+
 ## [0.1.0-alpha.20] - 2026-10-28
 
 ### Added

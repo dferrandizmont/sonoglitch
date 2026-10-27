@@ -1,0 +1,1 @@
+The glitch loader now appears over the photo while it is processed. Android 10 or newer.

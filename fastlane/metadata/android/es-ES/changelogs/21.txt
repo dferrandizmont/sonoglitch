@@ -1,0 +1,1 @@
+El cargador glitch aparece ahora sobre la foto mientras se procesa. Android 10 o superior.

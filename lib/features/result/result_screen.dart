@@ -646,7 +646,27 @@ class _ResultScreenState extends State<ResultScreen> {
               width: double.infinity,
               color: AppTheme.background,
               padding: const EdgeInsets.all(AppTheme.spaceSm),
-              child: Center(child: _picture(l10n)),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Center(child: _picture(l10n)),
+                  // The one loader of the screen sits where the photo is, so
+                  // it stays in view however far the controls are scrolled.
+                  if (_processing)
+                    IgnorePointer(
+                      child: Container(
+                        padding: const EdgeInsets.all(AppTheme.spaceMd),
+                        decoration: BoxDecoration(
+                          color: AppTheme.background.withValues(alpha: .82),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.radiusSm,
+                          ),
+                        ),
+                        child: const GlitchLoader(),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
           Flexible(
@@ -663,21 +683,14 @@ class _ResultScreenState extends State<ResultScreen> {
                         ? null
                         : Padding(
                             padding: const EdgeInsets.all(AppTheme.spaceSm),
-                            child: Row(
-                              children: [
-                                const GlitchLoader(),
-                                const SizedBox(width: AppTheme.spaceSm),
-                                Expanded(
-                                  child: Text(
-                                    l10n.processingMegapixels(
-                                      (_processingPixels! / 1000000)
-                                          .toStringAsFixed(1),
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                            child: Text(
+                              l10n.processingMegapixels(
+                                (_processingPixels! / 1000000).toStringAsFixed(
+                                  1,
                                 ),
-                              ],
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                   ),
@@ -873,7 +886,7 @@ class _ResultScreenState extends State<ResultScreen> {
   /// The picture on screen, with the button that shows the original.
   Widget _picture(AppLocalizations l10n) {
     final image = _showOriginal && _original != null ? _original : _composed;
-    if (image == null) return const GlitchLoader();
+    if (image == null) return const SizedBox.shrink();
     // Fit the stack to the image so Compare follows the actual photo corner.
     return LayoutBuilder(
       builder: (context, constraints) {
