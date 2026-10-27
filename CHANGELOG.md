@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions use prerelease identifiers while the app is in early development.
 
+## [0.1.0-alpha.19] - 2026-10-27
+
+### Changed
+
+- Website regenerated from the updated privacy policy; iOS project uses the `es.sonoglitch.app` bundle id.
+
 ## [0.1.0-alpha.18] - 2026-10-27
 
 ### Changed

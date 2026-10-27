@@ -16,3 +16,10 @@ This configuration was reviewed on Windows, where CocoaPods installation, Xcode 
 On a Mac with Flutter 3.47.7, Xcode and CocoaPods, resolve the locked dependencies, run `pod install` in `ios/` and inspect the resolved deployment targets and permission macros. Build the app, configure signing and test on a physical iPhone running iOS 16 or later before considering a release.
 
 Check camera and microphone grant/deny/revocation, continuing without microphone access, level-only microphone behavior and calibration, front/back orientation and mirroring, background/foreground and covered-viewfinder lifecycle, repeated capture, crops, album creation/saving, limited or denied photo-library access and sharing. Confirm temporary-file cleanup on success and failure. No iOS build, simulator run or physical-device validation is claimed by this change.
+
+## Checklist for the first Mac session
+
+1. The bundle identifier is now `es.sonoglitch.app` (Runner and RunnerTests), the same as the Android application id. Set your Apple team in Xcode (Runner > Signing & Capabilities) and register that id.
+2. `flutter pub get`, `cd ios && pod install`, then `flutter run` on a real iPhone (the camera does not work in the simulator).
+3. Expected platform gaps, all with Dart fallbacks, to confirm on the device: no native spectrum (bass, mid, treble, rhythm and spectral tilt stay neutral, only the noise level works), no ambient-lux channel (light comes from the camera image), no native JPEG encoder (JPEG export goes through the Dart path; check quality and memory at 12 to 24 MP), and the compass and barometer of the optional context line (`NSMotionUsageDescription` is not declared: see Info.plist before enabling the barometer on iOS).
+4. Verify the items listed above (permissions, orientation, mirroring, background/foreground, Save to the Photos album, Share), then record the results here.
