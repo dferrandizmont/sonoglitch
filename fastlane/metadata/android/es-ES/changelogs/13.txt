@@ -1,0 +1,1 @@
+Nueva interfaz: un visor limpio con un botón de estilo y una hoja de estilos, una guía en palabras sencillas, disparo auto y ajustes agrupados. El trabajo en segundo plano es más ligero. Android 10 o superior.

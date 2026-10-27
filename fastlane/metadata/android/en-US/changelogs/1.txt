@@ -1,0 +1,1 @@
+First alpha: Static, Tape and Prism camera effects driven by sound level, image brightness and phone motion. Live preview and still capture. PNG export in the original aspect ratio, 1:1 or 4:5, gallery saving and system sharing. Optional watermark, English and Spanish interface, and local diagnostics. No ads or accounts; audio is never recorded. Early development.

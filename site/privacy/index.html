@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Privacy policy — Sonoglitch</title>
+<meta name="description" content="How Sonoglitch handles your data: audio is never recorded, stored or transmitted, and the release builds have no network access.">
+<link rel="canonical" href="https://dferrandizmont.github.io/sonoglitch/privacy/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Sonoglitch">
+<meta property="og:title" content="Privacy policy — Sonoglitch">
+<meta property="og:description" content="How Sonoglitch handles your data: audio is never recorded, stored or transmitted, and the release builds have no network access.">
+<meta property="og:url" content="https://dferrandizmont.github.io/sonoglitch/privacy/">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://dferrandizmont.github.io/sonoglitch/img/og.png">
+<meta name="twitter:image" content="https://dferrandizmont.github.io/sonoglitch/img/og.png">
+<link rel="icon" href="../img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body><header class="topbar"><div class="wrap"><a class="brand" href="../">Sonoglitch</a><nav class="nav" aria-label="Main"><a class="lang" href="../es/" hreflang="es" lang="es">Español</a></nav></div></header><main class="prose"><h1>Privacy policy</h1>
+<p class="updated"><em>Last updated: 2026-10-26. Applies to Sonoglitch (all versions).</em></p>
+<p>Sonoglitch is a camera app that distorts photos according to the sound level, the light and the movement around you. It is free, open source software and it works entirely on your device.</p>
+<h2>What the app does with your data</h2>
+<div class="table-wrap"><table><thead><tr><th>Data</th><th>Why</th><th>Where it goes</th></tr></thead><tbody><tr><td>Camera image</td><td>Live preview with the effect and taking the photo</td><td>Stays on your device. While you work on a photo, temporary files may exist in the app's private cache (no other app can read them) until the system clears it or you uninstall the app. Photos are saved to your gallery only when you tap Save.</td></tr><tr><td>Microphone</td><td>Only numbers are measured, in memory, to drive the effect: the <strong>volume level</strong> and the energy of <strong>three frequency bands</strong> (bass, mid, treble)</td><td><strong>No audio is recorded, stored or sent.</strong> The microphone's audio buffers are processed in memory only to compute the volume and the three band energies and are then discarded; only the resulting numbers are kept, briefly.</td></tr><tr><td>Motion sensors (accelerometer and gyroscope)</td><td>Measure how much the phone moves and turns</td><td>Used in memory. Readings can appear in the local diagnostics log as plain numbers (see <em>Diagnostics</em>); never sent.</td></tr><tr><td>Image analysis</td><td>Brightness and the difference between consecutive small camera frames, computed to drive the effect</td><td>Used in memory. Readings can appear in the local diagnostics log as plain numbers; never sent.</td></tr><tr><td>Photo gallery</td><td>Saves the photo you choose to save</td><td>Written to your gallery only when you tap Save.</td></tr></tbody></table></div>
+<h2>What the app does not do</h2>
+<ul>
+<li>It has no accounts, no ads, no analytics and no trackers.</li>
+<li>Release builds do not declare the Android <code>INTERNET</code> permission, so the app has no network access. (Debug and profile builds made by developers include it, as Flutter requires for its tooling.)</li>
+<li>On Android it asks for no storage permission: photos are saved through the system media store, and the app does not read other apps' files. On iOS the system asks for access to your photo library so the app can save into its own album.</li>
+<li>On Android, its data is excluded from device and cloud backups.</li>
+<li>It does not share data with anyone. When you tap Share, the photo is handed to the app you choose through the system share sheet; from then on that app's own privacy policy applies.</li>
+</ul>
+<h2>Diagnostics</h2>
+<p>The app keeps a small text log in its private storage on your device: technical events, timings, errors and the numeric readings shown in the diagnostics panel (volume level, brightness, movement as plain numbers), plus the device model and Android version. It never contains audio or photos. It is shared only if you tap <em>Share logs</em> or <em>Copy report</em> and send it yourself. You can remove it by clearing the app's storage or uninstalling the app.</p>
+<h2>Optional links</h2>
+<p>Some builds (F-Droid and the GitHub releases) show an optional "Support the project" link to a Ko-fi page; the Google Play build has none. Tapping it opens the link in another app on your device, normally your browser. Nothing is sent by the app itself, and the app does not know whether you donate.</p>
+<h2>Children</h2>
+<p>The app does not collect personal data from anyone, including children.</p>
+<h2>Changes and contact</h2>
+<p>Changes to this policy will appear in this file and in the release notes. Questions: write to <a href="mailto:dev@mainshai.com">dev@mainshai.com</a> or open an issue in the project repository.</p></main><footer><div class="wrap"><p><a href="mailto:dev@mainshai.com">dev@mainshai.com</a></p><p>Sonoglitch is licensed under Apache-2.0.</p></div></footer></body>
+</html>

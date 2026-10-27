@@ -1,0 +1,499 @@
+#version 460 core
+
+#include <flutter/runtime_effect.glsl>
+#include "signature_common.glsl"
+
+// D2A contextual recipe (uniform ABI; all inputs frozen for preview/still):
+// uMood.x, civil-time warmth [-1,1]: grain CELL SIZE *=1+.10*w (0.90..1.10);
+//   red/blue temperature gains +/-4%. uMood.y, calendar/moon hue [-1,1]:
+//   masked shadow/leak (Prism highlight/leak) gains <=2%. The SUM of warmth
+//   and hue gains is clamped per channel to +/-4%, then multiplied by
+//   max(noise,abs(2*light-1)) before retention (zero at neutral controls).
+// uMood.z, scene chroma allowance [.65,1]: scales only the chromatic component
+//   of (effect-original), never the source RGB/chroma; luma delta is retained.
+// uMood.w, spectral tilt [-1,1]: transfers <=15% of the SMALLER broad/fine
+//   amplitude envelope from slab/block warp to row jitter/dispersion/grain (or back).
+//   Broad+fine envelope is invariant (including pulse); gains stay [.85,1.15].
+//   If min(B,F)<1e-6 both gains stay 1; otherwise divide by B and F exactly.
+//   Fine grain <=.0046*noise*treble before grade/retention; no extra layer.
+// uSign.xy, reliable heading (cos(delta),sin(delta)), |delta|<=12 degrees:
+//   inverse-rotates aspect-correct cut/tracking coordinates and forward-rotates
+//   warp/dispersion vectors. Corruption masks stay raster-aligned to preserve
+//   the <=20% damaged-area cap. Motion direction is untouched; no new trig.
+// uSign.z, signed rhythm pulse [-1,1]: factor 1+.04*p*noise; Static wet,
+//   Tape tracking component, Prism RGB split only. Noise zero is EXACT bypass,
+//   as are orientation and tilt. Pulse never selects a recipe; it modulates
+//   the selected D1 component in place. uSign.w is reserved and ignored.
+// Neutral mood (0,0,1,0) and sign (1,0,0,0) execute the exact D1 arithmetic.
+// Applicable geometry context uses the combined <=.05 short-side cap and >=45%
+//   retention. Colour alone keeps the D1 path/grade/retention, including at n=0.
+// Fingerprint remains LAST and <=1/255; no new texture reads.
+
+// SIG-2A recipe parameters (all ranges inclusive; source = uniform ABI):
+// uBass [0,1], filtered low-band energy: slow dispersion-axis sine frequency 7..6.087/short side,
+//   angle amplitude 0.55..0.6325 radians (existing sine reused).
+// uMid [0,1], filtered middle-band energy: band/block density *=1..1.15 (41..47.15 bands);
+//   fixed duty compensates physical width inversely; damaged area <=20%.
+// uTreble [0,1], filtered high-band energy: row density 210..241.5, jitter/RGB split *=1..1.15;
+//   arithmetic fine grain <=0.004*uNoise*uTreble before retention.
+// uSeed [0,1], pending-shot source: independent bounded phase offsets
+//   (row/hash clock +97*s, bands +13*s, blocks +7*s, columns +5*s,
+//   fine hash +31.7*s, light grain +(31,17)*s); no amplitude added.
+//   It never scales uTime.
+//   Dispersion sine phase +=2*pi*s.
+// uFingerprint.xyzw [0,1]^4, capture source: each lane hashes an independent
+//   normalized 4096-cell microtexture; w adds shared grain. Applied LAST,
+//   x/y/z seed red/green/blue with cell offsets (0,0)/(17,0)/(0,29);
+//   each lane and w contributes <=0.5/255, combined <=1/255 per channel.
+//   Zero is an exact bypass. It never moves macro
+//   features: the shutter can replace the provisional fingerprint seamlessly.
+// Existing controls: uNoise [0,1] gates onset n^.75, tears smoothstep(.25,
+//   .65,n), damage smoothstep(.60,1,n), wet <=n^.65; all warp/split/grain
+//   vanish at n=0. uLight [0,1] grades dark/cold or bright/warm with weights
+//   max((.5-L)*2,0)^.65 / max((L-.5)*2,0)^.65 and style constants below.
+//   uMotion [0,1] scales/mixes a six-position trail by m^.65; uMotionDir
+//   (sensor direction, length<=1, components [-1,1]) multiplies that trail;
+//   y is negated for UV. Bands never replace the direction or main controls.
+// uTime [0,1e6] seconds: floor(t*GLITCH_RATE), blocks at twice that rate;
+//   no band/seed time scaling. uSize (>0 pixels) supplies normalized aspect
+//   geometry and block raster reservation. uUvScale/uUvOffset [0,1]^2 are
+//   cover mapping only; uImage (camera RGB [0,1], sampler 0) is read clamped.
+// Nonzero bands/seed: TOTAL warp+split+trail <=0.05 short side and >=45%
+//   untouched original in the final pre-micro mix (including grade/flashes).
+// Bloom radius <=0.012 short side; samples remain <=28 (6*4 + 4 bloom).
+// All bands/seed zero: exact legacy recipe, exempt from new budget to retain
+//   historical pixels. Fingerprint-only changes remain <=1 RGB8 code.
+// Live/still use this same recipe and frozen uniforms; no local state.
+
+// Fixed float indices: size 0..1, noise 2, light 3, motion 4, time 5,
+// direction 6..7, cover scale 8..9, cover offset 10..11. Image is sampler 0.
+uniform vec2 uSize;
+uniform float uNoise;
+uniform float uLight;
+uniform float uMotion;
+uniform float uTime;
+uniform vec2 uMotionDir;
+uniform vec2 uUvScale;
+uniform vec2 uUvOffset;
+// Extended contract: bass 12, mid 13, treble 14, seed 15.
+uniform float uBass;
+uniform float uMid;
+uniform float uTreble;
+uniform float uSeed;
+// Capture micro-fingerprint 16..19; zero disables it.
+uniform vec4 uFingerprint;
+// Contextual mood 20..23: warmth, hue, chroma allowance, spectral tilt.
+uniform vec4 uMood;
+// Contextual signature 24..27: orientation axis, rhythmic pulse, reserved.
+uniform vec4 uSign;
+uniform sampler2D uImage;
+
+out vec4 fragColor;
+
+// Saturated dispersion, diagonal chroma edges and rose-amber leaks.
+const float TRAIL_LENGTH = 0.105;
+const float DARK_CONTRAST = 1.30;
+const float DARK_GRAIN = 0.045;
+const float DARK_VIGNETTE = 0.51;
+const float WASH_CONTRAST = 0.74;
+const float BRIGHT_SATURATION = 1.24;
+const vec2 LEAK_CORNER = vec2(0.0, 0.0);
+const vec3 LEAK_COLOR = vec3(0.30, 0.065, 0.10);
+const float GLITCH_RATE = 24.0;
+const float ROW_COUNT = 210.0;
+const float BAND_COUNT = 41.0;
+
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+float luma(vec3 c) {
+  return dot(c, vec3(0.2126, 0.7152, 0.0722));
+}
+
+vec3 sampleImage(vec2 uv) {
+  // Clamp after cover mapping; never wrap the opposite edge into the picture.
+  return texture(uImage, clamp(uv * uUvScale + uUvOffset, 0.0, 1.0)).rgb;
+}
+
+vec2 noiseOffset(vec2 offset) {
+  // Bound EACH channel's combined displacement in units of screen width.
+  // This also bounds diagonal prism dispersion, at any output aspect ratio.
+  offset *= min(1.0, 0.049 / max(length(offset), 0.000001));
+  return offset * vec2(1.0, uSize.x / uSize.y);
+}
+
+vec3 noiseSample(vec2 uv, vec2 shift, vec2 split, float wet, vec3 clean) {
+  if (wet <= 0.0) return clean;
+  vec3 torn = vec3(
+      sampleImage(uv + noiseOffset(shift + split)).r,
+      sampleImage(uv + noiseOffset(shift)).g,
+      sampleImage(uv + noiseOffset(shift - split)).b);
+  return mix(clean, torn, wet);
+}
+
+vec3 noiseSample(vec2 uv, vec2 shift, vec2 split, float wet) {
+  return noiseSample(uv, shift, split, wet, sampleImage(uv));
+}
+
+vec3 motionSample(vec2 uv, vec2 shift, vec2 split, float wet, out vec3 original) {
+  original = sampleImage(uv);
+  vec3 color = noiseSample(uv, shift, split, wet, original);
+  if (uMotion <= 0.0 || length(uMotionDir) <= 0.0) return color;
+  // Smooth, one-sided smear plus two distant ghosts; never quantize motion.
+  float response = pow(clamp(uMotion, 0.0, 1.0), 0.65);
+  // uMotionDir.y is "up" in screen space, but uv.y grows downwards. Negate
+  // so that "shake up" smears the picture up, the same way it does on X.
+  vec2 trail = vec2(uMotionDir.x, -uMotionDir.y) * vec2(1.0, uSize.x / uSize.y)
+      * response * TRAIL_LENGTH;
+  vec3 smeared = color * 0.30
+      + noiseSample(uv - trail * 0.12, shift, split, wet) * 0.18
+      + noiseSample(uv - trail * 0.28, shift, split, wet) * 0.16
+      + noiseSample(uv - trail * 0.46, shift, split, wet) * 0.14
+      + noiseSample(uv - trail * 0.72, shift, split, wet) * 0.12
+      + noiseSample(uv - trail, shift, split, wet) * 0.10;
+  return mix(color, smeared, response);
+}
+
+vec3 moodGrade(vec3 color, vec2 uv, float tick, float grainDivisor) {
+  float dark = pow(clamp((0.5 - uLight) * 2.0, 0.0, 1.0), 0.65);
+  float bright = pow(clamp((uLight - 0.5) * 2.0, 0.0, 1.0), 0.65);
+  if (dark > 0.0) {
+    // Shadow contrast, crushed toe, and teal-blue midtones.
+    vec3 cold = max((color - 0.10) * DARK_CONTRAST, 0.0);
+    cold *= vec3(0.60, 0.91, 1.10);
+    cold += vec3(0.0, 0.024, 0.055) * (1.0 - clamp(cold, 0.0, 1.0));
+    vec2 savedUv = uv;
+    if (uMood.x != 0.0 && uNoise > 0.0) uv /= grainDivisor;
+    float grain = hash(floor(uv * vec2(640.0, 640.0 * uSize.y / uSize.x))
+        + vec2(tick, tick * 0.37)) * 2.0 - 1.0;
+    uv = savedUv;
+    cold += grain * DARK_GRAIN * (0.35 + 0.65 * (1.0 - luma(color)));
+    float edge = smoothstep(0.15, 0.70, length(uv - 0.5));
+    cold *= 1.0 - DARK_VIGNETTE * edge;
+    color = mix(color, cold, dark);
+  }
+  if (bright > 0.0) {
+    // Four broad taps gather only bright neighbours, preserving the subject.
+    vec2 radius = vec2(0.012, 0.012 * uSize.x / uSize.y);
+    vec3 bloom = max(sampleImage(uv + vec2(radius.x, 0.0)) - 0.62, 0.0)
+        + max(sampleImage(uv - vec2(radius.x, 0.0)) - 0.62, 0.0)
+        + max(sampleImage(uv + vec2(0.0, radius.y)) - 0.62, 0.0)
+        + max(sampleImage(uv - vec2(0.0, radius.y)) - 0.62, 0.0);
+    vec3 warm = color * WASH_CONTRAST + vec3(0.14, 0.105, 0.075);
+    warm += vec3(0.15, 0.045, -0.075) * smoothstep(0.20, 0.90, luma(color));
+    warm += bloom * 0.16 * vec3(1.0, 0.72, 0.38);
+    // Corner flare is a mood cue, independent of noise and time.
+    float flare = pow(max(0.0, 1.0 - length((uv - LEAK_CORNER)
+        * vec2(1.0, 0.85)) / 0.95), 2.0);
+    warm += flare * LEAK_COLOR;
+    float saturation = BRIGHT_SATURATION;
+    warm = mix(vec3(luma(warm)), warm, saturation);
+    // Soft shoulder prevents the combined bloom/leak from whitening the frame.
+    warm = mix(warm, vec3(0.86) + (warm - 0.86) * 0.28, step(0.86, warm));
+    color = mix(color, warm, bright);
+  }
+  return clamp(color, 0.0, 1.0);
+}
+
+vec3 legacyRecipe(float grainDivisor, float pulseFactor, out vec3 original) {
+  vec2 uv = FlutterFragCoord().xy / uSize;
+  float noise = clamp(uNoise, 0.0, 1.0);
+  float onset = pow(noise, 0.75);
+  float tearing = smoothstep(0.25, 0.65, noise);
+  float corruption = smoothstep(0.60, 1.0, noise);
+  // Immediate amplitude response to a shout; only the pattern clock is stepped.
+  float tick = floor(uTime * GLITCH_RATE);
+  float row = floor(uv.y * ROW_COUNT);
+  float jitter = hash(vec2(row, tick)) * 2.0 - 1.0;
+  float band = step(0.64, hash(vec2(floor(uv.y * BAND_COUNT), tick + 11.0)));
+  float slab = hash(vec2(floor(uv.y * BAND_COUNT), tick + 3.0)) * 2.0 - 1.0;
+  // Thin corruption bands cover at most 16% of the continuous frame. Reserve
+  // one raster row per band so sampling cannot push coverage above 20%, even
+  // in tiny previews. Horizontal gaps can only reduce that area. Refresh twice
+  // as often as the tears, without changing the light grain's clock.
+  float blockTick = floor(uTime * GLITCH_RATE * 2.0);
+  float blockBands = min(BAND_COUNT, max(1.0, floor(uSize.y / 32.0)));
+  float blockDuty = min(0.16, max(0.0, 0.20 - blockBands / uSize.y));
+  float bandPhase = uv.y * blockBands + hash(vec2(blockTick, 17.0));
+  vec2 block = vec2(floor(uv.x * 12.0), floor(bandPhase));
+  float broken = (1.0 - step(blockDuty, fract(bandPhase)))
+      * step(0.35, hash(block + blockTick));
+  float blockShift = (hash(block + vec2(blockTick, 9.0)) * 2.0 - 1.0) * broken;
+  vec2 shift;
+  vec2 split;
+  float angle = sin(uv.y * 7.0 + tick * 0.13) * 0.55;
+  shift = vec2(jitter * 0.003 * onset + slab * band * 0.018 * tearing
+      + blockShift * 0.014 * corruption, blockShift * 0.004 * corruption);
+  split = vec2(cos(angle), sin(angle))
+      * (0.007 * onset + 0.008 * tearing + 0.012 * corruption);
+  if (pulseFactor != 1.0) split *= pulseFactor;
+  // Preserve local image detail even across hard edges: ordinary tears retain
+  // >=70% of the original pixel, and heavy bands retain >=28%. Their remaining
+  // content is sampled from the image, never replaced by a flat dark dropout.
+  float wet = min(pow(noise, 0.65), mix(0.30, 0.72, broken * corruption));
+  vec3 color = motionSample(uv, shift, split, wet, original);
+  color = moodGrade(color, uv, tick, grainDivisor);
+  // One thin row in occasional stepped frames. Multiplication, after grading,
+  // guarantees flashes stay <= 18% above that local pixel, even in deep black.
+  float flash = step(0.90, hash(vec2(tick, 71.0)))
+      * step(0.985, fract(uv.y * 96.0 + hash(vec2(tick, 23.0))));
+  color *= 1.0 + 0.18 * corruption * flash;
+  return clamp(color, 0.0, 1.0);
+}
+
+// Signature-only sampling. All offsets are fractions of the short side.
+// Reserve warp + dispersion + the WHOLE trail together using the triangle
+// inequality; every tap then fits the shared 5% radius without extra reads.
+// D2A BEGIN
+// Only geometry that can act may opt into the protected macro recipe.
+// Colour lanes and pulse never select a different light grade or retention mix.
+bool stpD2GeometryEnabled() {
+  if (uNoise <= 0.0) return false;
+  if (uSign.x != 1.0 || uSign.y != 0.0) return true;
+  if (uMood.w == 0.0) return false;
+  // This eligibility check is only needed by the zero-band/seed D1 route.
+  // Its fine envelope already exceeds epsilon whenever this broad one does.
+  float tearing = smoothstep(0.25, 0.65, uNoise);
+  float corruption = smoothstep(0.60, 1.0, uNoise);
+  float broadBound = 0.018 * tearing + 0.018 * corruption;
+  return broadBound >= 0.000001;
+}
+
+vec2 stpD2Rotate(vec2 p) {
+  return vec2(uSign.x * p.x - uSign.y * p.y,
+      uSign.y * p.x + uSign.x * p.y);
+}
+// D2A END
+
+vec3 stpNoiseSample(vec2 uv, vec2 trail, vec2 shift, vec2 split, float wet,
+    vec3 clean) {
+  if (wet <= 0.0) return clean;
+  vec3 torn = vec3(
+      sampleImage(uv + trail + shift + split).r,
+      sampleImage(uv + trail + shift).g,
+      sampleImage(uv + trail + shift - split).b);
+  return mix(clean, torn, wet);
+}
+
+vec3 stpTrailSample(vec2 uv, vec2 trail, vec2 shift, vec2 split, float wet) {
+  return stpNoiseSample(uv, trail, shift, split, wet, sampleImage(uv + trail));
+}
+
+vec3 stpMotionSample(vec2 uv, vec2 shift, vec2 split, float wet,
+    out vec3 original) {
+  float response = pow(clamp(uMotion, 0.0, 1.0), 0.65);
+  vec2 trail = vec2(uMotionDir.x, -uMotionDir.y) * response * TRAIL_LENGTH;
+  float total = length(shift) + length(split) + length(trail);
+  vec2 shortToUv = min(uSize.x, uSize.y) / uSize;
+  // Limit an axis-aligned vector of the conservative combined radius once.
+  float budgetScale = signatureLimitOffset(vec2(total, 0.0) * shortToUv,
+      uSize).x / max(total * shortToUv.x, 0.000001);
+  shift *= shortToUv * budgetScale;
+  split *= shortToUv * budgetScale;
+  trail *= shortToUv * budgetScale;
+  original = sampleImage(uv); // Reused by the final original-preserving mix.
+  vec3 color = stpNoiseSample(uv, vec2(0.0), shift, split, wet, original);
+  if (uMotion <= 0.0 || length(uMotionDir) <= 0.0) return color;
+  vec3 smeared = color * 0.30
+      + stpTrailSample(uv, -trail * 0.12, shift, split, wet) * 0.18
+      + stpTrailSample(uv, -trail * 0.28, shift, split, wet) * 0.16
+      + stpTrailSample(uv, -trail * 0.46, shift, split, wet) * 0.14
+      + stpTrailSample(uv, -trail * 0.72, shift, split, wet) * 0.12
+      + stpTrailSample(uv, -trail, shift, split, wet) * 0.10;
+  return mix(color, smeared, response);
+}
+
+vec3 stpMoodGrade(vec3 color, vec2 uv, float tick, float grainDivisor) {
+  float dark = pow(clamp((0.5 - uLight) * 2.0, 0.0, 1.0), 0.65);
+  float bright = pow(clamp((uLight - 0.5) * 2.0, 0.0, 1.0), 0.65);
+  if (dark > 0.0) {
+    // Shadow contrast, crushed toe, and teal-blue midtones.
+    vec3 cold = max((color - 0.10) * DARK_CONTRAST, 0.0);
+    cold *= vec3(0.60, 0.91, 1.10);
+    cold += vec3(0.0, 0.024, 0.055) * (1.0 - clamp(cold, 0.0, 1.0));
+// D2A BEGIN
+    vec2 d2SavedUv = uv;
+    if (uMood.x != 0.0 && uNoise > 0.0) {
+      // Keep the same hash, amplitude and clock; change cell size only.
+      uv /= grainDivisor;
+    }
+// D2A END
+    float grain = hash(floor(uv * vec2(640.0, 640.0 * uSize.y / uSize.x))
+        + vec2(tick, tick * 0.37) + uSeed * vec2(31.0, 17.0)) * 2.0 - 1.0;
+// D2A BEGIN
+    uv = d2SavedUv;
+// D2A END
+    cold += grain * DARK_GRAIN * (0.35 + 0.65 * (1.0 - luma(color)));
+    float edge = smoothstep(0.15, 0.70, length(uv - 0.5));
+    cold *= 1.0 - DARK_VIGNETTE * edge;
+    color = mix(color, cold, dark);
+  }
+  if (bright > 0.0) {
+    // Four broad taps gather only bright neighbours, preserving the subject.
+    vec2 radius = 0.012 * min(uSize.x, uSize.y) / uSize;
+    vec3 bloom = max(sampleImage(uv + vec2(radius.x, 0.0)) - 0.62, 0.0)
+        + max(sampleImage(uv - vec2(radius.x, 0.0)) - 0.62, 0.0)
+        + max(sampleImage(uv + vec2(0.0, radius.y)) - 0.62, 0.0)
+        + max(sampleImage(uv - vec2(0.0, radius.y)) - 0.62, 0.0);
+    vec3 warm = color * WASH_CONTRAST + vec3(0.14, 0.105, 0.075);
+    warm += vec3(0.15, 0.045, -0.075) * smoothstep(0.20, 0.90, luma(color));
+    warm += bloom * 0.16 * vec3(1.0, 0.72, 0.38);
+    // Corner flare is a mood cue, independent of noise and time.
+    float flare = pow(max(0.0, 1.0 - length((uv - LEAK_CORNER)
+        * vec2(1.0, 0.85)) / 0.95), 2.0);
+    warm += flare * LEAK_COLOR;
+    float saturation = BRIGHT_SATURATION;
+    warm = mix(vec3(luma(warm)), warm, saturation);
+    // Soft shoulder prevents the combined bloom/leak from whitening the frame.
+    warm = mix(warm, vec3(0.86) + (warm - 0.86) * 0.28, step(0.86, warm));
+    color = mix(color, warm, bright);
+  }
+  return clamp(color, 0.0, 1.0);
+}
+
+vec3 stpD2Color(vec3 color, vec3 original, vec2 uv, float noise, float warmth) {
+  if (uMood.x != 0.0 || uMood.y != 0.0) {
+    float hueMask = clamp(max(luma(color), 1.0 - uv.y), 0.0, 1.0);
+    vec3 gain = clamp(vec3(0.04, 0.0, -0.04) * warmth
+        + vec3(-0.02, 0.01, 0.02) * clamp(uMood.y, -1.0, 1.0) * hueMask,
+        vec3(-0.04), vec3(0.04));
+    // No contextual tint at neutral primary controls; preserve their meaning.
+    float colorAmount = max(noise, clamp(abs(2.0 * uLight - 1.0), 0.0, 1.0));
+    color *= 1.0 + gain * colorAmount;
+  }
+  if (uMood.z != 1.0) {
+    vec3 delta = clamp(color, 0.0, 1.0) - original;
+    vec3 neutralDelta = vec3(luma(delta));
+    color = original + neutralDelta
+        + (delta - neutralDelta) * clamp(uMood.z, 0.65, 1.0);
+  }
+  return color;
+}
+
+vec3 stpSignatureRecipe(float warmth, float grainDivisor) {
+  vec2 uv = FlutterFragCoord().xy / uSize;
+  vec2 position = signatureAspectPosition(uv, uSize);
+  float noise = clamp(uNoise, 0.0, 1.0);
+  float onset = pow(noise, 0.75);
+  float tearing = smoothstep(0.25, 0.65, noise);
+  float corruption = smoothstep(0.60, 1.0, noise);
+  float bass = clamp(uBass, 0.0, 1.0);
+  float mid = clamp(uMid, 0.0, 1.0);
+  float treble = clamp(uTreble, 0.0, 1.0);
+  float seed = clamp(uSeed, 0.0, 1.0);
+  float tick = floor(uTime * GLITCH_RATE);
+  float patternTick = tick + seed * 97.0;
+  float density = 1.0 + 0.15 * mid;
+  float detail = 1.0 + 0.15 * treble;
+// D2A BEGIN
+  bool d2Axis = noise > 0.0 && (uSign.x != 1.0 || uSign.y != 0.0);
+  if (d2Axis) {
+    position = vec2(dot(position, uSign.xy),
+        dot(position, vec2(-uSign.y, uSign.x)));
+  }
+// D2A END
+  float y = position.y + 0.5;
+  float row = floor(y * ROW_COUNT * detail);
+  float jitter = (hash(vec2(row, patternTick)) * 2.0 - 1.0) * detail;
+  float bandCell = floor(y * BAND_COUNT * density + seed * 13.0);
+  float band = step(0.64, hash(vec2(bandCell, patternTick + 11.0)));
+  float slab = hash(vec2(bandCell, patternTick + 3.0)) * 2.0 - 1.0;
+  float blockTick = floor(uTime * GLITCH_RATE * 2.0) + seed * 97.0;
+  // Raster reservation uses OUTPUT-UV density, not short-side density.
+  float blockBands = min(BAND_COUNT * density,
+      max(1.0, floor(uSize.y / 32.0)));
+  float blockDuty = min(0.16, max(0.0, 0.20 - blockBands / uSize.y));
+  float bandPhase = uv.y * blockBands + hash(vec2(blockTick, 17.0)) + seed * 7.0;
+  vec2 block = vec2(floor((position.x + 0.5) * 12.0 + seed * 5.0), floor(bandPhase));
+  float broken = (1.0 - step(blockDuty, fract(bandPhase)))
+      * step(0.35, hash(block + blockTick));
+  float blockShift = (hash(block + vec2(blockTick, 9.0)) * 2.0 - 1.0) * broken;
+  float fineShift = jitter * 0.003 * onset;
+  vec2 shift;
+  vec2 split;
+  float angle = sin(y * 7.0 / (1.0 + 0.15 * bass)
+      + tick * 0.13 + seed * 6.2831853) * 0.55 * (1.0 + 0.15 * bass);
+  shift = vec2(fineShift + slab * band * 0.018 * tearing
+      + blockShift * 0.014 * corruption, blockShift * 0.004 * corruption);
+  float splitAmplitude = (0.007 * onset + 0.008 * tearing + 0.012 * corruption);
+  split = vec2(cos(angle), sin(angle)) * splitAmplitude * detail;
+  float pulseFactor = 1.0;
+  if (uSign.z != 0.0 && noise > 0.0) {
+    pulseFactor = 1.0 + 0.04 * clamp(uSign.z, -1.0, 1.0) * noise;
+  }
+// D2A BEGIN
+  float d2FineGain = 1.0;
+  if (uMood.w != 0.0 && tearing > 0.0) {
+    vec2 broadShift = shift - vec2(fineShift, 0.0);
+    float broadBound = 0.018 * tearing + 0.018 * corruption;
+    float fineBound = 0.003 * onset * detail + 1.414214
+        * splitAmplitude * detail * pulseFactor
+        + 0.004 * noise * treble;
+    // L1 geometry + RGB-grain envelope, including any pulse-scaled split.
+    // Tiny/zero components bypass BOTH gains; direct division conserves B+F.
+    if (min(broadBound, fineBound) >= 0.000001) {
+      float transfer = 0.15 * clamp(uMood.w, -1.0, 1.0) * min(broadBound, fineBound);
+      float broadGain = 1.0 - transfer / broadBound;
+      d2FineGain = 1.0 + transfer / fineBound;
+      shift = broadShift * broadGain + vec2(fineShift, 0.0) * d2FineGain;
+      split *= d2FineGain;
+    }
+  }
+  if (d2Axis) {
+    shift = stpD2Rotate(shift);
+    split = stpD2Rotate(split);
+  }
+  if (uSign.z != 0.0 && noise > 0.0) {
+    split *= pulseFactor;
+  }
+// D2A END
+  float wet = min(pow(noise, 0.65), mix(0.30, 0.72, broken * corruption));
+  vec3 original;
+  vec3 color = stpMotionSample(uv, shift, split, wet, original);
+// D2A BEGIN
+  if (uMood.x != 0.0 && noise > 0.0 && treble > 0.0) {
+    position = (position + 0.5) / grainDivisor - 0.5;
+  }
+// D2A END
+  float fine = signatureHash(floor((position + 0.5) * 640.0 * detail), seed)
+      * 2.0 - 1.0;
+// D2A BEGIN
+  if (uMood.w != 0.0) fine *= d2FineGain;
+// D2A END
+  color += fine * 0.004 * noise * treble;
+  color = stpMoodGrade(color, uv, tick, grainDivisor);
+  float flash = step(0.90, hash(vec2(patternTick, 71.0)))
+      * step(0.985, fract(uv.y * 96.0 + hash(vec2(patternTick, 23.0))));
+  color *= 1.0 + 0.18 * corruption * flash;
+// D2A BEGIN
+  color = stpD2Color(color, original, uv, noise, warmth);
+// D2A END
+  return signatureRetainOriginal(original, clamp(color, 0.0, 1.0), 0.55);
+}
+
+void main() {
+  vec2 uv = FlutterFragCoord().xy / uSize;
+  // Exact legacy arithmetic is retained behind a uniform branch. In particular,
+  // fingerprint alone does not switch budgets or perturb the macro layout.
+  bool signatureEnabled = uBass != 0.0 || uMid != 0.0 || uTreble != 0.0 || uSeed != 0.0;
+// D2A BEGIN
+  signatureEnabled = signatureEnabled || stpD2GeometryEnabled();
+  float warmth = clamp(uMood.x, -1.0, 1.0);
+  float grainDivisor = 1.0 + 0.10 * warmth;
+// D2A END
+  vec3 color;
+  if (signatureEnabled) {
+    color = stpSignatureRecipe(warmth, grainDivisor);
+  } else {
+    vec3 original;
+    float pulseFactor = 1.0 + 0.04 * clamp(uSign.z, -1.0, 1.0)
+        * clamp(uNoise, 0.0, 1.0);
+    color = legacyRecipe(grainDivisor, pulseFactor, original);
+    if (uMood.x != 0.0 || uMood.y != 0.0 || uMood.z != 1.0) {
+      color = stpD2Color(color, original, uv, clamp(uNoise, 0.0, 1.0), warmth);
+      color = clamp(color, 0.0, 1.0);
+    }
+  }
+  fragColor = vec4(signatureMicroFingerprint(color, uv, uFingerprint), 1.0);
+}

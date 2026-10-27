@@ -1,0 +1,1 @@
+A new look: squarer, instrument-like controls, one segmented style bar with a counter, segmented violet, warm and cyan meters, calmer sheets with numbered styles and a result screen with a single Save action. Keyboard focus on the camera controls. Android 10 or newer.

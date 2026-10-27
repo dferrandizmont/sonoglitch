@@ -1,0 +1,1 @@
+Enlace opcional para apoyar el proyecto en Ko-fi, en los ajustes de las versiones de F-Droid y GitHub; la de Google Play no lo tiene. Android 10 o superior.

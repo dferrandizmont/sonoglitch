@@ -1,0 +1,1 @@
+Nuevo aspecto: controles más cuadrados, tipo instrumento, una barra de estilo con contador, medidores segmentados en violeta, cálido y cian, hojas más limpias con estilos numerados y una pantalla de resultado con una sola acción principal, Guardar. Foco de teclado en la cámara. Android 10 o superior.

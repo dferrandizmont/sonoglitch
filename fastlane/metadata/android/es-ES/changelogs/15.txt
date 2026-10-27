@@ -1,0 +1,1 @@
+Cada foto lleva ahora su propia firma: las bandas de sonido y una semilla por disparo remodelan el patrón de los seis estilos sin perder el sujeto, y un ID corto de foto se imprime en la Banda de sonido y el Póster. Nueva marca con glitch, Banda de sonido de celdas cuadradas, Póster rediseñado y línea de contexto opcional. Android 10 o superior.

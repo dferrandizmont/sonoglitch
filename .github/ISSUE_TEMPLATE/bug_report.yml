@@ -1,0 +1,65 @@
+name: Bug report
+description: Report a reproducible problem in Sonoglitch.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Sonoglitch is in early development. Please describe one problem per report.
+        Issues are public: review diagnostics and redact local paths, device details you do not want to publish, and any other private information before posting.
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      description: Manufacturer and model.
+      placeholder: Samsung Galaxy A54
+    validations:
+      required: true
+  - type: input
+    id: android-version
+    attributes:
+      label: Android version
+      placeholder: Android 14
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: Find the version in Settings, under About. Include the build tag or commit if known.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the selected style, camera, export format and permissions when relevant.
+      placeholder: |
+        1. Open the app.
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Attach a screenshot only if it does not reveal private content.
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Copy report diagnostics
+      description: |
+        Enable Settings > Diagnostics, return to the viewfinder and tap Copy report in the panel.
+        You can also toggle the panel with a quick triple tap on the viewfinder.
+        Paste the report here after reviewing and redacting it. If the app cannot open, explain that here instead.
+      render: json
+    validations:
+      required: true
