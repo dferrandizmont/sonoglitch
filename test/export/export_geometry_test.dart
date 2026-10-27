@@ -10,6 +10,7 @@ import 'package:sonoglitch/export/export_readings.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  var hasRoboto = false;
   setUpAll(() async {
     // Ahem's square glyphs do not model production label widths. Use the
     // Flutter SDK's bundled Roboto when the SDK root is known; otherwise the
@@ -23,6 +24,7 @@ void main() {
     final loader = FontLoader('ExportGeometryRoboto')
       ..addFont(font.readAsBytes().then(ByteData.sublistView));
     await loader.load();
+    hasRoboto = true;
   });
   final readings = readingsOf(
     const ExportLayoutValues(
@@ -102,6 +104,13 @@ void main() {
     },
   );
   test('poster spectrum label rects fit and stay separate at 1x and 4x', () {
+    if (!hasRoboto) {
+      // Without the SDK's Roboto (e.g. a CI runner that has not downloaded the
+      // material fonts) the test font is Ahem, whose square glyphs are far
+      // wider than the production labels and would measure the wrong thing.
+      markTestSkipped('Roboto from the Flutter SDK is not available.');
+      return;
+    }
     const labels = ['160 Hz', '2k Hz', '8k Hz'];
     final rects = <List<Rect>>[];
     for (final scale in [1, 4]) {

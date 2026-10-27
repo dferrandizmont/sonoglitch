@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions use prerelease identifiers while the app is in early development.
 
-## [0.1.0-alpha.17] - 2026-10-27
+## [0.1.0-alpha.18] - 2026-10-27
 
 ### Changed
 
