@@ -239,16 +239,20 @@ class ExportService {
   }
 
   /// Shares [file] with the system share sheet, without any text.
-  Future<void> share(File file, {Rect? origin}) async {
+  ///
+  /// Returns false when the sheet was closed without choosing a target.
+  Future<bool> share(File file, {Rect? origin}) async {
     try {
-      await SharePlus.instance.share(
+      final result = await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path)],
           subject: AppConfig.appName,
           sharePositionOrigin: origin,
         ),
       );
-      log.info('export', 'picture shared');
+      final shared = result.status != ShareResultStatus.dismissed;
+      if (shared) log.info('export', 'picture shared');
+      return shared;
     } catch (error, stackTrace) {
       log.error('export', 'the picture could not be shared', error, stackTrace);
       rethrow;

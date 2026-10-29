@@ -1,5 +1,7 @@
 {
   "@@locale": "en",
+  "settingsVolumeButtonsTitle": "Volume buttons",
+  "settingsVolumeButtonsSubtitle": "Press volume up or down to take the photo.",
   "settingsContextLineTitle": "Context line",
   "settingsContextLineSubtitle": "Adds the shot’s date, direction and pressure to Sound strip and Poster.",
   "viewfinderMomentTooltip": "Auto shot: takes the photo on a loud sound or sudden move",

@@ -54,10 +54,12 @@ Future<void> pumpOnboarding(
   FakePermissionGateway gateway, {
   required void Function(bool microphoneGranted) onContinue,
   double textScale = 1,
+  Locale? locale,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.dark(),
+      locale: locale,
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(
           textScaler: TextScaler.linear(textScale),
@@ -74,6 +76,51 @@ Future<void> pumpOnboarding(
 }
 
 void main() {
+  testWidgets('first launch hides both warnings until a real denial', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final semantics = tester.ensureSemantics();
+    try {
+      final gateway = FakePermissionGateway();
+      await pumpOnboarding(
+        tester,
+        gateway,
+        onContinue: (_) {},
+        textScale: 2,
+        locale: const Locale('es'),
+      );
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(OnboardingScreen)),
+      );
+      expect(find.text(l10n.onboardingCameraDenied), findsNothing);
+      expect(find.text(l10n.onboardingMicrophoneDeniedNotice), findsNothing);
+      final button = find.byType(FilledButton);
+      await tester.ensureVisible(button);
+      await tester.pumpAndSettle();
+      expect(tester.getSize(button).width, greaterThanOrEqualTo(48));
+      expect(tester.getSize(button).height, greaterThanOrEqualTo(48));
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.onboardingCameraDenied), findsOneWidget);
+      gateway.cameraGranted = true;
+      await tester.ensureVisible(button);
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.onboardingCameraDenied), findsNothing);
+      expect(find.text(l10n.onboardingMicrophoneDeniedNotice), findsOneWidget);
+      await tester.ensureVisible(button);
+      await tester.pumpAndSettle();
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      expect(tester.takeException(), isNull);
+    } finally {
+      semantics.dispose();
+    }
+  });
+
   for (final gatewayKind in [
     'request',
     'microphone refused',
@@ -90,12 +137,7 @@ void main() {
           cameraGranted: gatewayKind == 'microphone refused',
           cameraPermanentlyDenied: gatewayKind == 'camera refused permanently',
         );
-        await pumpOnboarding(
-          tester,
-          gateway,
-          onContinue: (_) {},
-          textScale: 1.3,
-        );
+        await pumpOnboarding(tester, gateway, onContinue: (_) {}, textScale: 2);
         final button = find.byType(FilledButton);
         await tester.ensureVisible(button);
         await tester.pumpAndSettle();
@@ -109,9 +151,8 @@ void main() {
         expect(button.hitTestable(), findsOneWidget);
         expect(tester.getSize(button).height, greaterThanOrEqualTo(48));
         expect(
-          tester.widget<FilledButton>(button).style,
-          isNull,
-          reason: 'the global button theme owns its appearance',
+          tester.widget<FilledButton>(button).style!.minimumSize!.resolve({}),
+          const Size(48, 48),
         );
         final context = tester.element(button);
         expect(
@@ -195,6 +236,9 @@ void main() {
     var continued = false;
     await pumpOnboarding(tester, gateway, onContinue: (_) => continued = true);
 
+    expect(find.textContaining('No microphone'), findsNothing);
+    await tester.tap(find.text('Allow camera and microphone'));
+    await tester.pumpAndSettle();
     expect(find.textContaining('No microphone'), findsOneWidget);
 
     await tester.tap(find.text('Continue without microphone'));

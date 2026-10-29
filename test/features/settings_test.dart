@@ -12,15 +12,6 @@ import 'package:sonoglitch/theme/app_theme.dart';
 import '../support/harness.dart';
 
 void main() {
-  /// Scrolls the settings until the row with [text] is on the screen.
-  ///
-  /// The body of the screen is a list: the rows that are below the fold are
-  /// only built when they are reached.
-  Future<void> scrollTo(WidgetTester tester, String text) async {
-    await tester.scrollUntilVisible(find.text(text), 150);
-    await tester.pumpAndSettle();
-  }
-
   /// The value that the switch of the row [title] shows on the screen.
   ///
   /// It reads the switch that is painted, not the stored setting, so a
@@ -32,6 +23,60 @@ void main() {
     );
     expect(toggle, findsOneWidget, reason: 'the switch of "$title"');
     return tester.widget<Switch>(toggle).value;
+  }
+
+  test(
+    'volume buttons default on and persist through SharedPreferences',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final settings = AppSettings(store: SharedPreferencesStore());
+      await settings.load();
+      expect(settings.volumeButtonsEnabled, isTrue);
+      for (final enabled in [false, true]) {
+        await settings.setVolumeButtonsEnabled(enabled);
+        final restored = AppSettings(store: SharedPreferencesStore());
+        await restored.load();
+        expect(restored.volumeButtonsEnabled, enabled);
+      }
+    },
+  );
+
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+    testWidgets('volume button switch is Android-only ($platform)', (
+      tester,
+    ) async {
+      final store = InMemoryPreferencesStore();
+      final settings = AppSettings(store: store);
+      await settings.load();
+      await pumpSettingsScreen(tester, settings);
+      if (platform == TargetPlatform.android) {
+        await tester.scrollUntilVisible(find.text('Volume buttons'), 150);
+        await tester.pumpAndSettle();
+        expect(visibleSwitchValue(tester, 'Volume buttons'), isTrue);
+        expect(
+          find.text('Press volume up or down to take the photo.'),
+          findsOneWidget,
+        );
+        await tester.tap(find.widgetWithText(SwitchListTile, 'Volume buttons'));
+        await tester.pumpAndSettle();
+        expect(visibleSwitchValue(tester, 'Volume buttons'), isFalse);
+        final restored = AppSettings(store: store);
+        await restored.load();
+        expect(restored.volumeButtonsEnabled, isFalse);
+      } else {
+        await tester.scrollUntilVisible(find.text('Privacy'), 150);
+        expect(find.text('Volume buttons'), findsNothing);
+      }
+    }, variant: TargetPlatformVariant({platform}));
+  }
+
+  /// Scrolls the settings until the row with [text] is on the screen.
+  ///
+  /// The body of the screen is a list: the rows that are below the fold are
+  /// only built when they are reached.
+  Future<void> scrollTo(WidgetTester tester, String text) async {
+    await tester.scrollUntilVisible(find.text(text), 150);
+    await tester.pumpAndSettle();
   }
 
   test('context metadata is opt-in and only its toggle is persisted', () async {

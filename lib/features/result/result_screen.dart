@@ -528,7 +528,7 @@ class _ResultScreenState extends State<ResultScreen> {
       final origin = box == null
           ? null
           : box.localToGlobal(Offset.zero) & box.size;
-      await widget.export.share(file, origin: origin);
+      final shared = await widget.export.share(file, origin: origin);
       if (!mounted) return;
       // The working file is NOT deleted here: `share_plus` on Android
       // returns when the chooser is dismissed, not when the receiving
@@ -536,9 +536,11 @@ class _ResultScreenState extends State<ResultScreen> {
       // the file the target app is about to open. The file stays in the
       // cache and is cleaned up on eviction, Retake or `dispose`,
       // or by `removeStaleTemporaryFiles` at the next app start.
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).resultShared)),
-      );
+      if (shared) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).resultShared)),
+        );
+      }
     } catch (error, stackTrace) {
       widget.log.error(
         'export',
@@ -792,39 +794,69 @@ class _ResultScreenState extends State<ResultScreen> {
               top: false,
               child: Padding(
                 padding: const EdgeInsets.all(AppTheme.spaceMd),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextButton.icon(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final scale = MediaQuery.textScalerOf(context).scale(1);
+                    final stacked = constraints.maxWidth / scale < 220;
+                    final verticalIcons =
+                        !stacked && constraints.maxWidth < 340;
+                    final actions = [
+                      TextButton(
                         onPressed: _busy ? null : _retake,
-                        icon: const Icon(Icons.replay),
-                        label: _actionLabel(l10n.resultRetake),
                         style: _actionStyle(context).copyWith(
                           foregroundColor: const WidgetStatePropertyAll(
                             AppTheme.textSecondary,
                           ),
                         ),
+                        child: _actionContent(
+                          Icons.replay,
+                          l10n.resultRetake,
+                          verticalIcons,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: AppTheme.spaceSm),
-                    Expanded(
-                      child: OutlinedButton.icon(
+                      OutlinedButton(
                         onPressed: _ready ? _share : null,
-                        icon: const Icon(Icons.share_outlined),
-                        label: _actionLabel(l10n.resultShare),
                         style: _actionStyle(context),
+                        child: _actionContent(
+                          Icons.share_outlined,
+                          l10n.resultShare,
+                          verticalIcons,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: AppTheme.spaceSm),
-                    Expanded(
-                      child: FilledButton.icon(
+                      FilledButton(
                         onPressed: _ready ? _save : null,
-                        icon: const Icon(Icons.download_outlined),
-                        label: _actionLabel(l10n.resultSave),
                         style: _actionStyle(context),
+                        child: _actionContent(
+                          Icons.download_outlined,
+                          l10n.resultSave,
+                          verticalIcons,
+                        ),
                       ),
-                    ),
-                  ],
+                    ];
+                    if (stacked) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          for (var i = 0; i < actions.length; i++) ...[
+                            if (i > 0) const SizedBox(height: AppTheme.spaceXs),
+                            actions[i],
+                          ],
+                        ],
+                      );
+                    }
+                    return IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          for (var i = 0; i < actions.length; i++) ...[
+                            if (i > 0) const SizedBox(width: AppTheme.spaceSm),
+                            Expanded(child: actions[i]),
+                          ],
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -978,14 +1010,42 @@ class _ResultScreenState extends State<ResultScreen> {
   void _toggleOriginal() =>
       setState(() => _originalLatched = !_originalLatched);
 
-  Widget _actionLabel(String label) =>
-      Text(label, maxLines: 1, overflow: TextOverflow.ellipsis);
+  Widget _actionContent(IconData icon, String label, bool vertical) {
+    final text = Text(label, textAlign: TextAlign.center);
+    if (vertical) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon),
+          const SizedBox(height: AppTheme.spaceXs),
+          text,
+        ],
+      );
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon),
+        const SizedBox(width: AppTheme.spaceSm),
+        Flexible(child: text),
+      ],
+    );
+  }
 
   ButtonStyle _actionStyle(BuildContext context) => ButtonStyle(
     padding: const WidgetStatePropertyAll(
-      EdgeInsets.symmetric(horizontal: AppTheme.spaceXs),
+      EdgeInsets.symmetric(
+        horizontal: AppTheme.spaceXs,
+        vertical: AppTheme.spaceXs,
+      ),
     ),
-    minimumSize: const WidgetStatePropertyAll(Size(0, AppTheme.touchTarget)),
+    minimumSize: const WidgetStatePropertyAll(
+      Size.square(AppTheme.touchTarget),
+    ),
+    visualDensity: VisualDensity.standard,
+    tapTargetSize: MaterialTapTargetSize.padded,
     animationDuration: MediaQuery.disableAnimationsOf(context)
         ? Duration.zero
         : AppTheme.pressDuration,
@@ -1070,39 +1130,52 @@ class _Measurements extends StatelessWidget {
     final rawDb = ambient.rawDb;
     final light = _levelWord(l10n, ambient.light);
     final motion = _levelWord(l10n, ambient.motion);
-    return Row(
-      key: const ValueKey('res-readings'),
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: _Reading(
-            label: l10n.levelNoise,
-            value: rawDb == null
-                ? _levelWord(l10n, ambient.noise)
-                : '\u2248${rawDb.round()} dB',
-            semanticsLabel: rawDb == null
-                ? null
-                : l10n.resultNoiseLabel(rawDb.round()),
-            color: AppTheme.accent,
-          ),
-        ),
-        Expanded(
-          child: _Reading(
-            label: l10n.levelLight,
-            value: light,
-            semanticsLabel: l10n.resultLightLabel(light),
-            color: AppTheme.warm,
-          ),
-        ),
-        Expanded(
-          child: _Reading(
-            label: l10n.levelMotion,
-            value: motion,
-            semanticsLabel: l10n.resultMotionLabel(motion),
-            color: AppTheme.signalCyan,
-          ),
-        ),
-      ],
+    final readings = <Widget>[
+      _Reading(
+        label: l10n.levelNoise,
+        value: rawDb == null
+            ? _levelWord(l10n, ambient.noise)
+            : '\u2248${rawDb.round()} dB',
+        semanticsLabel: rawDb == null
+            ? null
+            : l10n.resultNoiseLabel(rawDb.round()),
+        color: AppTheme.accent,
+      ),
+      _Reading(
+        label: l10n.levelLight,
+        value: light,
+        semanticsLabel: l10n.resultLightLabel(light),
+        color: AppTheme.warm,
+      ),
+      _Reading(
+        label: l10n.levelMotion,
+        value: motion,
+        semanticsLabel: l10n.resultMotionLabel(motion),
+        color: AppTheme.signalCyan,
+      ),
+    ];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final scale = MediaQuery.textScalerOf(context).scale(1);
+        final stacked = constraints.maxWidth / scale < 200;
+        if (stacked) {
+          return Column(
+            key: const ValueKey('res-readings'),
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 0; i < readings.length; i++) ...[
+                if (i > 0) const SizedBox(height: AppTheme.spaceSm),
+                readings[i],
+              ],
+            ],
+          );
+        }
+        return Row(
+          key: const ValueKey('res-readings'),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [for (final reading in readings) Expanded(child: reading)],
+        );
+      },
     );
   }
 
@@ -1134,7 +1207,11 @@ class _Reading extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MicroLabel(label),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: MicroLabel(label),
+        ),
         const SizedBox(height: AppTheme.spaceXs),
         Row(
           children: [
@@ -1149,8 +1226,6 @@ class _Reading extends StatelessWidget {
                     ? value
                     : '${value[0].toUpperCase()}${value.substring(1)}',
                 style: AppTheme.readout,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

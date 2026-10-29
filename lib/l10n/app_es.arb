@@ -1,7 +1,9 @@
 {
   "@@locale": "es",
+  "settingsVolumeButtonsTitle": "Botones de volumen",
+  "settingsVolumeButtonsSubtitle": "Pulsa subir o bajar volumen para hacer la foto.",
   "settingsContextLineTitle": "Línea de contexto",
-  "settingsContextLineSubtitle": "Añade la fecha, dirección y presión de la toma a Sound strip y Póster.",
+  "settingsContextLineSubtitle": "Añade la fecha, dirección y presión de la toma a Banda de sonido y Póster.",
   "viewfinderMomentTooltip": "Disparo auto: hace la foto con un ruido fuerte o un movimiento brusco",
   "@viewfinderMomentTooltip": {
     "description": "Tooltip and semantic label of the Auto shot button."

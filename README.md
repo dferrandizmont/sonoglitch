@@ -128,7 +128,7 @@ flutter run
 For a build with diagnostics enabled by default and an explicit displayed version:
 
 ```sh
-flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=APP_VERSION=0.1.0-alpha.21
+flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=APP_VERSION=0.2.0-alpha.2
 ```
 
 `SONOGLITCH_DEBUG=true` sets the default diagnostics preference and enables the triple tap on the preview. A previously saved preference takes precedence; the **Settings > Troubleshooting > Diagnostics** switch always works. `APP_VERSION` sets the version shown in About and diagnostic reports (default `0.1.0`). It does not change the Android package version: use Flutter's `--build-name` and `--build-number` options for that.
@@ -144,7 +144,7 @@ The define requires three finite numbers, each clamped to 0–1; malformed input
 To build a local APK:
 
 ```sh
-flutter build apk --release --target-platform android-arm64,android-x64 --dart-define=APP_VERSION=0.1.0-alpha.21
+flutter build apk --release --target-platform android-arm64,android-x64 --dart-define=APP_VERSION=0.2.0-alpha.2
 ```
 
 The output is `build/app/outputs/flutter-apk/app-release.apk`. Release builds are signed with the keystore described in `android/key.properties` (`storeFile`, `storePassword`, `keyAlias` and `keyPassword`); a relative `storeFile` is resolved from `android/`, and the file is ignored by git. When that file is absent the Gradle build falls back to the debug key, which is only good for a local install. The [tag release workflow](.github/workflows/release.yml) signs the published APK with the repository secrets instead; see [Contributing](CONTRIBUTING.md#release-workflow). iOS configuration targets version 16.0 or later, but is not release-ready until built and verified on a Mac and physical device; see [iOS status](docs/IOS_STATUS.md).

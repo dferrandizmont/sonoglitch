@@ -1,0 +1,8 @@
+# Copy to android/key.properties (ignored by git) and fill in the values.
+# Remove the "# " in front of both passwords and replace CHANGE_ME with yours.
+# tool/release/setup_upload_key.ps1 creates the real file for you.
+# Never commit the real file, the .jks or the passwords.
+storeFile=C:/Users/<you>/claves/sonoglitch-upload.jks
+# storePassword=CHANGE_ME
+keyAlias=upload
+# keyPassword=CHANGE_ME

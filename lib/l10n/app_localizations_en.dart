@@ -10,6 +10,13 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get settingsVolumeButtonsTitle => 'Volume buttons';
+
+  @override
+  String get settingsVolumeButtonsSubtitle =>
+      'Press volume up or down to take the photo.';
+
+  @override
   String get settingsContextLineTitle => 'Context line';
 
   @override

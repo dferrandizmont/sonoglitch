@@ -4,6 +4,8 @@ iOS is not release-ready. Android remains the primary target. The shared Dart co
 
 This configuration was reviewed on Windows, where CocoaPods installation, Xcode compilation, signing and iOS simulator/device testing cannot be verified.
 
+The Apple Developer Program membership was accepted on 2026-10-28. Still to do on the Mac: register the bundle id `es.sonoglitch.app`, create the app record in App Store Connect, set the team in Xcode (Signing & Capabilities) and create the TestFlight internal testers group. The team id and certificates stay out of the repository.
+
 ## Configuration in this repository
 
 - The Podfile and the Xcode project's Debug, Profile and Release deployment targets use iOS 16.0.

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../ambient/ambient_state.dart';
+import '../../ambient/ambient_controller.dart';
 import '../../ambient/signal_intensity.dart';
 import '../../app_config.dart';
 import '../../camera/camera_metrics.dart';
@@ -17,6 +17,7 @@ import '../../export/export_quality.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/micro_label.dart';
 import 'app_settings.dart';
+import 'screenshot_section.dart';
 
 Future<bool> _openExternally(Uri uri) =>
     launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -35,6 +36,7 @@ class SettingsScreen extends StatelessWidget {
     required this.device,
     this.donationUrl = AppConfig.donationUrl,
     this.openLink = _openExternally,
+    this.screenshotMode = AppConfig.screenshotMode,
   });
 
   /// The switches.
@@ -53,7 +55,10 @@ class SettingsScreen extends StatelessWidget {
   final DiagnosticExporter exporter;
 
   /// The current ambient state, for the report.
-  final ValueListenable<AmbientState> ambient;
+  final AmbientController ambient;
+
+  /// Private tooling; tests can reveal the section without a build define.
+  final bool screenshotMode;
 
   /// The current camera measurements, for the report.
   final ValueListenable<CameraMetricsData> metrics;
@@ -248,6 +253,16 @@ class SettingsScreen extends StatelessWidget {
               subtitle: Text(l10n.settingsMomentKeepArmedSubtitle),
             ),
           ),
+          if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+            ListenableBuilder(
+              listenable: settings,
+              builder: (context, _) => SwitchListTile(
+                value: settings.volumeButtonsEnabled,
+                onChanged: settings.setVolumeButtonsEnabled,
+                title: Text(l10n.settingsVolumeButtonsTitle),
+                subtitle: Text(l10n.settingsVolumeButtonsSubtitle),
+              ),
+            ),
           ListenableBuilder(
             listenable: settings,
             builder: (context, _) => ListTile(
@@ -291,6 +306,10 @@ class SettingsScreen extends StatelessWidget {
             subtitle: Text(l10n.settingsTipsSubtitle),
           ),
           const Divider(),
+          if (screenshotMode) ...[
+            ScreenshotSection(ambient: ambient),
+            const Divider(),
+          ],
           _SectionTitle(l10n.settingsTroubleshootingTitle),
           ListenableBuilder(
             listenable: settings,

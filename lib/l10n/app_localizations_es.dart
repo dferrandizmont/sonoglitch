@@ -10,11 +10,18 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
+  String get settingsVolumeButtonsTitle => 'Botones de volumen';
+
+  @override
+  String get settingsVolumeButtonsSubtitle =>
+      'Pulsa subir o bajar volumen para hacer la foto.';
+
+  @override
   String get settingsContextLineTitle => 'Línea de contexto';
 
   @override
   String get settingsContextLineSubtitle =>
-      'Añade la fecha, dirección y presión de la toma a Sound strip y Póster.';
+      'Añade la fecha, dirección y presión de la toma a Banda de sonido y Póster.';
 
   @override
   String get viewfinderMomentTooltip =>

@@ -37,6 +37,31 @@ void main() {
     spanish = readArb('app_es.arb');
   });
 
+  test('Spanish messages use the translated layout names', () {
+    for (final key in keysOf(spanish)) {
+      final message = spanish[key] as String;
+      for (final layoutKey in [
+        'resultLayoutFull',
+        'resultLayoutSoundStrip',
+        'resultLayoutPoster',
+      ]) {
+        final englishName = english[layoutKey] as String;
+        expect(
+          RegExp(
+            '\\b${RegExp.escape(englishName)}\\b',
+            caseSensitive: false,
+          ).hasMatch(message),
+          isFalse,
+          reason: '$key still uses the English layout name $englishName',
+        );
+      }
+    }
+    expect(
+      spanish['settingsContextLineSubtitle'],
+      contains(spanish['resultLayoutSoundStrip']),
+    );
+  });
+
   test('the two files have the same keys', () {
     final englishKeys = keysOf(english);
     final spanishKeys = keysOf(spanish);

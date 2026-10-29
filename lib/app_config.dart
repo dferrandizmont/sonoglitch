@@ -23,6 +23,11 @@ class AppConfig {
   /// Set with `--dart-define=SONOGLITCH_DEBUG=true`.
   static const bool debugBuild = bool.fromEnvironment('SONOGLITCH_DEBUG');
 
+  /// Private screenshot tooling. Never enable in a published build.
+  static const bool screenshotMode = bool.fromEnvironment(
+    'SONOGLITCH_SCREENSHOTS',
+  );
+
   /// The values of the three controls set by hand, as `noise,light,motion`.
   ///
   /// Overridable at build time with

@@ -10,6 +10,7 @@ import '../../ambient/ambient_state.dart';
 import '../../ambient/context_sensors.dart';
 import '../../app_config.dart';
 import '../../camera/camera_service.dart';
+import '../../camera/volume_keys.dart';
 import '../../debug/capture_metrics.dart';
 import '../../debug/debug_hud.dart';
 import '../../debug/debug_log.dart';
@@ -49,6 +50,7 @@ class ViewfinderScreen extends StatefulWidget {
     required this.device,
     required this.capture,
     this.animationClock,
+    this.volumeKeys,
     this.contextSensors = const ContextSensors(),
   });
 
@@ -88,6 +90,9 @@ class ViewfinderScreen extends StatefulWidget {
   /// null.
   final AnimationClock? animationClock;
 
+  /// Hardware shutter input; the platform implementation is owned by the screen.
+  final VolumeKeys? volumeKeys;
+
   @override
   State<ViewfinderScreen> createState() => _ViewfinderScreenState();
 }
@@ -122,6 +127,9 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
   bool _appActive = true;
   bool _routeVisible = true;
   bool _previewReady = false;
+  bool _cameraReady = false;
+  late final VolumeKeys _volumeKeys;
+  StreamSubscription<void>? _volumeSubscription;
   final _previewActivity = ValueNotifier(false);
 
   bool get _viewfinderActive => _appActive && _routeVisible;
@@ -145,6 +153,15 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
   @override
   void initState() {
     super.initState();
+    _volumeKeys = widget.volumeKeys ?? platformVolumeKeys();
+    _volumeSubscription = _volumeKeys.presses.listen((_) {
+      if (!mounted) return;
+      // Recheck the route too: a press may already be in flight when a
+      // sheet opens, before the dependency change updates _routeVisible.
+      if (_canUseVolumeKeys && (ModalRoute.of(context)?.isCurrent ?? true)) {
+        unawaited(_capture());
+      }
+    });
     _clock = widget.animationClock ?? StopwatchAnimationClock();
     WidgetsBinding.instance.addObserver(this);
     _flash = AnimationController(
@@ -176,6 +193,8 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
     widget.camera.signals = widget.ambient.signals;
     widget.settings.addListener(_syncIntensity);
     widget.settings.addListener(_syncMomentSettings);
+    widget.settings.addListener(_syncVolumeKeys);
+    widget.camera.frame.addListener(_syncVolumeKeys);
     _syncIntensity();
     _syncMomentSettings();
     unawaited(_start());
@@ -191,6 +210,9 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
     await widget.styles.load();
     try {
       await widget.camera.initialize();
+      if (!mounted) return;
+      _cameraReady = true;
+      _syncVolumeKeys();
     } catch (error, stackTrace) {
       widget.log.error('camera', 'the camera did not start', error, stackTrace);
       if (!mounted) return;
@@ -200,6 +222,11 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
 
   @override
   void dispose() {
+    _volumeKeys.enabled = false;
+    unawaited(_volumeSubscription?.cancel());
+    if (widget.volumeKeys == null) _volumeKeys.dispose();
+    widget.settings.removeListener(_syncVolumeKeys);
+    widget.camera.frame.removeListener(_syncVolumeKeys);
     _tapTimer?.cancel();
     _styleFeedbackTimer?.cancel();
     _momentSubscription?.cancel();
@@ -233,6 +260,7 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
     _syncAmbient();
     _syncClock();
     _syncCamera();
+    _syncVolumeKeys();
     _syncMomentArmed();
   }
 
@@ -255,8 +283,21 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
     _syncAmbient();
     _syncClock();
     _syncCamera();
+    _syncVolumeKeys();
     setState(() {});
   }
+
+  bool get _canUseVolumeKeys =>
+      mounted &&
+      widget.settings.volumeButtonsEnabled &&
+      _viewfinderActive &&
+      !_capturing &&
+      _cameraReady &&
+      _cameraError == null &&
+      widget.camera.frame.value != null &&
+      !widget.camera.isPaused;
+
+  void _syncVolumeKeys() => _volumeKeys.enabled = _canUseVolumeKeys;
 
   /// Starts or stops the camera.
   ///
@@ -500,9 +541,15 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
   }
 
   Future<void> _flip() async {
+    _cameraReady = false;
+    _syncVolumeKeys();
     try {
       await widget.camera.flip();
-      if (mounted) setState(() => _cameraError = null);
+      if (mounted) {
+        setState(() => _cameraError = null);
+        _cameraReady = true;
+        _syncVolumeKeys();
+      }
     } catch (error, stackTrace) {
       widget.log.error(
         'camera',
@@ -516,11 +563,12 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
   }
 
   Future<void> _capture() async {
-    if (_capturing) return;
+    if (_capturing || !_viewfinderActive) return;
     setState(() {
       _capturing = true;
       _cameraError = null;
     });
+    _syncVolumeKeys();
     widget.capture.reset();
     // The shot is confirmed with a short flash and a tap in the hand.
     _flash.duration = AppTheme.motionDuration(context, AppTheme.pressDuration);
@@ -616,7 +664,10 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
       if (!mounted) return;
       _showError(AppLocalizations.of(context).viewfinderCameraError);
     } finally {
-      if (mounted) setState(() => _capturing = false);
+      if (mounted) {
+        setState(() => _capturing = false);
+        _syncVolumeKeys();
+      }
     }
   }
 
@@ -634,6 +685,7 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
 
   void _showError(String message) {
     setState(() => _cameraError = message);
+    _syncVolumeKeys();
   }
 
   void _openSettings() {
@@ -732,107 +784,164 @@ class _ViewfinderScreenState extends State<ViewfinderScreen>
                           onSettings: _openSettings,
                         ),
                         Expanded(
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: ClipRect(
-                                  child: widget.settings.diagnosticsEnabled
-                                      ? Align(
-                                          alignment: Alignment.topLeft,
-                                          child: LayoutBuilder(
-                                            builder: (context, hudConstraints) {
-                                              // The existing HUD has an intrinsic-width button row.
-                                              // Keep it scrollable without modifying the parallel job's file.
-                                              final minWidth =
-                                                  AppTheme.diagnosticsMinWidth *
-                                                  MediaQuery.textScalerOf(
-                                                    context,
-                                                  ).scale(1);
-                                              return SingleChildScrollView(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                child: SizedBox(
-                                                  width:
-                                                      hudConstraints.maxWidth <
-                                                          minWidth
-                                                      ? minWidth
-                                                      : hudConstraints.maxWidth,
-                                                  height:
-                                                      hudConstraints.maxHeight,
-                                                  child: DebugHud(
-                                                    ambient: widget.ambient,
-                                                    metrics:
-                                                        widget.camera.metrics,
-                                                    styleId:
-                                                        widget.styles.style.id,
-                                                    timings:
-                                                        widget.capture.value,
-                                                    device: widget.device,
-                                                    log: widget.log,
-                                                    exporter: widget.exporter,
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
+                          child: LayoutBuilder(
+                            builder: (context, middleConstraints) {
+                              // Keep a diagnostics control reachable inside
+                              // its margin, padding and border when enabled.
+                              final diagnosticsSpace =
+                                  widget.settings.diagnosticsEnabled
+                                  ? (AppTheme.touchTarget +
+                                            2 *
+                                                (AppTheme.safeMargin +
+                                                    AppTheme.spaceSm +
+                                                    AppTheme.borderWidth))
+                                        .clamp(
+                                          0.0,
+                                          middleConstraints.maxHeight / 3,
                                         )
-                                      : const SizedBox.expand(),
-                                ),
-                              ),
-                              IgnorePointer(
-                                child: AnimatedSwitcher(
-                                  key: ValueKey(widget.styles.style.id),
-                                  duration: AppTheme.motionDuration(
-                                    context,
-                                    AppTheme.feedbackTransitionDuration,
+                                  : 0.0;
+                              return Column(
+                                children: [
+                                  Expanded(
+                                    child: ClipRect(
+                                      child: widget.settings.diagnosticsEnabled
+                                          ? Align(
+                                              alignment: Alignment.topLeft,
+                                              child: LayoutBuilder(
+                                                builder: (context, hudConstraints) {
+                                                  // The existing HUD has an intrinsic-width button row.
+                                                  // Keep it scrollable without modifying the parallel job's file.
+                                                  final minWidth =
+                                                      AppTheme
+                                                          .diagnosticsMinWidth *
+                                                      MediaQuery.textScalerOf(
+                                                        context,
+                                                      ).scale(1);
+                                                  return SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    child: SizedBox(
+                                                      width:
+                                                          hudConstraints
+                                                                  .maxWidth <
+                                                              minWidth
+                                                          ? minWidth
+                                                          : hudConstraints
+                                                                .maxWidth,
+                                                      height: hudConstraints
+                                                          .maxHeight,
+                                                      child: DebugHud(
+                                                        ambient: widget.ambient,
+                                                        metrics: widget
+                                                            .camera
+                                                            .metrics,
+                                                        styleId: widget
+                                                            .styles
+                                                            .style
+                                                            .id,
+                                                        timings: widget
+                                                            .capture
+                                                            .value,
+                                                        device: widget.device,
+                                                        log: widget.log,
+                                                        exporter:
+                                                            widget.exporter,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            )
+                                          : const SizedBox.expand(),
+                                    ),
                                   ),
-                                  child: _styleFeedback == null
-                                      ? const SizedBox.shrink()
-                                      : Semantics(
-                                          key: ValueKey(_styleFeedback),
-                                          liveRegion: true,
-                                          child: Container(
-                                            key: const ValueKey(
-                                              'style-feedback',
+                                  // Bound the tip and transient feedback together;
+                                  // diagnostics yield space before the controls.
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxHeight:
+                                          middleConstraints.maxHeight -
+                                          diagnosticsSpace,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IgnorePointer(
+                                          child: AnimatedSwitcher(
+                                            key: ValueKey(
+                                              widget.styles.style.id,
                                             ),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: AppTheme.spaceSmMd,
-                                              vertical: AppTheme.spaceSm,
+                                            duration: AppTheme.motionDuration(
+                                              context,
+                                              AppTheme
+                                                  .feedbackTransitionDuration,
                                             ),
-                                            decoration: BoxDecoration(
-                                              color: AppTheme.scrimStrong,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    AppTheme.radiusSm,
+                                            child: _styleFeedback == null
+                                                ? const SizedBox.shrink()
+                                                : Semantics(
+                                                    key: ValueKey(
+                                                      _styleFeedback,
+                                                    ),
+                                                    liveRegion: true,
+                                                    child: Container(
+                                                      key: const ValueKey(
+                                                        'style-feedback',
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: AppTheme
+                                                                .spaceSmMd,
+                                                            vertical: AppTheme
+                                                                .spaceSm,
+                                                          ),
+                                                      decoration: BoxDecoration(
+                                                        color: AppTheme
+                                                            .scrimStrong,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              AppTheme.radiusSm,
+                                                            ),
+                                                      ),
+                                                      child: Text(
+                                                        _styleFeedback!,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: AppTheme.body
+                                                            .copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                      ),
+                                                    ),
                                                   ),
-                                            ),
-                                            child: Text(
-                                              _styleFeedback!,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: AppTheme.body.copyWith(
-                                                fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        if (hintVisible)
+                                          Flexible(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        AppTheme.spaceSm,
+                                                    vertical: AppTheme.spaceSm,
+                                                  ),
+                                              child: FirstRunHint(
+                                                key: const ValueKey('vf-hint'),
+                                                onDismiss: _dismissTip,
+                                                onHelp: _showLegend,
                                               ),
                                             ),
                                           ),
-                                        ),
-                                ),
-                              ),
-                            ],
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                         ),
-                        if (hintVisible)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppTheme.spaceSm,
-                              vertical: AppTheme.spaceSm,
-                            ),
-                            child: FirstRunHint(
-                              key: const ValueKey('vf-hint'),
-                              onDismiss: _dismissTip,
-                              onHelp: _showLegend,
-                            ),
-                          ),
                         _StyleBar(
                           name: widget.styles.style.name,
                           styleId: widget.styles.style.id,

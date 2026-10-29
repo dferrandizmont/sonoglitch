@@ -98,6 +98,18 @@ abstract class AppLocalizations {
     Locale('es'),
   ];
 
+  /// No description provided for @settingsVolumeButtonsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume buttons'**
+  String get settingsVolumeButtonsTitle;
+
+  /// No description provided for @settingsVolumeButtonsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Press volume up or down to take the photo.'**
+  String get settingsVolumeButtonsSubtitle;
+
   /// No description provided for @settingsContextLineTitle.
   ///
   /// In en, this message translates to:

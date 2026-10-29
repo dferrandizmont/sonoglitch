@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' show Tristate;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sonoglitch/ambient/ambient_state.dart';
 import 'package:sonoglitch/debug/capture_metrics.dart';
@@ -101,6 +102,63 @@ void main() {
       scrollable: find.byType(Scrollable),
     );
     await tester.pump();
+  }
+
+  for (final width in [270.0, 320.0]) {
+    for (final language in ['en', 'es']) {
+      for (final scale in [1.0, 2.0]) {
+        testWidgets(
+          '$language measurement labels stay whole at $width dp and ${scale}x text',
+          (tester) async {
+            tester.view.physicalSize = Size(width, 568);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+            await pumpResult(
+              tester,
+              locale: Locale(language),
+              textScale: scale,
+            );
+            final l10n = AppLocalizations.of(
+              tester.element(find.byType(ResultScreen)),
+            );
+            for (final label in [
+              l10n.levelNoise,
+              l10n.levelLight,
+              l10n.levelMotion,
+            ]) {
+              final text = find.text(label.toUpperCase());
+              expect(text, findsOneWidget);
+              await tester.ensureVisible(text);
+              await tester.pump();
+              final paragraph = tester.renderObject<RenderParagraph>(text);
+              expect(paragraph.didExceedMaxLines, isFalse, reason: label);
+              final boxes = paragraph.getBoxesForSelection(
+                TextSelection(baseOffset: 0, extentOffset: label.length),
+              );
+              expect(boxes, isNotEmpty);
+              // A whole word occupies one line, independent of glyph pixels.
+              expect(
+                boxes.every(
+                  (box) =>
+                      box.top == boxes.first.top &&
+                      box.bottom == boxes.first.bottom,
+                ),
+                isTrue,
+                reason: label,
+              );
+              final rect = tester.getRect(text);
+              expect(rect.left, greaterThanOrEqualTo(0));
+              expect(rect.right, lessThanOrEqualTo(width));
+              expect(text.hitTestable(), findsOneWidget);
+              expect(tester.takeException(), isNull);
+            }
+            await tester.pumpWidget(const SizedBox.shrink());
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    }
   }
 
   testWidgets('the layout selector composes again and is remembered', (
@@ -511,6 +569,19 @@ void main() {
         expect(size.width, greaterThanOrEqualTo(48));
       }
 
+      for (final label in ['Repetir', 'Compartir', 'Guardar', 'MOVIMIENTO']) {
+        final text = find.text(label);
+        if (label == 'MOVIMIENTO') {
+          await tester.ensureVisible(text);
+          await tester.pump();
+        }
+        expect(
+          tester.renderObject<RenderParagraph>(text).didExceedMaxLines,
+          isFalse,
+          reason: label,
+        );
+      }
+
       // The hint is between the label of the layout and its chips, and it
       // never lands on top of them.
       final hint = tester.getRect(
@@ -571,6 +642,33 @@ void main() {
           }
 
           expectActionsVisible();
+          for (final label in [
+            l10n.resultRetake,
+            l10n.resultShare,
+            l10n.resultSave,
+          ]) {
+            final text = find.text(label);
+            expect(
+              tester.renderObject<RenderParagraph>(text).didExceedMaxLines,
+              isFalse,
+            );
+            final button = find
+                .ancestor(
+                  of: text,
+                  matching: find.byWidgetPredicate(
+                    (widget) => widget is ButtonStyleButton,
+                  ),
+                )
+                .first;
+            final bounds = tester.getRect(button);
+            final textBounds = tester.getRect(text);
+            expect(textBounds.top, greaterThanOrEqualTo(bounds.top));
+            expect(textBounds.bottom, lessThanOrEqualTo(bounds.bottom));
+            final target = tester.getSemantics(button).rect;
+            expect(target.width, greaterThanOrEqualTo(48));
+            expect(target.height, greaterThanOrEqualTo(48));
+          }
+          await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
           await tester.scrollUntilVisible(
             find.text(l10n.resultLayoutPoster),
             100,

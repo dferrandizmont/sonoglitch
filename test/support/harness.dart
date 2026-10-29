@@ -8,12 +8,13 @@ import 'package:sonoglitch/ambient/clock.dart';
 import 'package:sonoglitch/ambient/context_sensors.dart';
 import 'package:sonoglitch/ambient/spectrum_service.dart';
 import 'package:sonoglitch/ambient/spectrum_source.dart';
-import 'package:sonoglitch/ambient/ambient_state.dart';
+import 'package:sonoglitch/app_config.dart';
 import 'package:sonoglitch/ambient/light_service.dart';
 import 'package:sonoglitch/ambient/motion_service.dart';
 import 'package:sonoglitch/ambient/noise_service.dart';
 import 'package:sonoglitch/camera/camera_metrics.dart';
 import 'package:sonoglitch/camera/camera_service.dart';
+import 'package:sonoglitch/camera/volume_keys.dart';
 import 'package:sonoglitch/debug/capture_metrics.dart';
 import 'package:sonoglitch/debug/debug_log.dart';
 import 'package:sonoglitch/debug/device_summary.dart';
@@ -108,6 +109,7 @@ Future<ViewfinderHarness> pumpViewfinder(
   CameraService? camera,
   AppSettings? settings,
   AnimationClock? animationClock,
+  VolumeKeys volumeKeys = const NoopVolumeKeys(),
   SpectrumService? spectrum,
   Locale? locale,
   Clock? ambientClock,
@@ -193,6 +195,7 @@ Future<ViewfinderHarness> pumpViewfinder(
         ),
         capture: capture,
         animationClock: clock,
+        volumeKeys: volumeKeys,
         contextSensors: contextSensors,
       ),
     ),
@@ -208,13 +211,28 @@ Future<ViewfinderHarness> pumpViewfinder(
 Future<void> pumpSettingsScreen(
   WidgetTester tester,
   AppSettings settings, {
-  ValueListenable<AmbientState>? ambient,
+  AmbientController? ambient,
   ValueListenable<CameraMetricsData>? metrics,
   String donationUrl = '',
   Future<bool> Function(Uri uri)? openLink,
   MediaQueryData? mediaQuery,
+  bool screenshotMode = AppConfig.screenshotMode,
 }) async {
   final log = DebugLog();
+  final controller =
+      ambient ??
+      AmbientController(
+        noise: NoiseService(decibelStream: const Stream<double>.empty()),
+        motion: MotionService(
+          samples: const Stream<AccelSample>.empty(),
+          gyroSamples: const Stream<AccelSample>.empty(),
+          gravitySamples: const Stream<AccelSample>.empty(),
+        ),
+        light: LightService(ambientLight: FakeAmbientLightSource()),
+        spectrum: SpectrumService(source: const NoopSpectrumSource()),
+        screenshotMode: screenshotMode,
+      );
+  if (ambient == null) addTearDown(controller.dispose);
   await tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.dark(),
@@ -229,7 +247,8 @@ Future<void> pumpSettingsScreen(
         openLink: openLink ?? (_) async => true,
         log: log,
         exporter: DiagnosticExporter(log: log),
-        ambient: ambient ?? ValueNotifier<AmbientState>(AmbientState.calm),
+        ambient: controller,
+        screenshotMode: screenshotMode,
         metrics:
             metrics ??
             ValueNotifier<CameraMetricsData>(const CameraMetricsData()),

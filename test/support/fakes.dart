@@ -338,6 +338,9 @@ class FakeExportService extends ExportService {
   /// The files that were shared.
   final List<File> sharedFiles = [];
 
+  /// What [share] reports: false simulates closing the sheet without sending.
+  bool shareCompletes = true;
+
   /// The last file written for every format.
   final Map<ExportFormat, File> files = <ExportFormat, File>{};
 
@@ -468,9 +471,10 @@ class FakeExportService extends ExportService {
   }
 
   @override
-  Future<void> share(File file, {ui.Rect? origin}) async {
+  Future<bool> share(File file, {ui.Rect? origin}) async {
     shared++;
     sharedFiles.add(file);
+    return shareCompletes;
   }
 }
 

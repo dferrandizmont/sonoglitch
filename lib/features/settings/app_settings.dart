@@ -28,6 +28,17 @@ class AppSettings extends ChangeNotifier {
   /// Where the values are stored.
   final PreferencesStore store;
 
+  static const volumeButtonsKey = 'settings.volumeButtons';
+  bool _volumeButtonsEnabled = true;
+  bool get volumeButtonsEnabled => _volumeButtonsEnabled;
+
+  Future<void> setVolumeButtonsEnabled(bool value) async {
+    if (_volumeButtonsEnabled == value) return;
+    _volumeButtonsEnabled = value;
+    notifyListeners();
+    await store.setBool(volumeButtonsKey, value);
+  }
+
   static const exportQualityKey = 'settings.exportQuality';
   ExportQuality _exportQuality = ExportQuality.high;
   ExportQuality get exportQuality => _exportQuality;
@@ -133,6 +144,10 @@ class AppSettings extends ChangeNotifier {
 
   /// Reads the values from the store.
   Future<void> load() async {
+    _volumeButtonsEnabled = await store.getBool(
+      volumeButtonsKey,
+      defaultValue: true,
+    );
     _watermarkEnabled = await store.getBool(watermarkKey, defaultValue: true);
     _contextLineEnabled = await store.getBool(
       contextLineKey,

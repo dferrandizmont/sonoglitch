@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui' show Tristate;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sonoglitch/ambient/ambient_state.dart';
 import 'package:sonoglitch/debug/debug_log.dart';
@@ -34,6 +35,7 @@ Future<void> pumpSheet(
   VoidCallback? onRandom,
   VoidCallback? onMatch,
   double textScale = 1,
+  Locale? locale,
   bool reducedMotion = false,
   Size screen = const Size(400, 900),
 }) async {
@@ -44,6 +46,7 @@ Future<void> pumpSheet(
   await tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.dark(),
+      locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) => MediaQuery(
@@ -77,6 +80,65 @@ Future<void> pumpSheet(
 }
 
 void main() {
+  for (final scale in [1.0, 2.0]) {
+    testWidgets('small Spanish picker at $scale text keeps labels whole', (
+      tester,
+    ) async {
+      final semantics = tester.ensureSemantics();
+      try {
+        final styles = fakeStyles();
+        await pumpSheet(
+          tester,
+          styles: styles,
+          onSelect: (_) {},
+          screen: const Size(320, 568),
+          textScale: scale,
+          locale: const Locale('es'),
+        );
+        final l10n = AppLocalizations.of(
+          tester.element(find.byType(StyleSheet)),
+        );
+        final match = find.widgetWithText(OutlinedButton, l10n.styleSheetMatch);
+        final random = find.widgetWithText(
+          OutlinedButton,
+          l10n.styleSheetRandom,
+        );
+        for (final target in [match, random]) {
+          expect(tester.getSize(target).height, greaterThanOrEqualTo(48));
+          expect(tester.getSize(target).width, greaterThanOrEqualTo(48));
+          final label = find.descendant(
+            of: target,
+            matching: find.byType(Text),
+          );
+          final paragraph = tester.renderObject<RenderParagraph>(label);
+          expect(paragraph.didExceedMaxLines, isFalse);
+          final text = tester.getRect(label);
+          final button = tester.getRect(target);
+          expect(text.top, greaterThanOrEqualTo(button.top));
+          expect(text.bottom, lessThanOrEqualTo(button.bottom));
+        }
+        for (final style in styles.styles) {
+          final label = find.text(styleDescription(l10n, style.id));
+          await tester.scrollUntilVisible(
+            label,
+            100,
+            scrollable: find.byType(Scrollable).last,
+          );
+          await tester.pumpAndSettle();
+          expect(
+            tester.renderObject<RenderParagraph>(label).didExceedMaxLines,
+            isFalse,
+          );
+          expect(tester.takeException(), isNull);
+        }
+        await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+        await tester.pumpWidget(const SizedBox.shrink());
+      } finally {
+        semantics.dispose();
+      }
+    });
+  }
+
   testWidgets('the sheet shows the name and the description of every style', (
     tester,
   ) async {
@@ -240,54 +302,55 @@ void main() {
     expect(find.text('Random'), findsOneWidget);
     expect(find.text('Match this place'), findsOneWidget);
   });
-  testWidgets('compact sheet has adjacent 48 dp actions and 60 dp rows', (
-    tester,
-  ) async {
-    final styles = fakeStyles();
-    await pumpSheet(
-      tester,
-      styles: styles,
-      onSelect: (_) {},
-      textScale: 1.3,
-      screen: const Size(320, 568),
-      reducedMotion: true,
-    );
-    final route = ModalRoute.of(tester.element(find.byType(StyleSheet)))!;
-    expect(route.transitionDuration, Duration.zero);
-    expect(route.reverseTransitionDuration, Duration.zero);
-    final actions = find.descendant(
-      of: find.byType(StyleSheet),
-      matching: find.byType(OutlinedButton),
-    );
-    expect(actions, findsNWidgets(2));
-    final first = tester.getRect(actions.first);
-    final second = tester.getRect(actions.last);
-    for (final rect in [first, second]) {
-      expect(rect.height, 48);
-      expect(rect.width, greaterThanOrEqualTo(48));
-    }
-    expect(first.top, second.top);
-    expect(first.overlaps(second), isFalse);
-    for (final button in tester.widgetList<OutlinedButton>(actions)) {
-      expect(button.style!.animationDuration, Duration.zero);
-    }
-    for (final style in styles.styles) {
-      final row = find.byWidgetPredicate(
-        (widget) => widget is StyleTile && widget.style.id == style.id,
+  testWidgets(
+    'compact sheet has adjacent actions of at least 48 dp and 60 dp rows',
+    (tester) async {
+      final styles = fakeStyles();
+      await pumpSheet(
+        tester,
+        styles: styles,
+        onSelect: (_) {},
+        textScale: 1.3,
+        screen: const Size(320, 568),
+        reducedMotion: true,
       );
-      await tester.scrollUntilVisible(
-        row,
-        60,
-        scrollable: find.descendant(
-          of: find.byType(StyleSheet),
-          matching: find.byType(Scrollable),
-        ),
+      final route = ModalRoute.of(tester.element(find.byType(StyleSheet)))!;
+      expect(route.transitionDuration, Duration.zero);
+      expect(route.reverseTransitionDuration, Duration.zero);
+      final actions = find.descendant(
+        of: find.byType(StyleSheet),
+        matching: find.byType(OutlinedButton),
       );
-      expect(tester.getSize(row).height, greaterThanOrEqualTo(60));
-      expect(tester.getSize(row).width, greaterThanOrEqualTo(48));
-    }
-    expect(tester.takeException(), isNull);
-  });
+      expect(actions, findsNWidgets(2));
+      final first = tester.getRect(actions.first);
+      final second = tester.getRect(actions.last);
+      for (final rect in [first, second]) {
+        expect(rect.height, greaterThanOrEqualTo(48));
+        expect(rect.width, greaterThanOrEqualTo(48));
+      }
+      expect(first.top, second.top);
+      expect(first.overlaps(second), isFalse);
+      for (final button in tester.widgetList<OutlinedButton>(actions)) {
+        expect(button.style!.animationDuration, Duration.zero);
+      }
+      for (final style in styles.styles) {
+        final row = find.byWidgetPredicate(
+          (widget) => widget is StyleTile && widget.style.id == style.id,
+        );
+        await tester.scrollUntilVisible(
+          row,
+          60,
+          scrollable: find.descendant(
+            of: find.byType(StyleSheet),
+            matching: find.byType(Scrollable),
+          ),
+        );
+        expect(tester.getSize(row).height, greaterThanOrEqualTo(60));
+        expect(tester.getSize(row).width, greaterThanOrEqualTo(48));
+      }
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('selected row has tint, left rule, number and a plain check', (
     tester,

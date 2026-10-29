@@ -35,6 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _cameraGranted = false;
   bool _microphoneGranted = false;
   bool _cameraPermanentlyDenied = false;
+  bool _requested = false;
 
   @override
   void initState() {
@@ -73,6 +74,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (!mounted) return;
     setState(() {
       _busy = false;
+      _requested = true;
       _cameraGranted = camera.granted;
       _microphoneGranted = microphone.granted;
       _cameraPermanentlyDenied = camera.permanentlyDenied;
@@ -170,14 +172,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 icon: Icons.settings_outlined,
                                 onPressed: _openSettings,
                               ),
-                            ] else if (!_cameraGranted) ...[
-                              Text(
-                                l10n.onboardingCameraDenied,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: AppTheme.danger,
+                            ] else if (!_cameraGranted || !_requested) ...[
+                              if (_requested && !_cameraGranted) ...[
+                                Text(
+                                  l10n.onboardingCameraDenied,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: AppTheme.danger,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: AppTheme.spaceSm),
+                                const SizedBox(height: AppTheme.spaceSm),
+                              ],
                               _PrimaryButton(
                                 label: l10n.onboardingGrant,
                                 icon: Icons.photo_camera_outlined,
@@ -239,6 +243,15 @@ class _PrimaryButton extends StatelessWidget {
     final button = SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(AppTheme.touchTarget, AppTheme.touchTarget),
+          visualDensity: VisualDensity.standard,
+          tapTargetSize: MaterialTapTargetSize.padded,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spaceMd,
+            vertical: AppTheme.spaceSm,
+          ),
+        ),
         onPressed: busy ? null : onPressed,
         icon: busy
             ? const SizedBox(
@@ -249,7 +262,7 @@ class _PrimaryButton extends StatelessWidget {
                 ),
               )
             : Icon(icon),
-        label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+        label: Text(label, textAlign: TextAlign.center),
       ),
     );
     if (!MediaQuery.disableAnimationsOf(context)) return button;

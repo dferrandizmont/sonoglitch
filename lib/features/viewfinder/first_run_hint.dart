@@ -30,11 +30,13 @@ class FirstRunHint extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.viewfinderHint,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: AppTheme.bodySmall.copyWith(color: AppTheme.textPrimary),
+          Flexible(
+            child: SingleChildScrollView(
+              child: Text(
+                l10n.viewfinderHint,
+                style: AppTheme.bodySmall.copyWith(color: AppTheme.textPrimary),
+              ),
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

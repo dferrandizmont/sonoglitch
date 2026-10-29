@@ -189,6 +189,32 @@ void main() {
     expect(export.written.single.existsSync(), isTrue);
   });
 
+  for (final completes in [true, false]) {
+    testWidgets(
+      completes
+          ? 'confirms a share that was sent'
+          : 'says nothing when the share sheet is closed without sending',
+      (tester) async {
+        export.shareCompletes = completes;
+        final rendered = await tester.runAsync(
+          () => buildTestImage(width: 40, height: 20),
+        );
+        export.images[ExportFormat.original] = (await tester.runAsync(
+          () => buildTestImage(width: 40, height: 20),
+        ))!;
+        await pumpResult(tester, rendered!);
+        await tester.pump();
+
+        await tester.tap(find.text('Share'));
+        await tester.pump();
+        await tester.pump();
+
+        expect(export.shared, 1);
+        expect(find.text('Shared.'), completes ? findsOneWidget : findsNothing);
+      },
+    );
+  }
+
   testWidgets('the working file stays in the cache right after a share', (
     tester,
   ) async {

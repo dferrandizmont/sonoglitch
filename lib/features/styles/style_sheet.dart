@@ -87,24 +87,27 @@ class StyleSheet extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppTheme.spaceMd,
                 ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _Action(
-                        icon: Icons.casino_outlined,
-                        label: l10n.styleSheetRandom,
-                        onPressed: () => _close(context, onRandom),
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: _Action(
+                          icon: Icons.casino_outlined,
+                          label: l10n.styleSheetRandom,
+                          onPressed: () => _close(context, onRandom),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: AppTheme.spaceSm),
-                    Expanded(
-                      child: _Action(
-                        icon: Icons.auto_awesome_outlined,
-                        label: l10n.styleSheetMatch,
-                        onPressed: () => _close(context, onMatch),
+                      const SizedBox(width: AppTheme.spaceSm),
+                      Expanded(
+                        child: _Action(
+                          icon: Icons.auto_awesome_outlined,
+                          label: l10n.styleSheetMatch,
+                          onPressed: () => _close(context, onMatch),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: AppTheme.spaceSmMd),
@@ -196,8 +199,8 @@ class _Action extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: AppTheme.touchTarget,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: AppTheme.touchTarget),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppTheme.textPrimary,
@@ -206,7 +209,9 @@ class _Action extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppTheme.radiusSm),
           ),
           minimumSize: const Size.square(AppTheme.touchTarget),
-          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spaceSm),
+          visualDensity: VisualDensity.standard,
+          tapTargetSize: MaterialTapTargetSize.padded,
+          padding: const EdgeInsets.all(AppTheme.spaceSm),
           animationDuration: AppTheme.motionDuration(
             context,
             AppTheme.pressDuration,
@@ -221,8 +226,6 @@ class _Action extends StatelessWidget {
             Flexible(
               child: Text(
                 label,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
                 style: AppTheme.bodySmall.copyWith(
                   color: AppTheme.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -308,8 +311,6 @@ class StyleTile extends StatelessWidget {
                       children: [
                         Text(
                           style.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                           style: AppTheme.readout.copyWith(
                             fontFeatures: const [],
                             fontWeight: isSelected
@@ -318,12 +319,7 @@ class StyleTile extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: AppTheme.space2xs),
-                        Text(
-                          description,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTheme.bodySmall,
-                        ),
+                        Text(description, style: AppTheme.bodySmall),
                         if (isSelected && selectedBadgeLabel != null) ...[
                           const SizedBox(height: AppTheme.spaceXs),
                           _SelectedBadge(label: selectedBadgeLabel!),

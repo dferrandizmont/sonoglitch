@@ -12,6 +12,7 @@ import 'light_service.dart';
 import 'motion_service.dart';
 import 'noise_service.dart';
 import 'signal_intensity.dart';
+import 'screenshot_values.dart';
 import 'signature/signature_controller.dart';
 import 'signature/signature_signals.dart';
 import 'signature/signature_state.dart';
@@ -38,6 +39,7 @@ class AmbientController extends ValueNotifier<AmbientState> {
     DateTime Function()? utcNow,
     this.mergeInterval = AmbientConfig.mergeInterval,
     this.clock = stopwatchClock,
+    this.screenshotMode = AppConfig.screenshotMode,
   }) : spectrum = spectrum ?? SpectrumService(),
        signature =
            signature ??
@@ -106,6 +108,42 @@ class AmbientController extends ValueNotifier<AmbientState> {
   /// The clock used to time the merged samples.
   final Clock clock;
 
+  /// Injectable only for tests; production follows the build switch.
+  final bool screenshotMode;
+  ScreenshotValues _screenshotValues = ScreenshotValues.lively;
+  ScreenshotValues get screenshotValues => _screenshotValues;
+  bool _demoValuesEnabled = false;
+  bool get demoValuesEnabled => _demoValuesEnabled;
+
+  /// Demo settings belong to this controller, not to a Settings route or disk.
+  void setDemoValues(bool enabled) {
+    if (!screenshotMode) return;
+    _demoValuesEnabled = enabled;
+    if (enabled) {
+      final demo = _screenshotValues;
+      setManualValues(
+        noise: demo.noise,
+        light: demo.light,
+        motion: demo.motion,
+      );
+    }
+    setManual(enabled);
+  }
+
+  void setScreenshotValues(ScreenshotValues values) {
+    if (!screenshotMode) return;
+    _screenshotValues = values;
+    if (_demoValuesEnabled) {
+      setManualValues(
+        noise: values.noise,
+        light: values.light,
+        motion: values.motion,
+      );
+    } else {
+      notifyListeners();
+    }
+  }
+
   /// The stream of the merged states.
   ///
   /// The peak detector of the moment mode listens to it, so it sees every
@@ -157,6 +195,7 @@ class AmbientController extends ValueNotifier<AmbientState> {
   void setManual(bool value) {
     if (_manual == value) return;
     _manual = value;
+    if (!value) _demoValuesEnabled = false;
     // The history is dropped at every transition: a capture that fires
     // immediately after switching back to automatic must average only the
     // measured samples, not the manual ones that accumulated just before.
@@ -260,6 +299,12 @@ class AmbientController extends ValueNotifier<AmbientState> {
     noise: _manualNoise,
     light: _manualLight,
     motion: _manualMotion,
+    rawDb: _demoValuesEnabled ? _screenshotValues.db : null,
+    rawLux: _demoValuesEnabled ? _screenshotValues.lux : null,
+    rawAccel: _demoValuesEnabled ? _screenshotValues.accel : null,
+    bass: _demoValuesEnabled ? _screenshotValues.bass : 0,
+    mid: _demoValuesEnabled ? _screenshotValues.mid : 0,
+    treble: _demoValuesEnabled ? _screenshotValues.treble : 0,
     seed: signature.seed,
     signature: signature.state,
   );
