@@ -1,6 +1,6 @@
 # Contributing to Sonoglitch
 
-Sonoglitch is in early development, with pre-release alpha builds only. Read [AGENTS.md](AGENTS.md) for project conventions and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the implemented design. The Spanish product specification contains goals as well as current behavior; verify changes against the code.
+Sonoglitch is in early development, with pre-release alpha builds only. Read [AGENTS.md](AGENTS.md) for project conventions and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the implemented design. The [Spanish product specification](docs/SPEC.es.md) contains goals as well as current behavior; verify changes against the code. Every change the users notice goes into the [changelog](CHANGELOG.md) in the same commit, and the [releasing guide](docs/RELEASING.md) explains how the three channels differ.
 
 Follow the [code of conduct](CODE_OF_CONDUCT.md). Use the [security policy](SECURITY.md) to report vulnerabilities privately rather than opening a public issue with sensitive details. iOS work must account for the unverified Mac/device checks in [iOS status](docs/IOS_STATUS.md).
 
@@ -16,6 +16,59 @@ Follow the [code of conduct](CODE_OF_CONDUCT.md). Use the [security policy](SECU
    ```
 
 Keep code, comments, documentation and commit messages in English. Store metadata and app translations may use their target languages. Do not commit local machine paths, credentials, tokens, `.env` files, keystores or signing passwords.
+
+## Build and run
+
+The setup above installs the toolchain and runs the app. Three build-time
+defines change what a build does:
+
+- `SONOGLITCH_DEBUG=true` sets the default diagnostics preference and enables
+  the triple tap on the preview. A previously saved preference takes precedence;
+  the **Settings > Troubleshooting > Diagnostics** switch always works.
+- `APP_VERSION` sets the version shown in About and in the diagnostic reports
+  (default `0.1.0`). It does not change the Android package version: use
+  Flutter's `--build-name` and `--build-number` options for that.
+- `SONOGLITCH_MANUAL=0.9,0.1,0` starts with reproducible manual controls in
+  `noise,light,motion` order. The define requires three finite numbers, each
+  clamped to 0–1; malformed input is ignored. Manual mode overrides the
+  published controls and uses the selected values directly for stills instead
+  of the 1.5-second snapshot of the readings. It does not disable sensor
+  subscriptions while the viewfinder is active. The diagnostics panel also
+  provides a manual-mode switch and sliders.
+
+For a run with diagnostics enabled by default and an explicit displayed
+version:
+
+```sh
+flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=APP_VERSION=0.2.0-alpha.2
+```
+
+To start with reproducible manual controls in `noise,light,motion` order:
+
+```sh
+flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=SONOGLITCH_MANUAL=0.9,0.1,0
+```
+
+To build a local APK:
+
+```sh
+flutter build apk --release --target-platform android-arm64,android-x64 --dart-define=APP_VERSION=0.2.0-alpha.2
+```
+
+The output is `build/app/outputs/flutter-apk/app-release.apk`; the key it is
+signed with is described in [Signing a local build](#signing-a-local-build).
+iOS configuration targets version 16.0 or later, but is not release-ready until
+built and verified on a Mac and a physical device; see
+[iOS status](docs/IOS_STATUS.md).
+
+## Diagnostics
+
+In a debug build (`SONOGLITCH_DEBUG=true`), triple-tap the viewfinder image, leaving less than 400 ms between taps, to show or hide the diagnostic panel. A release build has no triple tap: the panel is opened from **Settings > Troubleshooting > Diagnostics**. The preference persists between sessions.
+
+- **Copy report** in the panel copies JSON with app version/build mode, device and OS, sensor readings, camera metrics, selected style, capture timings and recent log lines.
+- **Share logs** in the panel opens the system share sheet with a JSON report and the current log file when available. **Export diagnostic report** in Settings provides another route to sharing diagnostics.
+
+Technical logs are maintained locally in all build modes, even when the panel is hidden. They rotate at 512 KiB and keep up to three files. No audio or image content is included in the diagnostic report. Absolute-path redaction is best effort; review device details, remaining paths and error text before including a report in a public issue.
 
 ## Changes and checks
 
@@ -33,6 +86,15 @@ Use `dart format .` when you need to apply formatting. If Flutter tooling rewrit
 
 Add a dependency only with a documented reason. Prefer maintained packages with a permissive license (Apache-2.0, MIT or BSD), and verify the license before adding it.
 
+The website is a static site generated with the Python standard library only:
+
+```sh
+python tool/site/build.py
+python -m unittest discover -s tool/site
+```
+
+See [tool/site/README.md](tool/site/README.md).
+
 ## The camera screen
 
 The camera screen is the reference for the look of the app:
@@ -44,6 +106,20 @@ The camera screen is the reference for the look of the app:
 - The diagnostics panel is opened from **Settings > Troubleshooting**. The triple tap on the preview only exists in debug builds (`--dart-define=SONOGLITCH_DEBUG=true`).
 
 The copy lives in `lib/l10n/app_en.arb` and `lib/l10n/app_es.arb`. English is the template, both files keep the same keys and every key has a description. Run `flutter gen-l10n` after changing an ARB file, and keep the generated classes in `lib/l10n/` up to date.
+
+## How it works
+
+Every style reads the same three normalised inputs:
+
+| Input | Measurement | Effect |
+| --- | --- | --- |
+| Noise | Microphone level, read in memory | The intensity of the disturbance |
+| Light | Ambient light sensor blended with the brightness of the camera image | The tone and the contrast of the picture |
+| Motion | Displacement of the scene between preview frames, plus the gyroscope and the accelerometer | How much the picture moves |
+
+The sound is also measured in three frequency bands, in memory, but the bands are only shown in the export layouts: they do not change the effect of a photo. The sound readings are relative and depend on the device, not calibrated measurements. The microphone permission is optional; without it the noise stays at zero.
+
+The camera screen shows the three levels in a card at the top. Tapping that card opens the **How it works** sheet, which explains the noise, the light and the movement in plain words, how the style is changed and what **Auto shot** does.
 
 ## Add a style
 
@@ -72,7 +148,7 @@ The copy lives in `lib/l10n/app_en.arb` and `lib/l10n/app_es.arb`. English is th
 | 15 | `float uSeed` | Procedural pattern seed, 0–1, frozen for a capture |
 | 16-19 | `vec4 uFingerprint` | Four independent 24-bit fractions; neutral `(0, 0, 0, 0)` |
 
-The ABI is exactly **20 floats**, without std140 padding, plus sampler 0. Indices 0�15 are unchanged. The band uniforms carry filtered scalar energies measured in memory. The seed comes from the pending photo's ephemeral nonce and stays stable until the shutter; it does not drift or reroll on a style change. The six selectable recipes still only declare spectrum/seed/fingerprint; SIG-2 will consume them. Hidden styles keep their existing spectrum/seed behavior. A zero fingerprint preserves the previous rendering exactly.
+The ABI is exactly **20 floats**, without std140 padding, plus sampler 0. Indices 0–15 are unchanged. The band uniforms carry filtered scalar energies measured in memory. The seed comes from the pending photo's ephemeral nonce and stays stable until the shutter; it does not drift or reroll on a style change. The six selectable recipes still only declare spectrum/seed/fingerprint; SIG-2 will consume them. Hidden styles keep their existing spectrum/seed behavior. A zero fingerprint preserves the previous rendering exactly.
 
 All twelve fragment shaders include `signature_common.glsl` from the same directory. Only `.frag` files belong under `flutter.shaders`; the compiler resolves the relative helper include and tracks it in the depfile. The helper contains no uniforms or `#version`. Its pure functions are `signatureAspectPosition(uv, size)`, `signatureLimitOffset(totalOffsetUv, size)`, `signatureRetainOriginal(original, effected, wet)` and `signatureMicroFingerprint(color, uv, fingerprint)` (plus the arithmetic `signatureHash`). Apply the microtexture last. The total sample offset is bounded to 5% of the short side, original contribution to at least 45%, and microtexture to one RGB8 level per channel. These helpers are available for SIG-2 and are not yet called by recipes. Verify all registered shaders load, and incremental include invalidation, through the lead's shader tests before integration.
 
@@ -127,6 +203,23 @@ Optional repository secrets for signing are:
 | `ANDROID_KEY_PASSWORD` | Signing key password |
 
 Configure all four or none. Partial configuration fails the job. With all four, the workflow decodes the keystore into a runner temporary file outside the checkout, aligns the built APK, replaces its debug signature using `apksigner`, verifies the result and removes the temporary key. With none, the job fails on a stable release: only a prerelease (`-alpha`, `-beta` or `-rc`) keeps Gradle's debug signature, and it adds a visible warning to the job summary and the release notes. Debug-signed builds are for testing and cannot establish a stable production signing identity. Invalid configured credentials fail the job rather than falling back. Keep the same release key for compatible updates.
+
+## Project layout
+
+| Path | Responsibility |
+| --- | --- |
+| `lib/ambient/` | Sound level/baseline/bursts, the three frequency bands, ambient lux and image brightness, scene/gyroscope/accelerometer motion and smoothing |
+| `lib/camera/` | Camera stream conversion, still capture and orientation |
+| `lib/effects/`, `shaders/` | Style registry, rendering and fragment shaders |
+| `lib/export/` | Crops, watermark, export quality, layouts, PNG/JPEG encoding, gallery and sharing |
+| `lib/features/` | Onboarding, viewfinder, styles, result and settings |
+| `lib/debug/` | Local logs, reports and diagnostics panel |
+| `lib/theme/`, `lib/l10n/` | UI tokens and English/Spanish localization |
+| `test/` | Unit, widget and shader-related tests |
+| `tool/` | Icon, screenshot and website generators |
+| `docs/readme/` | Banner, icon and screenshots used by the README and the website |
+| `site/` | Generated website, committed so it can be served from the branch |
+| `.github/`, `fastlane/metadata/android/` | CI, release automation, templates and store text |
 
 ## License of contributions
 
