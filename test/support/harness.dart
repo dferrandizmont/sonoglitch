@@ -217,6 +217,7 @@ Future<void> pumpSettingsScreen(
   Future<bool> Function(Uri uri)? openLink,
   MediaQueryData? mediaQuery,
   bool screenshotMode = AppConfig.screenshotMode,
+  String? screenshotPhotoSourceStatus,
 }) async {
   final log = DebugLog();
   final controller =
@@ -249,6 +250,7 @@ Future<void> pumpSettingsScreen(
         exporter: DiagnosticExporter(log: log),
         ambient: controller,
         screenshotMode: screenshotMode,
+        screenshotPhotoSourceStatus: screenshotPhotoSourceStatus,
         metrics:
             metrics ??
             ValueNotifier<CameraMetricsData>(const CameraMetricsData()),

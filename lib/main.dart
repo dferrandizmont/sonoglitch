@@ -10,6 +10,7 @@ import 'ambient/motion_service.dart';
 import 'ambient/noise_service.dart';
 import 'app_config.dart';
 import 'camera/camera_service.dart';
+import 'camera/screenshot_photo_source.dart';
 import 'debug/capture_metrics.dart';
 import 'debug/debug_log.dart';
 import 'debug/device_summary.dart';
@@ -57,7 +58,17 @@ Future<void> main() async {
     motion: MotionService(),
     light: light,
   );
-  final camera = CameraService(light: light, log: log);
+  ScreenshotPhotoSource? photoSource;
+  if (AppConfig.screenshotMode) {
+    photoSource = await ScreenshotPhotoSource.find();
+  }
+  final camera = CameraService(
+    light: light,
+    log: log,
+    deviceFactory: photoSource?.deviceFactory,
+    lister: photoSource?.lister,
+    preserveSourceOrientation: photoSource?.active ?? false,
+  );
   final styles = StyleController(log: log);
   final export = ExportService(log: log);
   final exporter = DiagnosticExporter(log: log);
@@ -76,6 +87,7 @@ Future<void> main() async {
       device: device,
       capture: CaptureMetrics(),
       noise: noise,
+      screenshotPhotoSourceStatus: photoSource?.status,
     ),
   );
 }
@@ -114,6 +126,7 @@ class SonoglitchApp extends StatelessWidget {
     required this.device,
     required this.capture,
     required this.noise,
+    this.screenshotPhotoSourceStatus,
   });
 
   final DebugLog log;
@@ -126,6 +139,8 @@ class SonoglitchApp extends StatelessWidget {
   final DiagnosticExporter exporter;
   final DeviceSummary device;
   final CaptureMetrics capture;
+
+  final String? screenshotPhotoSourceStatus;
 
   /// The noise source, switched on when the microphone is granted.
   final NoiseService noise;
@@ -202,6 +217,7 @@ class SonoglitchApp extends StatelessWidget {
             capture: capture,
             styleId: styles.style.id,
             device: device,
+            screenshotPhotoSourceStatus: screenshotPhotoSourceStatus,
           ),
         );
       default:

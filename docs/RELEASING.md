@@ -69,6 +69,7 @@ formato y la siguiente ya sigue esta tabla.
 | 27-oct-2026 | GitHub Releases (repositorio público) | 0.1.0-alpha.19 | 19 | `de7defc` (público `2607798`) | `sonoglitch-0.1.0-alpha.19.apk`, Actions, clave de depuración | Publicada (prerelease) | no archivados |
 | 27-oct-2026 | GitHub Releases (repositorio público) | 0.1.0-alpha.20 | 20 | `0f0dc34` (público `2ba3a60`) | `sonoglitch-0.1.0-alpha.20.apk`, Actions, clave de depuración | Publicada (prerelease) | no archivados |
 | 27-oct-2026 | GitHub Releases (repositorio público) | 0.1.0-alpha.21 | 21 | `4439eeb` (público `9bd315d`) | `sonoglitch-0.1.0-alpha.21.apk`, Actions, clave de depuración | Publicada (prerelease) | no archivados |
+| 29-oct-2026 | GitHub Releases (repositorio público) | 0.2.0-alpha.2 | 22 | `2c27005` (público `eb8041e`) | `sonoglitch-0.2.0-alpha.2.apk`, Actions, clave de depuración | Publicada (prerelease); la etiqueta 0.2.0-alpha.1 del privado nunca se compiló | no archivados |
 
 Todavía no hay ninguna subida a Google Play ni a TestFlight. El AAB de la build 19 se compiló en local con la clave de
 subida (27-oct-2026, commit `de7defc`) y **no se subió**: quedó obsoleto, y la primera subida a Play usará un build
@@ -82,6 +83,17 @@ mayor que 21.
 ## Public and private repositories
 
 Development happens in a private repository. This public repository receives one commit per release, a snapshot of the tagged tree, with the version tag; the development history is not published. `tool/publish/publish_public.ps1 -Tag vX.Y.Z` makes the snapshot from tracked files only, scans it for secrets and pushes it (use `-DryRun` first). Pushing the tag starts the *Release APK* workflow, which builds, signs and publishes the GitHub release. F-Droid builds from these tags. Pull requests to this repository are reviewed here and ported to the private repository by the maintainer.
+
+### Identity in the public repository
+
+Only `Daniel Mont Ferrandiz <dev@mainshai.com>` may appear in the public repository, as author, committer and tagger. The script sets it itself (the release tag is annotated, so it carries a tagger), whatever the global or local git config says; change it for another project with the `PUBLIC_AUTHOR_NAME` and `PUBLIC_AUTHOR_EMAIL` environment variables. Before pushing, the script checks that:
+
+- the new commit and the tag have exactly that identity;
+- no Gmail address appears in the identity, the commit message, the tag or any file of the snapshot (the secret scan includes a Gmail pattern, so `-DryRun` catches it too).
+
+Any failure stops the script before the push. If a kept clone in `-WorkDir` is used, it is first brought to the remote `main`. Do not commit to the public repository by hand or from the GitHub web editor with a personal account: those commits use whatever identity that account has and the check does not see them.
+
+Tests: `python -m unittest discover -s tool/publish` (Windows, PowerShell). They run the real script against a temporary private repository and a bare "public" one, with a personal identity in the global git config, and mutating the script so it no longer fixes the identity makes them fail.
 
 ### Release flow: test privately first, then publish
 
@@ -108,6 +120,28 @@ adjust all nine values independently.
 
 **Never publish or upload this APK. Play, F-Droid and GitHub release builds must
 never pass `SONOGLITCH_SCREENSHOTS=true`.** The section is absent by default.
+
+**Photo source.** To use a JPEG or PNG instead of the emulator camera, launch
+the screenshot build once (to create its external files directory), then push
+the image to this fixed app-private path. PNG content is accepted even though
+the destination filename ends in `.jpg`:
+
+```sh
+adb push "photo.jpg" /sdcard/Android/data/es.sonoglitch.app/files/screenshot_source.jpg
+adb shell am force-stop es.sonoglitch.app
+adb shell monkey -p es.sonoglitch.app -c android.intent.category.LAUNCHER 1
+```
+
+Settings shows whether the photo source was selected at startup and its path.
+The live viewfinder uses an aspect-preserving YUV420 preview (up to 640 pixels
+on the long side, about 30 fps); capture, result and compare use the same photo
+with the real effects. EXIF is baked into the pixels once, and landscape photos
+stay landscape. Still captures retain the source resolution before the normal
+4096-pixel still decode/export limits. Flipping keeps the same photo. Remove
+the file with `adb shell rm /sdcard/Android/data/es.sonoglitch.app/files/screenshot_source.jpg`
+and restart to restore the camera. Without the screenshot define or the file,
+the normal camera is used. On iOS the fixed filename is in the app Documents
+directory instead (copy it into the simulator app container).
 
 For a clean Android status bar, allow and enter System UI demo mode, then set the
 clock, battery, network and notifications (support depends on the device):

@@ -68,6 +68,7 @@ class CameraService {
     required this.log,
     this.converter = const FrameConverter(),
     this.clock = stopwatchClock,
+    this.preserveSourceOrientation = false,
     CameraDeviceFactory? deviceFactory,
     CameraLister? lister,
     Future<ui.Image> Function(FrameConversion)? imageFactory,
@@ -95,6 +96,10 @@ class CameraService {
 
   /// The clock used to measure the conversion time.
   final Clock clock;
+
+  /// The screenshot photo already has its final orientation, in both paths.
+  /// Hardware cameras keep their existing sensor and gravity transforms.
+  final bool preserveSourceOrientation;
 
   /// Builds the camera that the service drives.
   final CameraDeviceFactory _deviceFactory;
@@ -257,7 +262,9 @@ class CameraService {
   /// that fails, the picture of the live controller is used as a fallback.
   Future<StillCapture?> captureStill({bool deferDecode = false}) {
     // Freeze at the shutter, before any queued camera initialisation or I/O.
-    final turns = motion?.orientation.value.quarterTurns ?? 0;
+    final turns = preserveSourceOrientation
+        ? 0
+        : motion?.orientation.value.quarterTurns ?? 0;
     return _serial(() async {
       final description = _description;
       final device = _device;
@@ -676,6 +683,7 @@ class CameraService {
         targetHeight: height,
       ),
       swapAxes: (width, height) {
+        if (preserveSourceOrientation) return false;
         if (readExifOrientation(bytes) != null) return false;
         final rotation = _decideStillRotation(
           exif: null,
@@ -767,6 +775,8 @@ class CameraService {
     final exif = exifValue == null
         ? null
         : ExifOrientation.fromValue(exifValue);
+
+    if (preserveSourceOrientation) return decoded;
 
     if (exif != null) {
       log.info(

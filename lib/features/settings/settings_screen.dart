@@ -6,6 +6,7 @@ import '../../ambient/ambient_controller.dart';
 import '../../ambient/signal_intensity.dart';
 import '../../app_config.dart';
 import '../../camera/camera_metrics.dart';
+import '../../camera/screenshot_photo_source.dart';
 import '../../debug/capture_metrics.dart';
 import '../../debug/debug_log.dart';
 import '../../debug/device_summary.dart';
@@ -37,6 +38,7 @@ class SettingsScreen extends StatelessWidget {
     this.donationUrl = AppConfig.donationUrl,
     this.openLink = _openExternally,
     this.screenshotMode = AppConfig.screenshotMode,
+    this.screenshotPhotoSourceStatus,
   });
 
   /// The switches.
@@ -59,6 +61,8 @@ class SettingsScreen extends StatelessWidget {
 
   /// Private tooling; tests can reveal the section without a build define.
   final bool screenshotMode;
+
+  final String? screenshotPhotoSourceStatus;
 
   /// The current camera measurements, for the report.
   final ValueListenable<CameraMetricsData> metrics;
@@ -308,6 +312,13 @@ class SettingsScreen extends StatelessWidget {
           const Divider(),
           if (screenshotMode) ...[
             ScreenshotSection(ambient: ambient),
+            Padding(
+              padding: const EdgeInsets.all(AppTheme.spaceMd),
+              child: Text(
+                screenshotPhotoSourceStatus ??
+                    ScreenshotPhotoSource.inactiveStatus,
+              ),
+            ),
             const Divider(),
           ],
           _SectionTitle(l10n.settingsTroubleshootingTitle),

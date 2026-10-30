@@ -49,27 +49,27 @@ clave de publicación. Si el instalador no deja actualizar la app que ya tienes,
 las firmas no coinciden: desinstala esa versión e instala esta otra.
 </details>
 
-<!--
 ## Capturas
 
 <p>
-  <img src="docs/readme/01-prism-live.png" width="19%" alt="Visor en directo con el estilo Prism">
-  <img src="docs/readme/02-thermal-live.png" width="19%" alt="Visor en directo con el estilo Thermal">
-  <img src="docs/readme/03-ripple-live.png" width="19%" alt="Visor en directo con el estilo Ripple">
-  <img src="docs/readme/04-result-full.png" width="19%" alt="Pantalla de resultado con la composición Full">
-  <img src="docs/readme/05-result-sound-strip.png" width="19%" alt="Pantalla de resultado con la composición Sound strip">
+  <a href="docs/readme/es/01-prism-live.png"><img src="docs/readme/es/01-prism-live.png" width="19%" alt="Visor en directo con el estilo Prism"></a>
+  <a href="docs/readme/es/02-thermal-live.png"><img src="docs/readme/es/02-thermal-live.png" width="19%" alt="Visor en directo con el estilo Thermal"></a>
+  <a href="docs/readme/es/03-ripple-live.png"><img src="docs/readme/es/03-ripple-live.png" width="19%" alt="Visor en directo con el estilo Ripple"></a>
+  <a href="docs/readme/es/04-result-full.png"><img src="docs/readme/es/04-result-full.png" width="19%" alt="Pantalla de resultado con la composición Full"></a>
+  <a href="docs/readme/es/05-result-sound-strip.png"><img src="docs/readme/es/05-result-sound-strip.png" width="19%" alt="Pantalla de resultado con la composición Sound strip"></a>
 </p>
+
+Pulsa una captura para ampliarla.
 
 <details>
 <summary>Más capturas</summary>
 
 <p>
-  <img src="docs/readme/06-result-poster.png" width="19%" alt="Pantalla de resultado con la composición Poster">
-  <img src="docs/readme/07-before-after.png" width="19%" alt="Comparación entre la foto procesada y la original">
-  <img src="docs/readme/08-landscape-result.png" width="19%" alt="Resultado de una foto en horizontal">
+  <a href="docs/readme/es/06-result-poster.png"><img src="docs/readme/es/06-result-poster.png" width="19%" alt="Pantalla de resultado con la composición Poster"></a>
+  <a href="docs/readme/es/07-before-after.png"><img src="docs/readme/es/07-before-after.png" width="19%" alt="Comparación entre la foto procesada y la original"></a>
+  <a href="docs/readme/es/08-landscape-result.png"><img src="docs/readme/es/08-landscape-result.png" width="19%" alt="Resultado de una foto en horizontal"></a>
 </p>
 </details>
--->
 
 ## Funciones
 

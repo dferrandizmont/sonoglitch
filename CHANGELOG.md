@@ -11,6 +11,8 @@ one with that format.
 
 ## Unreleased
 
+- The README and the contributing guide follow the common layout of the family of apps: the README is shorter, and the build, the diagnostics, the checks and the project layout move to the contributing guide.
+
 ## 0.2.0-alpha.2 · 29-Oct-2026
 
 - Volume up and down take the photo on Android (Settings > Volume buttons).

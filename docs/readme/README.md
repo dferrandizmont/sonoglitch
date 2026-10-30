@@ -8,8 +8,7 @@ This folder holds the pictures used by [README.md](../../README.md),
 | `header.png` | The banner at the top of both READMEs, 1024 px wide |
 | `icon-512.png` | The app icon, 512 px square |
 | `og.png` | The Open Graph image of the website, only used when it exists |
-| `NN-*.png` | The screenshots, in the order they are listed below |
-| `play/NN-*.png` | The same screenshots prepared for Google Play |
+| `en/NN-*.png`, `es/NN-*.png` | The screenshots of each README, 1080x2400, in the order listed below |
 
 The banner, the icon and the Open Graph image are made by
 `tool/readme/make_banner.py`. The screenshots are processed by
@@ -38,6 +37,24 @@ with the same name.
 
 The section of the README that shows the screenshots is inside an HTML comment
 until the pictures exist. Uncomment it once the files are here.
+
+## Provisional screenshots
+
+The screenshots of `en/` and `es/` are provisional. They were taken on the
+Android emulator with the screenshot build and its photo source (see
+[RELEASING.md](../RELEASING.md)), so the effects are the real ones but the
+scene is a stock photo. They will be replaced by captures from a phone with
+the same names. The Google Play images are generated from them into
+`docs/store/` (not published) with the `store_shots.py` tool of the shared
+README template.
+
+Photos used, both CC0 (public domain) from Wikimedia Commons:
+
+- [Fruit at the Xincheng Night Market](https://commons.wikimedia.org/wiki/File:Fruit_at_the_Xincheng_Night_Market.jpg), shots 01, 02 and 04 to 07.
+- [Swedish sunset (Unsplash)](https://commons.wikimedia.org/wiki/File:Swedish_sunset_(Unsplash).jpg), shots 03 and 08.
+
+The tools below still write the older layout (screenshots at the root of
+this folder and `play/`); adapt them before processing real captures.
 
 ## How to regenerate them
 

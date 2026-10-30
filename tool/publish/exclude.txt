@@ -1,2 +1,5 @@
 # Paths (relative to the repository root) that are not published.
 # The tracked tree is already public-ready; list here anything added later that must stay private.
+
+# Store listing screenshots are generated here but never published.
+docs/store

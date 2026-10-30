@@ -6,6 +6,7 @@ import 'package:sonoglitch/ambient/motion_service.dart';
 import 'package:sonoglitch/ambient/noise_service.dart';
 import 'package:sonoglitch/ambient/spectrum_service.dart';
 import 'package:sonoglitch/ambient/spectrum_source.dart';
+import 'package:sonoglitch/camera/screenshot_photo_source.dart';
 import 'package:sonoglitch/export/export_layout.dart';
 import 'package:sonoglitch/export/export_readings.dart';
 import 'package:sonoglitch/features/settings/app_settings.dart';
@@ -24,7 +25,30 @@ void main() {
     expect(find.byType(ScreenshotSection), findsNothing);
     expect(find.text('Screenshot mode'), findsNothing);
     expect(find.text('Demo values'), findsNothing);
+    expect(find.textContaining('Photo source'), findsNothing);
   });
+
+  for (final active in [false, true]) {
+    testWidgets(
+      'screenshot settings show photo source active=$active and path',
+      (tester) async {
+        final settings = AppSettings(store: InMemoryPreferencesStore());
+        await settings.load();
+        final status =
+            'Photo source ${active ? 'active' : 'inactive'}; '
+            '${ScreenshotPhotoSource.androidAdbPath}';
+        await pumpSettingsScreen(
+          tester,
+          settings,
+          screenshotMode: true,
+          screenshotPhotoSourceStatus: status,
+        );
+        await tester.scrollUntilVisible(find.text(status), 200);
+        expect(find.text(status), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 
   testWidgets('demo values survive Settings and capture until switched off', (
     tester,

@@ -49,27 +49,27 @@ the installer refuses to update the app you already have, the signatures do not
 match: uninstall that build and install this one again.
 </details>
 
-<!--
 ## Screenshots
 
 <p>
-  <img src="docs/readme/01-prism-live.png" width="19%" alt="Live viewfinder with the Prism style">
-  <img src="docs/readme/02-thermal-live.png" width="19%" alt="Live viewfinder with the Thermal style">
-  <img src="docs/readme/03-ripple-live.png" width="19%" alt="Live viewfinder with the Ripple style">
-  <img src="docs/readme/04-result-full.png" width="19%" alt="Result screen with the Full export layout">
-  <img src="docs/readme/05-result-sound-strip.png" width="19%" alt="Result screen with the Sound strip export layout">
+  <a href="docs/readme/en/01-prism-live.png"><img src="docs/readme/en/01-prism-live.png" width="19%" alt="Live viewfinder with the Prism style"></a>
+  <a href="docs/readme/en/02-thermal-live.png"><img src="docs/readme/en/02-thermal-live.png" width="19%" alt="Live viewfinder with the Thermal style"></a>
+  <a href="docs/readme/en/03-ripple-live.png"><img src="docs/readme/en/03-ripple-live.png" width="19%" alt="Live viewfinder with the Ripple style"></a>
+  <a href="docs/readme/en/04-result-full.png"><img src="docs/readme/en/04-result-full.png" width="19%" alt="Result screen with the Full export layout"></a>
+  <a href="docs/readme/en/05-result-sound-strip.png"><img src="docs/readme/en/05-result-sound-strip.png" width="19%" alt="Result screen with the Sound strip export layout"></a>
 </p>
+
+Tap a screenshot to enlarge it.
 
 <details>
 <summary>More screenshots</summary>
 
 <p>
-  <img src="docs/readme/06-result-poster.png" width="19%" alt="Result screen with the Poster export layout">
-  <img src="docs/readme/07-before-after.png" width="19%" alt="Comparison between the processed picture and the original">
-  <img src="docs/readme/08-landscape-result.png" width="19%" alt="Result of a landscape photo">
+  <a href="docs/readme/en/06-result-poster.png"><img src="docs/readme/en/06-result-poster.png" width="19%" alt="Result screen with the Poster export layout"></a>
+  <a href="docs/readme/en/07-before-after.png"><img src="docs/readme/en/07-before-after.png" width="19%" alt="Comparison between the processed picture and the original"></a>
+  <a href="docs/readme/en/08-landscape-result.png"><img src="docs/readme/en/08-landscape-result.png" width="19%" alt="Result of a landscape photo"></a>
 </p>
 </details>
--->
 
 ## Features
 
