@@ -9,6 +9,7 @@
 [![Code: Apache-2.0](https://img.shields.io/badge/Code-Apache--2.0-6E5AA8)](LICENSE)
 [![Version](https://img.shields.io/github/v/release/dferrandizmont/sonoglitch?include_prereleases&label=version&color=6E5AA8)](https://github.com/dferrandizmont/sonoglitch/releases)
 [![Downloads](https://img.shields.io/github/downloads/dferrandizmont/sonoglitch/total?label=downloads&color=6E5AA8)](https://github.com/dferrandizmont/sonoglitch/releases)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Buy_me_a_coffee-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/danielmfdev)
 
 Sonoglitch is a free, open source camera app that lets the surroundings shape a
 photo. The sound level of the microphone, the light of the place and the

@@ -9,6 +9,7 @@
 [![Licencia: Apache-2.0](https://img.shields.io/badge/Licencia-Apache--2.0-6E5AA8)](LICENSE)
 [![Versión](https://img.shields.io/github/v/release/dferrandizmont/sonoglitch?include_prereleases&label=versi%C3%B3n&color=6E5AA8)](https://github.com/dferrandizmont/sonoglitch/releases)
 [![Descargas](https://img.shields.io/github/downloads/dferrandizmont/sonoglitch/total?label=descargas&color=6E5AA8)](https://github.com/dferrandizmont/sonoglitch/releases)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Inv%C3%ADtame_a_un_caf%C3%A9-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/danielmfdev)
 
 Sonoglitch es una cámara gratuita y de código abierto que deja que el entorno
 dé forma a la foto. El nivel de sonido del micrófono, la luz del entorno y el
