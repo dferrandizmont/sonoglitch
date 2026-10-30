@@ -1,0 +1,115 @@
+{% extends 'base/layout.html.j2' %}
+{% from 'base/screenshots.html.j2' import picture %}
+{% from 'macros.html.j2' import marker, cells %}
+{% block content %}
+{% set icon_down %}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M6 11l6 6 6-6M4 21h16"/></svg>{% endset %}
+<section id="about" class="hero">
+<div class="wrap">
+<div class="hero-grid">
+<div class="hero-text">
+<p class="mono">{{ c.eyebrow }}</p>
+<h1 class="glitch">{{ c.headline }}</h1>
+<p class="lede">{{ c.intro }}</p>
+<p class="facts">{{ c.key_facts }}</p>
+<div class="actions">
+<a class="btn pri" href="#download">{{ icon_down }}{{ c.cta_download }}</a>
+<a class="btn out" href="{{ site.repo_url }}">{{ c.cta_code }}</a>
+</div>
+</div>
+{% set hero = shots[0] %}<figure class="vf">
+<span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+<picture>
+<source type="image/avif" srcset="{{ hero.avif }}" sizes="(max-width: 899px) 256px, 348px">
+<source type="image/webp" srcset="{{ hero.webp }}" sizes="(max-width: 899px) 256px, 348px">
+<img src="{{ hero.src }}" srcset="{{ hero.webp }}" sizes="(max-width: 899px) 256px, 348px" width="{{ hero.width }}" height="{{ hero.height }}" alt="{{ hero.alt }}" fetchpriority="high">
+</picture>
+</figure>
+</div>
+<ul class="readings" role="list" aria-label="{{ c.readings_label }}">
+{% set lit = [9, 6, 4] %}{% set kinds = ['noise', 'light', 'move'] %}
+{% for r in c.readings %}<li class="reading {{ kinds[loop.index0] }}">
+<span class="row">{% if loop.index0 == 0 %}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>{% elif loop.index0 == 1 %}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>{% else %}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>{% endif %}<span class="mono name">{{ r.name }}</span>{{ cells(lit[loop.index0]) }}</span>
+<span class="text">{{ r.text }}</span>
+</li>{% endfor %}
+</ul>
+</div>
+</section>
+
+<section id="download" class="sec">
+<div class="wrap">
+<div class="sec-head">{{ marker(2) }}<h2>{{ t.download }}</h2><p>{{ c.download_intro }}</p></div>
+<div class="platforms">
+{% for platform, kinds, note in [('android', ['apk', 'play', 'fdroid'], c.android_note), ('ios', ['app_store', 'testflight'], c.ios_note)] %}
+<div class="card platform">
+<div class="card-head"><h3>{{ t[platform] }}</h3><span class="mono">{{ note }}</span></div>
+{% for item in site.downloads if item.kind in kinds %}
+{% if item.state == 'soon' %}<div class="store soon"><span class="l">{{ t[item.kind] }}</span><span class="st">{{ t[item.state] }}</span></div>
+{% else %}<a class="store" href="{{ item.url }}"><span class="l">{{ icon_down }}{{ t[item.kind] }}</span><span class="st">{{ t[item.state] }}</span></a>
+{% endif %}
+{% endfor %}
+{% if platform == 'ios' %}<p class="sub">{{ c.ios_text }}</p>{% endif %}
+</div>
+{% endfor %}
+</div>
+<p class="note">{{ c.apk_note }} <a href="#support">{{ c.apk_howto }}</a></p>
+</div>
+</section>
+
+<section id="screenshots" class="sec">
+<div class="wrap">
+<div class="sec-head">{{ marker(4) }}<h2>{{ t.screenshots }}</h2><p class="mono hint">{{ c.shots_hint }}</p></div>
+<div class="reel" tabindex="0" role="region" aria-label="{{ t.screenshots }}">
+<ul class="film" role="list">
+{% for shot in shots %}{% set name = site.screenshots[loop.index0] %}<li><figure>{{ picture(shot, loop.first, "(max-width: 899px) 200px, 256px") }}<figcaption class="mono"><span class="frm">{{ '%02d' | format(loop.index) }}</span><span>{{ c.screenshot_captions[name] }}</span></figcaption></figure></li>
+{% endfor %}
+</ul>
+</div>
+</div>
+</section>
+
+<section id="features" class="sec">
+<div class="wrap">
+<div class="sec-head">{{ marker(6) }}<h2>{{ t.features }}</h2><p>{{ c.features_intro }}</p></div>
+<dl class="styles" role="group" aria-label="{{ c.styles_label }}">
+{% for s in c.styles %}<div class="style"><dt>{{ s.name }}</dt><dd>{{ s.text }}</dd></div>{% endfor %}
+</dl>
+<ul class="feat" role="list">
+{% for feature in c.features %}<li><span class="mono">{{ '%02d' | format(loop.index) }}</span><h3>{{ c.feature_titles[loop.index0] }}</h3><p>{{ feature }}</p></li>
+{% endfor %}
+</ul>
+</div>
+</section>
+
+<section id="privacy" class="sec">
+<div class="wrap">
+<div class="priv">
+<div class="sec-head flush">{{ marker(8) }}<h2>{{ t.privacy }}</h2>
+{% for sentence in c.privacy_summary %}<p>{{ sentence }}</p>{% endfor %}
+<p><a class="more" href="{{ route(lang, true) }}">{{ t.privacy_full }}</a></p>
+</div>
+<ul class="glance" role="list" aria-label="{{ c.glance_label }}">
+{% for g in c.glance %}<li><span>{{ g.key }}</span><span>{{ g.value }}</span></li>{% endfor %}
+</ul>
+</div>
+<h3 class="path-title">{{ c.mic_title }}</h3>
+<ol class="path" role="list">
+{% for step in c.mic_steps %}<li><span class="mono step">{{ c.mic_step }} {{ loop.index }}</span><span class="cell" aria-hidden="true"></span><strong>{{ step.name }}</strong><span class="d">{{ step.text }}</span></li>
+{% endfor %}
+</ol>
+</div>
+</section>
+
+<section id="support" class="sec">
+<div class="wrap">
+<div class="sec-head">{{ marker(9) }}<h2>{{ t.support }}</h2><p class="mono">{{ t.faq }}</p></div>
+<div class="faq">
+{% for item in c.faq %}<details{% if loop.first %} open{% endif %}><summary><span>{{ item.question }}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><p>{{ item.answer }}</p></details>
+{% endfor %}
+</div>
+<div class="mail">
+<p><span class="mono">{{ c.mail_label }}</span><span class="big">{{ c.mail_text }} <a href="mailto:{{ contact_email }}">{{ contact_email }}</a></span></p>
+<a class="btn out" href="{{ site.repo_url }}/issues">{{ c.issue_link }}</a>
+</div>
+</div>
+</section>
+{% endblock %}

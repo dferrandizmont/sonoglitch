@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>{% include 'base/head.html.j2' %}<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0D0D11"></head>
+<body class="page-{{ page_kind }}">
+{% include 'base/skip_link.html.j2' %}
+{% block header %}{% set home = route(lang) %}<header class="site-head">
+<div class="wrap bar">
+<a class="brand" href="{{ home }}"><img src="/apple-touch-icon.png" alt="" width="32" height="32"><span>{{ c.name }}</span></a>
+<nav class="sections" aria-label="{{ c.nav_label }}">{% for id in ['download', 'screenshots', 'features', 'privacy', 'support'] %}<a href="{{ '#' ~ id if page_kind == 'home' else home ~ '#' ~ id }}">{{ t[id] }}</a>{% endfor %}</nav>
+{% if site.languages | length > 1 %}<nav class="lang" aria-label="{{ t.languages_label }}" data-lang-switcher>{% for code in site.languages %}<a href="{{ route(code, page_kind == 'privacy') }}" lang="{{ code }}" hreflang="{{ code }}"{% if code == lang %} aria-current="page"{% endif %}>{{ t.languages[code] }}</a>{% endfor %}</nav>{% endif %}
+</div>
+</header>{% endblock %}
+<main id="content">{% block content %}{% endblock %}</main>
+{% block footer %}{% include 'base/required_footer.html.j2' %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,177 @@
+{
+  "name": "Sonoglitch",
+  "title": "Sonoglitch · A camera shaped by sound, light and motion",
+  "description": "A free, open source camera app for Android: the sound, light and movement around you distort the photo. No ads, no account, works offline.",
+  "eyebrow": "Camera app · Android 10+ · Early alpha",
+  "headline": "A camera shaped by sound, light and motion",
+  "intro": "Sonoglitch is a free, open source camera app for anyone who wants a photo to show how a place sounded and felt, not only how it looked. The sound level, the light and the movement around you distort the picture live, right in the viewfinder.",
+  "key_facts": "Free · No ads · No account · Works offline · Open source",
+  "cta_download": "Download",
+  "cta_code": "View the code",
+  "nav_label": "Sections",
+  "readings_label": "The three readings",
+  "readings": [
+    {
+      "name": "Noise",
+      "text": "Sets the strength of the disturbance."
+    },
+    {
+      "name": "Light",
+      "text": "Sets the tone and the contrast."
+    },
+    {
+      "name": "Movement",
+      "text": "Sets how much the picture moves and the trails it leaves."
+    }
+  ],
+  "download_intro": "Android 10 (API 29) or newer for now; iOS is not released yet. The app is at an early alpha stage, so only test builds are published, and device compatibility, performance and image quality still need testing.",
+  "android_note": "Android 10 or newer",
+  "ios_note": "Not released yet",
+  "ios_text": "The iPhone version will come from the same code, but it is not ready for release yet.",
+  "apk_note": "Each test build is an APK with its own .sha256 file, so you can check it before installing.",
+  "apk_howto": "How to install it",
+  "shots_hint": "Scroll sideways",
+  "screenshot_captions": {
+    "01-prism-live": "Prism · live",
+    "02-thermal-live": "Thermal · live",
+    "03-ripple-live": "Ripple · live",
+    "04-result-full": "Full · 4:5",
+    "05-result-sound-strip": "Sound strip",
+    "06-result-poster": "Poster · 9:16",
+    "07-before-after": "Compare",
+    "08-landscape-result": "Landscape"
+  },
+  "screenshot_alts": {
+    "01-prism-live": "Live viewfinder with the Prism style over a night-market fruit stall, with the noise, light and movement meters at the top",
+    "02-thermal-live": "Live viewfinder with the Thermal style over the same stall, in heat-camera colours and contours",
+    "03-ripple-live": "Live viewfinder with the Ripple style over a sunset on a lake, with the noise, light and movement meters at the top",
+    "04-result-full": "Photo screen with the Full layout and the Portrait 4:5 crop, with the Retake, Share and Save buttons",
+    "05-result-sound-strip": "Photo screen with the Sound strip layout: a band under the picture shows the sound, light and movement readings",
+    "06-result-poster": "Photo screen with the Poster layout and the Story 9:16 crop: a white frame with the Thermal style name and the readings",
+    "07-before-after": "Photo screen with the compare button on: the original night market photo, without the effect, in the Full layout and the Portrait 4:5 crop",
+    "08-landscape-result": "Photo screen with a landscape sunset photo in the Sound strip layout and the Original crop"
+  },
+  "features_intro": "Every style uses the three readings in its own way, and the effect stays bounded, so the subject is still recognisable.",
+  "styles_label": "The six styles",
+  "styles": [
+    {
+      "name": "Static",
+      "text": "Digital bands and tearing"
+    },
+    {
+      "name": "Tape",
+      "text": "Worn VHS: wobble, lines and grain"
+    },
+    {
+      "name": "Phosphor",
+      "text": "Old CRT screen with green trails"
+    },
+    {
+      "name": "Ripple",
+      "text": "Sound spreads like waves on water"
+    },
+    {
+      "name": "Thermal",
+      "text": "Heat-camera colours and contours"
+    },
+    {
+      "name": "Prism",
+      "text": "Flowing warp that splits colours"
+    }
+  ],
+  "feature_titles": [
+    "Six styles",
+    "Live viewfinder",
+    "Auto shot",
+    "Three layouts",
+    "Four crops",
+    "Quality and format"
+  ],
+  "features": [
+    "Static, Tape, Phosphor, Ripple, Thermal and Prism each turn the noise, the light and the movement into a different kind of glitch.",
+    "The effect is already on the picture. Swipe or use the style button to change style; the style sheet also offers Random and Match this place, which picks a style for the ambience and tells you why.",
+    "The camera takes the photo by itself when the sound crosses a threshold after a quiet second, or when the scene jumps.",
+    "Full is just the photo, Sound strip adds a band with the sound, light and movement, and Poster is a framed print with the style and readings.",
+    "Original, Square 1:1, Portrait 4:5 and Story 9:16.",
+    "Choose Standard (up to 2048 px on the photo's long side), High (up to 4096 px) or Maximum (up to native size), within the limits of the original image and the device, and export as PNG or JPEG. The cropped photo is capped at 24 MP; Sound strip and Poster can make the exported image larger. Save the photo to the gallery or share it, and press and hold it to compare it with the original."
+  ],
+  "privacy_summary": [
+    "From the microphone, Sonoglitch measures only the volume level and the energy of three frequency bands, in memory: no audio is recorded, stored or sent.",
+    "It works entirely on your device, with no accounts, no ads, no analytics and no trackers.",
+    "Release builds do not declare Android's INTERNET permission, so the app has no network access."
+  ],
+  "glance_label": "Privacy at a glance",
+  "glance": [
+    {
+      "key": "Audio",
+      "value": "Never recorded"
+    },
+    {
+      "key": "Processing",
+      "value": "On the device"
+    },
+    {
+      "key": "Accounts · ads",
+      "value": "None"
+    },
+    {
+      "key": "Analytics · trackers",
+      "value": "None"
+    },
+    {
+      "key": "Network (release builds)",
+      "value": "No access"
+    }
+  ],
+  "mic_title": "What happens to the microphone signal",
+  "mic_step": "Step",
+  "mic_steps": [
+    {
+      "name": "Microphone",
+      "text": "The audio buffers are processed in memory only."
+    },
+    {
+      "name": "Measure",
+      "text": "The volume level and the energy of three bands: bass, mid and treble."
+    },
+    {
+      "name": "Numbers",
+      "text": "Numeric readings drive the effect. Volume readings can also appear in a private diagnostics log on your device; you choose whether to share it."
+    },
+    {
+      "name": "Discard",
+      "text": "The buffers are then discarded. No audio is recorded, stored or sent."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Does Sonoglitch cost anything?",
+      "answer": "No. It is free, with no ads and no purchases, and its code is open source under Apache-2.0. The GitHub build has an optional Ko-fi link in Settings if you want to support the project."
+    },
+    {
+      "question": "Do I need an account or a connection?",
+      "answer": "No. There are no accounts and it works offline: release builds do not even declare Android's INTERNET permission."
+    },
+    {
+      "question": "Does it record what I say?",
+      "answer": "No. From the microphone it measures only the volume level and the energy of three frequency bands, in memory, and then discards the audio buffers. No audio is recorded, stored or sent."
+    },
+    {
+      "question": "Which phones can run it?",
+      "answer": "Android phones with Android 10 (API 29) or newer. It is an early alpha, so device compatibility, performance and image quality still need testing."
+    },
+    {
+      "question": "Is it on Google Play, F-Droid or the App Store?",
+      "answer": "Not yet. Google Play and F-Droid will come later, and iOS is not released; for now only alpha test builds are published on GitHub."
+    },
+    {
+      "question": "How do I install the APK?",
+      "answer": "Open the releases page on GitHub, pick the newest prerelease and download sonoglitch-<version>.apk with its .sha256 file. Check the APK against that hash, install it allowing unknown apps and check the version in Settings > About. Some prereleases are signed with the debug key. If Android reports a signature mismatch when updating, uninstall the installed build and install the new one."
+    }
+  ],
+  "mail_label": "Still stuck?",
+  "mail_text": "Write to",
+  "issue_link": "Open an issue on GitHub",
+  "licence_text": "Apache-2.0 license",
+  "privacy_date": "2026-10-27"
+}

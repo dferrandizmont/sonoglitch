@@ -1,0 +1,9 @@
+{#- Square-cell section marker, like the app's glitch loader: three lit cells out of twelve. -#}
+{% macro marker(start) -%}
+<span class="marker" aria-hidden="true">{% for i in range(12) %}<i{% if start <= i < start + 3 %} class="on"{% endif %}></i>{% endfor %}</span>
+{%- endmacro %}
+
+{#- Twelve square meter cells; `lit` of them on. -#}
+{% macro cells(lit) -%}
+<span class="cells" aria-hidden="true">{% for i in range(12) %}<i{% if i < lit %} class="on"{% endif %}></i>{% endfor %}</span>
+{%- endmacro %}

@@ -1,0 +1,14 @@
+{% extends 'base/layout.html.j2' %}
+{% from 'macros.html.j2' import marker %}
+{% block content %}
+<div class="page-intro not-found">
+<div class="wrap">
+{{ marker(0) }}
+<h1 class="glitch">{{ t.not_found }}</h1>
+<p class="lede">{{ t.not_found_text }}</p>
+<ul class="home-links" role="list">
+{% for code in site.languages %}<li><a class="btn out" href="{{ route(code) }}" lang="{{ code }}" hreflang="{{ code }}">{{ t.home }} · {{ t.languages[code] }}</a></li>{% endfor %}
+</ul>
+</div>
+</div>
+{% endblock %}

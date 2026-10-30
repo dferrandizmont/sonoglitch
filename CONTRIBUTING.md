@@ -40,7 +40,7 @@ For a run with diagnostics enabled by default and an explicit displayed
 version:
 
 ```sh
-flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=APP_VERSION=0.2.0-alpha.2
+flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=APP_VERSION=0.2.0-alpha.3
 ```
 
 To start with reproducible manual controls in `noise,light,motion` order:
@@ -52,7 +52,7 @@ flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=SONOGLITCH_MANUAL=
 To build a local APK:
 
 ```sh
-flutter build apk --release --target-platform android-arm64,android-x64 --dart-define=APP_VERSION=0.2.0-alpha.2
+flutter build apk --release --target-platform android-arm64,android-x64 --dart-define=APP_VERSION=0.2.0-alpha.3
 ```
 
 The output is `build/app/outputs/flutter-apk/app-release.apk`; the key it is
@@ -86,14 +86,9 @@ Use `dart format .` when you need to apply formatting. If Flutter tooling rewrit
 
 Add a dependency only with a documented reason. Prefer maintained packages with a permissive license (Apache-2.0, MIT or BSD), and verify the license before adding it.
 
-The website is a static site generated with the Python standard library only:
-
-```sh
-python tool/site/build.py
-python -m unittest discover -s tool/site
-```
-
-See [tool/site/README.md](tool/site/README.md).
+The website, https://sonoglitch.mainshai.com, is generated from `web/` by the common generator of the
+family of apps (a separate private repository), which also reads the screenshots in `docs/readme/` and the
+privacy policy in `docs/legal/`. `site/` only holds redirects from the old GitHub Pages address.
 
 ## The camera screen
 
@@ -170,7 +165,7 @@ Seeds, fingerprints, photo IDs and derivation material are excluded from ambient
 
 ## Privacy
 
-Never record, store or transmit audio. Only the volume level and the energy of the three frequency bands may be read, in memory: no audio sample is kept, written to disk or sent anywhere. Keep camera audio capture disabled. Do not add app network requests, servers, accounts, analytics, ads or trackers. Processing stays on the device; sharing is initiated explicitly by the user through the system share sheet. Keep logs free of audio, image content and secrets, preserve absolute-path redaction and review device information and error text before posting reports publicly. See [docs/PRIVACY.md](docs/PRIVACY.md).
+Never record, store or transmit audio. Only the volume level and the energy of the three frequency bands may be read, in memory: no audio sample is kept, written to disk or sent anywhere. Keep camera audio capture disabled. Do not add app network requests, servers, accounts, analytics, ads or trackers. Processing stays on the device; sharing is initiated explicitly by the user through the system share sheet. Keep logs free of audio, image content and secrets, preserve absolute-path redaction and review device information and error text before posting reports publicly. See [docs/legal/politica-privacidad.en.md](docs/legal/politica-privacidad.en.md).
 
 ## Signing a local build
 
@@ -216,9 +211,10 @@ Configure all four or none. Partial configuration fails the job. With all four, 
 | `lib/debug/` | Local logs, reports and diagnostics panel |
 | `lib/theme/`, `lib/l10n/` | UI tokens and English/Spanish localization |
 | `test/` | Unit, widget and shader-related tests |
-| `tool/` | Icon, screenshot and website generators |
+| `tool/` | Icon, screenshot, release and publishing tools |
 | `docs/readme/` | Banner, icon and screenshots used by the README and the website |
-| `site/` | Generated website, committed so it can be served from the branch |
+| `web/` | Source of the website: settings, texts, templates and styles |
+| `site/` | Redirects from the old GitHub Pages address to the website |
 | `.github/`, `fastlane/metadata/android/` | CI, release automation, templates and store text |
 
 ## License of contributions

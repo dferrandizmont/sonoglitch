@@ -66,7 +66,7 @@ Pulsa una captura para ampliarla.
 
 <p>
   <a href="docs/readme/es/06-result-poster.png"><img src="docs/readme/es/06-result-poster.png" width="19%" alt="Pantalla de resultado con la composición Poster"></a>
-  <a href="docs/readme/es/07-before-after.png"><img src="docs/readme/es/07-before-after.png" width="19%" alt="Comparación entre la foto procesada y la original"></a>
+  <a href="docs/readme/es/07-before-after.png"><img src="docs/readme/es/07-before-after.png" width="19%" alt="Pantalla de la foto mostrando la original, sin el efecto, para compararla con la procesada"></a>
   <a href="docs/readme/es/08-landscape-result.png"><img src="docs/readme/es/08-landscape-result.png" width="19%" alt="Resultado de una foto en horizontal"></a>
 </p>
 </details>
@@ -101,7 +101,7 @@ de frecuencias, en memoria: el audio nunca se graba, almacena ni transmite. El
 procesamiento es local, sin cuentas, sin anuncios, sin analítica y sin
 servidores.
 
-Lee la [política de privacidad](docs/PRIVACY.md) para los detalles.
+[Política de privacidad](https://sonoglitch.mainshai.com/es/privacy/) · Web: [sonoglitch.mainshai.com](https://sonoglitch.mainshai.com/es/) · Soporte: **sonoglitch@mainshai.com**.
 
 ## Novedades
 

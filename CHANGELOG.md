@@ -11,7 +11,12 @@ one with that format.
 
 ## Unreleased
 
+## 0.2.0-alpha.3 · 31-Oct-2026
+
 - The README and the contributing guide follow the common layout of the family of apps: the README is shorter, and the build, the diagnostics, the checks and the project layout move to the contributing guide.
+- The privacy policy is now also available in Spanish.
+- New website at https://sonoglitch.mainshai.com, in English and Spanish, with the full privacy policy. The old address on GitHub Pages redirects to it.
+- The before-and-after screenshot of the README and the website now shows the original photo; it was a copy of the result screenshot.
 
 ## 0.2.0-alpha.2 · 29-Oct-2026
 

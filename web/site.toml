@@ -1,0 +1,25 @@
+id = "sonoglitch"
+domain = "sonoglitch.mainshai.com"
+languages = ["en", "es"]
+default_language = "en"
+brand = "#6E5AA8"
+open_source = true
+free = true
+repo_url = "https://github.com/dferrandizmont/sonoglitch"
+contact_email = "sonoglitch@mainshai.com"
+screenshots = [
+  "01-prism-live",
+  "02-thermal-live",
+  "03-ripple-live",
+  "04-result-full",
+  "05-result-sound-strip",
+  "06-result-poster",
+  "07-before-after",
+  "08-landscape-result",
+]
+privacy = { en = "docs/legal/politica-privacidad.en.md", es = "docs/legal/politica-privacidad.md" }
+downloads = [
+  { kind = "apk", state = "alpha", url = "https://github.com/dferrandizmont/sonoglitch/releases" },
+  { kind = "play", state = "soon" },
+  { kind = "app_store", state = "soon" },
+]

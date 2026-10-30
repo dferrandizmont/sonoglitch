@@ -1,0 +1,15 @@
+{#- Same mandatory content as the shared footer, laid out for the Viewfinder design. -#}
+<footer class="site-foot">
+<div class="wrap">
+<div class="foot-top">
+{% set author_parts = t.author.split('DanielMF') %}<p class="author"><img src="/apple-touch-icon.png" alt="" width="24" height="24"><span>{{ author_parts[0].format(app=c.name) }}<a href="https://mainshai.com">DanielMF</a>{{ author_parts[1] }}</span></p>
+<p class="mono">{{ t.no_tracking }}</p>
+</div>
+<ul class="foot-links" role="list">
+{% if site.open_source %}<li><a href="{{ site.repo_url }}">{{ t.code }}</a><span class="dim"> · {{ c.licence_text }}</span></li>{% endif %}
+{% if site.free %}<li><a href="https://ko-fi.com/danielmfdev">{{ t.coffee }}</a></li>{% endif %}
+<li><a href="mailto:{{ contact_email }}">{{ t.contact }}</a></li>
+<li><a href="{{ route(lang, true) }}">{{ t.privacy_full }}</a></li>
+</ul>
+</div>
+</footer>

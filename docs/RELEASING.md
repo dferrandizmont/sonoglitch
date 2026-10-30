@@ -188,14 +188,14 @@ Do **not** pass `DONATION_URL`. Upload `build/app/outputs/bundle/release/app-rel
 ### Store listing
 
 - Title, short and full descriptions: `fastlane/metadata/android/<locale>/` (English and Spanish).
-- Privacy policy URL: the rendered `docs/PRIVACY.md` of the public repository (for example `https://github.com/dferrandizmont/sonoglitch/blob/main/docs/PRIVACY.md`). The repository must be public first.
+- Privacy policy URL: `https://sonoglitch.mainshai.com/privacy/` (English; source: `docs/legal/politica-privacidad.en.md`).
 - Contact email: `dev@mainshai.com`.
 - Price: free, no ads, no in-app purchases.
 - Assets that must be made on a device: a 512×512 icon, a 1024×500 feature graphic and at least two phone screenshots.
 
 ### Data safety form
 
-The app collects and shares nothing: answer *No* to "Does your app collect or share any of the required user data types?". Camera and microphone are used for on-device processing only (see the [privacy policy](PRIVACY.md)); audio is never recorded, stored or sent, and the release build has no `INTERNET` permission. Declared permissions: `CAMERA`, `RECORD_AUDIO`. Content rating: answer the questionnaire in Play Console (no user-generated content, no location sharing, no purchases); do not assume the outcome. The photo or report the user chooses to share goes to another app through the system share sheet at the user's request, which Play's Data safety rules treat as user-initiated, not as the app sharing data; check the current wording of those rules when filling the form.
+The app collects and shares nothing: answer *No* to "Does your app collect or share any of the required user data types?". Camera and microphone are used for on-device processing only (see the [privacy policy](legal/politica-privacidad.en.md)); audio is never recorded, stored or sent, and the release build has no `INTERNET` permission. Declared permissions: `CAMERA`, `RECORD_AUDIO`. Content rating: answer the questionnaire in Play Console (no user-generated content, no location sharing, no purchases); do not assume the outcome. The photo or report the user chooses to share goes to another app through the system share sheet at the user's request, which Play's Data safety rules treat as user-initiated, not as the app sharing data; check the current wording of those rules when filling the form.
 
 ## F-Droid
 

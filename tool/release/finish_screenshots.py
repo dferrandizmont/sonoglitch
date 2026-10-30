@@ -9,7 +9,7 @@ It runs ``tool/readme/process_screenshots.py`` (README and Google Play
 versions), copies the Google Play versions to
 ``fastlane/metadata/android/{en-US,es-ES}/images/phoneScreenshots/`` (the
 folder Google Play, F-Droid and ``fastlane supply`` read), switches on the
-screenshots section of both READMEs and rebuilds the website. The result is
+screenshots section of both READMEs. The website (web/) is regenerated separately. The result is
 left uncommitted so it can be reviewed.
 """
 
@@ -70,9 +70,7 @@ def main() -> int:
         if path.exists():
             print("%s: screenshots section %s" % (name, "enabled" if enable_readme_section(path) else "already on or not found"))
 
-    run(sys.executable, "tool/site/build.py")
-    run(sys.executable, "-m", "unittest", "discover", "-s", "tool/site")
-    print("Done. Review `git status`, then commit.")
+    print("Done. Review `git status`, then commit, and regenerate the website from web/.")
     return 0
 
 

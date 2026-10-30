@@ -66,7 +66,7 @@ Tap a screenshot to enlarge it.
 
 <p>
   <a href="docs/readme/en/06-result-poster.png"><img src="docs/readme/en/06-result-poster.png" width="19%" alt="Result screen with the Poster export layout"></a>
-  <a href="docs/readme/en/07-before-after.png"><img src="docs/readme/en/07-before-after.png" width="19%" alt="Comparison between the processed picture and the original"></a>
+  <a href="docs/readme/en/07-before-after.png"><img src="docs/readme/en/07-before-after.png" width="19%" alt="The result screen showing the original photo, without the effect, to compare it with the processed one"></a>
   <a href="docs/readme/en/08-landscape-result.png"><img src="docs/readme/en/08-landscape-result.png" width="19%" alt="Result of a landscape photo"></a>
 </p>
 </details>
@@ -100,7 +100,7 @@ The app reads only the microphone volume level and the energy of three frequency
 bands, in memory: audio is never recorded, stored or transmitted. The
 processing is local, with no accounts, no ads, no analytics and no servers.
 
-Read the [privacy policy](docs/PRIVACY.md) for the details.
+[Privacy policy](https://sonoglitch.mainshai.com/privacy/) · Website: [sonoglitch.mainshai.com](https://sonoglitch.mainshai.com/) · Support: **sonoglitch@mainshai.com**.
 
 ## What's new
 

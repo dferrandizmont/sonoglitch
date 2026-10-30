@@ -69,6 +69,6 @@ Use the same scenes and the same photo for the result screens (04 to 06), so the
 ### After the images exist
 
 - Upload per localisation in App Store Connect: *English (U.S.)* and *Spanish (Spain)*. The same images can be used for both only when no text of the interface is Spanish or English in them: otherwise capture each language.
-- Fill the rest of the listing from the Play kit (`.local/play/PLAY_CONSOLE.es.md`): name, subtitle, description, keywords, support URL, privacy policy URL (`https://github.com/dferrandizmont/sonoglitch/blob/main/docs/PRIVACY.md`), age rating questionnaire, and App Privacy: **Data Not Collected** (the app has no accounts, servers, analytics or network calls).
+- Fill the rest of the listing from the Play kit (`.local/play/PLAY_CONSOLE.es.md`): name, subtitle, description, keywords, support URL, privacy policy URL (`https://sonoglitch.mainshai.com/privacy/`), age rating questionnaire, and App Privacy: **Data Not Collected** (the app has no accounts, servers, analytics or network calls).
 - Before the first submission add `ITSAppUsesNonExemptEncryption = NO` and the Spanish permission strings to `Info.plist`, add a `PrivacyInfo.xcprivacy`, and set the supported orientations (portrait) as listed in the QA plan (`docs/qa/plan-de-pruebas.md`).
 - `tool/readme/process_screenshots.py` only prepares the README and Google Play versions today. When the iOS images exist, either export them by hand at the exact sizes above or extend that tool with an Apple output (exact size, flatten to RGB, PNG).

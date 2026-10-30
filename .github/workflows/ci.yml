@@ -22,5 +22,3 @@ jobs:
       - run: dart format --output=none --set-exit-if-changed .
       - run: flutter analyze
       - run: flutter test
-      - name: Check the generated website
-        run: python3 -m unittest discover -s tool/site

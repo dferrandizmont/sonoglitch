@@ -1,7 +1,7 @@
 # Images of the README and of the website
 
 This folder holds the pictures used by [README.md](../../README.md),
-[README.es.md](../../README.es.md) and the [website](../../tool/site/README.md).
+[README.es.md](../../README.es.md) and the website (`web/`).
 
 | File | Use |
 | --- | --- |
@@ -24,7 +24,7 @@ The banner, the icon and the Open Graph image are made by
 | `04-result-full.png` | The result screen with the Full export layout: the picture alone |
 | `05-result-sound-strip.png` | The result screen with the Sound strip export layout, with the measured values under the picture |
 | `06-result-poster.png` | The result screen with the Poster export layout, a framed print with the name of the style |
-| `07-before-after.png` | The comparison between the processed picture and the original |
+| `07-before-after.png` | The result screen with the compare button on: the original photo, without the effect |
 | `08-landscape-result.png` | The result of a photo taken in horizontal |
 | `09-settings.png` | The Settings screen, optional |
 
@@ -67,18 +67,13 @@ this folder and `play/`); adapt them before processing real captures.
    python tool/readme/process_screenshots.py
    ```
 
-3. Regenerate the website, because it copies the screenshots:
-
-   ```sh
-   python tool/site/build.py
-   ```
-
-4. Run the tests:
+3. Run the tests:
 
    ```sh
    python -m unittest discover -s tool/readme -p "test_process_screenshots.py"
-   python -m unittest discover -s tool/site
    ```
+
+4. Regenerate and deploy the website, which reads these screenshots.
 
 The tool prints a table with the size of every file it writes.
 
