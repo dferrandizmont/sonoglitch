@@ -70,6 +70,8 @@ formato y la siguiente ya sigue esta tabla.
 | 27-oct-2026 | GitHub Releases (repositorio público) | 0.1.0-alpha.20 | 20 | `0f0dc34` (público `2ba3a60`) | `sonoglitch-0.1.0-alpha.20.apk`, Actions, clave de depuración | Publicada (prerelease) | no archivados |
 | 27-oct-2026 | GitHub Releases (repositorio público) | 0.1.0-alpha.21 | 21 | `4439eeb` (público `9bd315d`) | `sonoglitch-0.1.0-alpha.21.apk`, Actions, clave de depuración | Publicada (prerelease) | no archivados |
 | 29-oct-2026 | GitHub Releases (repositorio público) | 0.2.0-alpha.2 | 22 | `2c27005` (público `eb8041e`) | `sonoglitch-0.2.0-alpha.2.apk`, Actions, clave de depuración | Publicada (prerelease); la etiqueta 0.2.0-alpha.1 del privado nunca se compiló | no archivados |
+| 31-oct-2026 | GitHub Releases (repositorio privado) | 0.2.0-alpha.3 | 23 | `9518d9b` | `sonoglitch-0.2.0-alpha.3.apk`, compilado en local (Actions del privado sin cuota), clave de subida | Publicada (prerelease) | no archivados |
+| 31-oct-2026 | GitHub Releases (repositorio público) | 0.2.0-alpha.3 | 23 | `9518d9b` (público `9ebfcc8`) | `sonoglitch-0.2.0-alpha.3.apk`, Actions, clave de subida (secretos de firma cargados en ambos repositorios) | Publicada (prerelease); misma firma que el APK del privado | no archivados |
 
 Todavía no hay ninguna subida a Google Play ni a TestFlight. El AAB de la build 19 se compiló en local con la clave de
 subida (27-oct-2026, commit `de7defc`) y **no se subió**: quedó obsoleto, y la primera subida a Play usará un build
@@ -189,7 +191,7 @@ Do **not** pass `DONATION_URL`. Upload `build/app/outputs/bundle/release/app-rel
 
 - Title, short and full descriptions: `fastlane/metadata/android/<locale>/` (English and Spanish).
 - Privacy policy URL: `https://sonoglitch.mainshai.com/privacy/` (English; source: `docs/legal/politica-privacidad.en.md`).
-- Contact email: `dev@mainshai.com`.
+- Contact email: `sonoglitch@mainshai.com` (forwards to the developer mailbox; the privacy policy, SECURITY.md and the code of conduct keep `dev@mainshai.com`). Website: `https://sonoglitch.mainshai.com`.
 - Price: free, no ads, no in-app purchases.
 - Assets that must be made on a device: a 512×512 icon, a 1024×500 feature graphic and at least two phone screenshots.
 

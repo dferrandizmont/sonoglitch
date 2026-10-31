@@ -10,7 +10,7 @@ CADA FOTO ES ÚNICA
 Cada disparo parte de una firma aleatoria nueva. Los graves, medios y agudos del sonido, junto con unas pistas sutiles del momento y del lugar (la hora del día, la fecha y la fase de la luna, hacia dónde apunta el móvil, el ritmo y la inclinación del sonido, lo colorida que es la escena), remodelan el patrón, de modo que dos disparos no están pensados para repetir la misma composición. Son pistas aproximadas que solo añaden pequeñas variaciones; no se guarda ni se envía nada. Un ID corto de foto, como A3F9-17C2, puede aparecer en las composiciones exportadas como referencia visual.
 
 SEIS ESTILOS
-Static, Tape, Phosphor, Ripple, Thermal y Prism. El botón de estilo abre la lista, con las acciones «Al azar» y «Según el lugar»; las flechas que lo rodean y un deslizamiento sobre la imagen también cambian de estilo. El disparo auto deja la cámara preparada para que haga la foto sola cuando el sonido supera un umbral tras un segundo de calma, o cuando la escena da un salto brusco. Una guía breve explica con palabras sencillas los tres controles.
+Static, Tape, Phosphor, Ripple, Thermal y Prism. El botón de estilo abre la lista, con las acciones «Al azar» y «Según el lugar»; las flechas que lo rodean y un deslizamiento sobre la imagen también cambian de estilo. El disparo auto deja la cámara preparada para que haga la foto sola cuando el sonido supera un umbral tras un segundo de calma, o cuando la escena da un salto brusco. También puedes hacer la foto con los botones de volumen (Ajustes > Botones de volumen). Una guía breve explica con palabras sencillas los tres controles.
 
 CAPTURA Y EXPORTACIÓN
 • PNG (sin pérdida) o JPEG, con calidad Estándar, Alta o Máxima (hasta el tamaño nativo del sensor, con un máximo de 24 megapíxeles).

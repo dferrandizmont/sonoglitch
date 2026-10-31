@@ -80,7 +80,7 @@ subject is still recognisable.
 
 - **Six styles.** Static, Tape, Phosphor, Ripple, Thermal and Prism.
 - **Live viewfinder.** The effect is already on the picture; the style button or a swipe changes it. The style sheet also offers **Random** and **Match this place**, which picks a style for the ambience and tells you why.
-- **Auto shot.** The camera takes the photo when the sound crosses a threshold after a quiet second, or when the scene jumps.
+- **Auto shot.** The camera takes the photo when the sound crosses a threshold after a quiet second, or when the scene jumps. On Android the volume buttons can also take the photo (Settings > Volume buttons).
 - **Three export layouts.** The picture alone, a sound strip with the measured values, or a poster with the style name.
 - **Four crops.** The original ratio, a centred 1:1 square, a centred 4:5 portrait and a 9:16 story.
 - **Three quality tiers.** Standard (up to 2048 px on the long side), High (up to 4096 px) and Maximum (up to the native size of the sensor), subject to the size of the original and to the limits of the device.

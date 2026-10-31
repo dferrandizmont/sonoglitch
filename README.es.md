@@ -80,7 +80,7 @@ sigue siendo reconocible.
 
 - **Seis estilos.** Static, Tape, Phosphor, Ripple, Thermal y Prism.
 - **Visor en directo.** El efecto ya está sobre la imagen; el botón de estilo o un deslizamiento lo cambian. El panel de estilos ofrece también **Al azar** y **Según el lugar**, que elige un estilo para el ambiente y te dice por qué.
-- **Disparo auto.** La cámara hace la foto cuando el sonido supera un umbral tras un segundo de calma, o cuando la escena da un salto.
+- **Disparo auto.** La cámara hace la foto cuando el sonido supera un umbral tras un segundo de calma, o cuando la escena da un salto. En Android también puedes hacer la foto con los botones de volumen (Ajustes > Botones de volumen).
 - **Tres composiciones de exportación.** Solo la foto, una banda de sonido con los valores medidos o un póster con el nombre del estilo.
 - **Cuatro recortes.** La proporción original, un cuadrado 1:1 centrado, un vertical 4:5 centrado y un 9:16 para historias.
 - **Tres niveles de calidad.** Estándar (hasta 2048 px en el lado largo), Alta (hasta 4096 px) y Máxima (hasta el tamaño nativo del sensor), según el tamaño del original y los límites del dispositivo.
