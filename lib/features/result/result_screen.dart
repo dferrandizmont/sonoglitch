@@ -1129,12 +1129,12 @@ class _Measurements extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final rawDb = ambient.rawDb;
     final light = _levelWord(l10n, ambient.light);
-    final motion = _levelWord(l10n, ambient.motion);
+    final motion = _levelWord(l10n, ambient.motion, masculine: true);
     final readings = <Widget>[
       _Reading(
         label: l10n.levelNoise,
         value: rawDb == null
-            ? _levelWord(l10n, ambient.noise)
+            ? _levelWord(l10n, ambient.noise, masculine: true)
             : '\u2248${rawDb.round()} dB',
         semanticsLabel: rawDb == null
             ? null
@@ -1179,10 +1179,21 @@ class _Measurements extends StatelessWidget {
     );
   }
 
-  String _levelWord(AppLocalizations l10n, double value) {
-    if (value < 0.33) return l10n.resultLevelLow;
-    if (value < 0.66) return l10n.resultLevelMedium;
-    return l10n.resultLevelHigh;
+  // Light is feminine in Spanish; noise and motion are masculine.
+  String _levelWord(
+    AppLocalizations l10n,
+    double value, {
+    bool masculine = false,
+  }) {
+    if (value < 0.33) {
+      return masculine ? l10n.resultLevelLowMasculine : l10n.resultLevelLow;
+    }
+    if (value < 0.66) {
+      return masculine
+          ? l10n.resultLevelMediumMasculine
+          : l10n.resultLevelMedium;
+    }
+    return masculine ? l10n.resultLevelHighMasculine : l10n.resultLevelHigh;
   }
 }
 

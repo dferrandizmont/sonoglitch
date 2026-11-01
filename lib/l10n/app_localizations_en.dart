@@ -172,6 +172,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resultLevelHigh => 'high';
 
   @override
+  String get resultLevelLowMasculine => 'low';
+
+  @override
+  String get resultLevelMediumMasculine => 'medium';
+
+  @override
+  String get resultLevelHighMasculine => 'high';
+
+  @override
   String get resultFormatLabel => 'Format';
 
   @override

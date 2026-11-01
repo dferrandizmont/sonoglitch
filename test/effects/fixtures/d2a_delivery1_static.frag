@@ -370,11 +370,21 @@ vec3 stpSignatureRecipe() {
   float triangle = 1.0 - 4.0 * abs(fract(y * 1.5 + seed) - 0.5);
   shift = vec2(jitter * 0.003 * onset + slab * band * 0.020 * tearing
       + blockShift * 0.015 * corruption + triangle * 0.003 * bass * noise,
-      0.003 * blockShift * corruption);
-  split = vec2((0.006 * onset + 0.007 * tearing + 0.010 * corruption) * detail, 0.0);
-  float wet = min(pow(noise, 0.65), mix(0.30, 0.72, broken * corruption));
+      0.010 * blockShift * corruption);
+  split = vec2((0.008 * onset + 0.009 * tearing + 0.013 * corruption) * detail, 0.0);
+  float wet = min(pow(noise, 0.65), mix(0.50, 0.72, broken * corruption));
   vec3 original;
   vec3 color = stpMotionSample(uv, shift, split, wet, original);
+  // Tear snow: monochrome grain inside the displaced bands and damaged blocks,
+  // so a tear reads on flat stripes where moving pixels changes nothing. It is
+  // <=0.18 before the 45% floor (<=0.099 after it), refreshes with the tear
+  // clock and vanishes with tearing, hence at noise zero.
+  float snowMask = max(band * tearing, broken * corruption);
+  if (snowMask > 0.0) {
+    float snow = hash(floor(position * 360.0)
+        + vec2(patternTick, patternTick * 0.37)) * 2.0 - 1.0;
+    color += snow * (0.18 * snowMask);
+  }
   float fine = signatureHash(floor((position + 0.5) * 640.0 * detail), seed)
       * 2.0 - 1.0;
   color += fine * 0.004 * noise * treble;

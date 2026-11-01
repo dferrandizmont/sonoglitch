@@ -16,10 +16,12 @@ import 'new_styles_test.dart' show sig2bScene;
 
 const _ids = {'static', 'tape', 'prism'};
 // Frozen before D2A edits; the delivery-1 shared helper is inlined verbatim.
+// Static, Prism and Tape were re-frozen when their visibility was raised (wet floor,
+// dispersion/block amplitude, tear tint/snow/tape layer); neutral D2 still equals them.
 const _oracleHashes = {
-  'static': 'c7de3d069f41c8005ff4edef0c37abb7e3e52d6ba995f59757e4871a70b1a304',
-  'tape': 'c2f1782e8ed2c547e101e9601a85c9109ebfae475f87b050778743082207bdfb',
-  'prism': '39983049176d29c68bf81979770426a66b62a42536297f21b5227a566f053224',
+  'static': 'd6a51684b819497ecb666b98d615024998d19fc28246e957686102adc4879669',
+  'tape': '9348d80973db971fdb967bb4fdf437878833f22fbf8d075726a842f8b1ec873f',
+  'prism': '461b605a1f95a4572847daba6cc8097fb3320992e619f81f0a269135f934fc7b',
 };
 const _micro = SignatureState(x: 0.125, y: 0.25, z: 0.5, w: 0.75);
 final _axisCos = math.cos(math.pi / 15);
@@ -267,7 +269,7 @@ void main() {
               final pulseFactor = 1 + 0.04 * pulse * noise;
               final broad = switch (style.id) {
                 'static' =>
-                  0.020 * tearing + 0.018 * corruption + 0.003 * bass * noise,
+                  0.020 * tearing + 0.025 * corruption + 0.003 * bass * noise,
                 'tape' =>
                   (0.016 +
                               0.012 *
@@ -279,14 +281,14 @@ void main() {
               };
               final split = switch (style.id) {
                 'static' =>
-                  (0.006 * onset + 0.007 * tearing + 0.010 * corruption) *
+                  (0.008 * onset + 0.009 * tearing + 0.013 * corruption) *
                       detail,
                 'tape' =>
-                  (0.0065 * onset + 0.006 * tearing + 0.009 * corruption) *
+                  (0.0085 * onset + 0.008 * tearing + 0.011 * corruption) *
                       detail,
                 _ =>
                   1.414214 *
-                      (0.007 * onset + 0.008 * tearing + 0.012 * corruption) *
+                      (0.009 * onset + 0.010 * tearing + 0.014 * corruption) *
                       detail *
                       pulseFactor,
               };

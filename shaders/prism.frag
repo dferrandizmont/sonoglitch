@@ -31,7 +31,7 @@
 
 // SIG-2A recipe parameters (all ranges inclusive; source = uniform ABI):
 // uBass [0,1], filtered low-band energy: slow dispersion-axis sine frequency 7..6.087/short side,
-//   angle amplitude 0.55..0.6325 radians (existing sine reused).
+//   angle amplitude 0.55..0.6325 radians around a +0.40 rad diagonal (existing sine reused).
 // uMid [0,1], filtered middle-band energy: band/block density *=1..1.15 (41..47.15 bands);
 //   fixed duty compensates physical width inversely; damaged area <=20%.
 // uTreble [0,1], filtered high-band energy: row density 210..241.5, jitter/RGB split *=1..1.15;
@@ -64,6 +64,18 @@
 // All bands/seed zero: exact legacy recipe, exempt from new budget to retain
 //   historical pixels. Fingerprint-only changes remain <=1 RGB8 code.
 // Live/still use this same recipe and frozen uniforms; no local state.
+
+// Visibility (signature path only; the zero-band/seed legacy recipe is untouched):
+//   pixels outside damaged blocks blend the displaced taps at wet <= min(n^.65,.50)
+//   (was .30); damaged blocks keep .72. With the 45% floor an ordinary pixel
+//   moves <=.55*.50*255 = 70 codes before tint, so only damaged blocks cross the
+//   96-code damage line and the <=20% damaged-area cap is unchanged.
+//   Dispersion length is *(.009,.010,.014) of onset/tear/damage (was .007,.008,
+//   .012) and its axis swings around +0.40 rad, so fringes also cut horizontal
+//   edges. The shared 5% short-side budget still bounds warp+split+trail.
+//   Spectral tear tint: displaced bands and damaged blocks add a zero-sum chroma
+//   vector (<=.164 before the floor, <=.09 after; no luma change) gated by
+//   tearing/damage, so a tear reads on flat stripes. Zero at noise zero.
 
 // Fixed float indices: size 0..1, noise 2, light 3, motion 4, time 5,
 // direction 6..7, cover scale 8..9, cover offset 10..11. Image is sampler 0.
@@ -412,11 +424,13 @@ vec3 stpSignatureRecipe(float warmth, float grainDivisor) {
   float fineShift = jitter * 0.003 * onset;
   vec2 shift;
   vec2 split;
+  // The dispersion axis swings around a diagonal (+0.40 rad), so the colour
+  // fringes also cut horizontal edges; the length is bounded as before.
   float angle = sin(y * 7.0 / (1.0 + 0.15 * bass)
-      + tick * 0.13 + seed * 6.2831853) * 0.55 * (1.0 + 0.15 * bass);
+      + tick * 0.13 + seed * 6.2831853) * 0.55 * (1.0 + 0.15 * bass) + 0.40;
   shift = vec2(fineShift + slab * band * 0.018 * tearing
       + blockShift * 0.014 * corruption, blockShift * 0.004 * corruption);
-  float splitAmplitude = (0.007 * onset + 0.008 * tearing + 0.012 * corruption);
+  float splitAmplitude = (0.009 * onset + 0.010 * tearing + 0.014 * corruption);
   split = vec2(cos(angle), sin(angle)) * splitAmplitude * detail;
   float pulseFactor = 1.0;
   if (uSign.z != 0.0 && noise > 0.0) {
@@ -448,9 +462,20 @@ vec3 stpSignatureRecipe(float warmth, float grainDivisor) {
     split *= pulseFactor;
   }
 // D2A END
-  float wet = min(pow(noise, 0.65), mix(0.30, 0.72, broken * corruption));
+  // Ordinary pixels blend at <=.50, damaged blocks at .72 (see Visibility above).
+  float wet = min(pow(noise, 0.65), mix(0.50, 0.72, broken * corruption));
   vec3 original;
   vec3 color = stpMotionSample(uv, shift, split, wet, original);
+  // Spectral tear tint: the displaced bands and damaged blocks also shift hue,
+  // so a tear reads on flat stripes where moving pixels changes nothing. The
+  // vector sums to zero (luma is untouched), is <=0.164 before the 45% floor
+  // (<=0.09 after it) and vanishes with tearing, hence at noise zero.
+  float spectral = max(band * tearing, broken * corruption);
+  if (spectral > 0.0) {
+    float tint = hash(vec2(bandCell, patternTick + 5.0)) * 2.0 - 1.0;
+    color += vec3(slab, -0.5 * slab + 0.866 * tint, -0.5 * slab - 0.866 * tint)
+        * (0.12 * spectral);
+  }
 // D2A BEGIN
   if (uMood.x != 0.0 && noise > 0.0 && treble > 0.0) {
     position = (position + 0.5) / grainDivisor - 0.5;

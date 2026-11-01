@@ -11,6 +11,13 @@ one with that format.
 
 ## Unreleased
 
+## 0.2.0-alpha.4 · 01-Nov-2026
+
+- New screenshots in the README and the store listing, taken with the real effects on photos by the developer.
+
+- In Spanish, the photo screen says "alto", "medio" and "bajo" for noise and movement (it said "alta", "media" and "baja", which only agree with light).
+- Prism, Static and Tape are much easier to recognise at high noise and movement: Prism tints the torn bands with colour, Static adds snow to them, and Tape adds worn-videotape streaks, dropout dashes, colour bleed and a skewed bottom edge, and all three show stronger colour splits, also on calm scenes such as a striped lighthouse.
+
 ## 0.2.0-alpha.3 · 31-Oct-2026
 
 - The README and the contributing guide follow the common layout of the family of apps: the README is shorter, and the build, the diagnostics, the checks and the project layout move to the contributing guide.

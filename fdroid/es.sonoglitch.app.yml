@@ -19,8 +19,8 @@ Repo: https://github.com/dferrandizmont/sonoglitch.git
 
 Builds:
   - versionName: 0.2.0
-    versionCode: 23
-    commit: v0.2.0-alpha.3
+    versionCode: 24
+    commit: v0.2.0-alpha.4
     output: build/app/outputs/flutter-apk/app-release.apk
     srclibs:
       - flutter@3.47.7
@@ -34,7 +34,7 @@ Builds:
       - .pub-cache/hosted/pub.dev/jni-1.1.0/java/gradle/wrapper/gradle-wrapper.jar
     build:
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - $$flutter$$/bin/flutter build apk --release --no-pub --target-platform=android-arm64,android-x64 --build-name=0.2.0 --build-number=23 --dart-define=APP_VERSION=0.2.0-alpha.3 --dart-define=DONATION_URL=https://ko-fi.com/danielmfdev
+      - $$flutter$$/bin/flutter build apk --release --no-pub --target-platform=android-arm64,android-x64 --build-name=0.2.0 --build-number=24 --dart-define=APP_VERSION=0.2.0-alpha.4 --dart-define=DONATION_URL=https://ko-fi.com/danielmfdev
 
 AutoUpdateMode: None
 UpdateCheckMode: None

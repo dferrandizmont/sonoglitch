@@ -173,6 +173,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get resultLevelHigh => 'alta';
 
   @override
+  String get resultLevelLowMasculine => 'bajo';
+
+  @override
+  String get resultLevelMediumMasculine => 'medio';
+
+  @override
+  String get resultLevelHighMasculine => 'alto';
+
+  @override
   String get resultFormatLabel => 'Formato';
 
   @override

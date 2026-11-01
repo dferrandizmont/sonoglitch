@@ -38,23 +38,31 @@ with the same name.
 The section of the README that shows the screenshots is inside an HTML comment
 until the pictures exist. Uncomment it once the files are here.
 
-## Provisional screenshots
+## How the current screenshots were made
 
-The screenshots of `en/` and `es/` are provisional. They were taken on the
-Android emulator with the screenshot build and its photo source (see
-[RELEASING.md](../RELEASING.md)), so the effects are the real ones but the
-scene is a stock photo. They will be replaced by captures from a phone with
-the same names. The Google Play images are generated from them into
-`docs/store/` (not published) with the `store_shots.py` tool of the shared
-README template.
+The screenshots of `en/` and `es/` were taken on the Android emulator
+(1080x2400, demo status bar) with the screenshot build and its photo source
+(see [RELEASING.md](../RELEASING.md)), with the app in English and in
+Spanish. The effects are the real ones; the scenes are photos taken by the
+developer, and the noise, light and motion readings are demo values (maximum
+noise and motion). The originals stay outside the repository
+(`.local/capturas/fuentes/`), with the bottom of the fireworks photo cropped
+to remove advertising.
 
-Photos used, both CC0 (public domain) from Wikimedia Commons:
+| Shots | Photo | Style |
+| --- | --- | --- |
+| 01 | Fireworks over a stadium | Prism |
+| 02 | Human tower (castellers) | Thermal |
+| 03 | Lighthouse at dusk with the moon | Ripple |
+| 04 to 07 | Correfoc devil among sparks | Static |
+| 08 | Sea view from a hotel (horizontal) | Phosphor |
 
-- [Fruit at the Xincheng Night Market](https://commons.wikimedia.org/wiki/File:Fruit_at_the_Xincheng_Night_Market.jpg), shots 01, 02 and 04 to 07.
-- [Swedish sunset (Unsplash)](https://commons.wikimedia.org/wiki/File:Swedish_sunset_(Unsplash).jpg), shots 03 and 08.
+The Google Play images are generated from them into `docs/store/` (not
+published) with the `store_shots.py` tool of the shared README template.
 
 The tools below still write the older layout (screenshots at the root of
-this folder and `play/`); adapt them before processing real captures.
+this folder and `play/`); adapt them before processing captures from a
+phone.
 
 ## How to regenerate them
 

@@ -212,6 +212,18 @@
   "@resultLevelHigh": {
     "description": "High level label."
   },
+  "resultLevelLowMasculine": "low",
+  "@resultLevelLowMasculine": {
+    "description": "Low level label for a masculine noun in languages with grammatical gender (noise, motion). resultLevelLow is used for light."
+  },
+  "resultLevelMediumMasculine": "medium",
+  "@resultLevelMediumMasculine": {
+    "description": "Medium level label for a masculine noun (noise, motion)."
+  },
+  "resultLevelHighMasculine": "high",
+  "@resultLevelHighMasculine": {
+    "description": "High level label for a masculine noun (noise, motion)."
+  },
   "resultFormatLabel": "Format",
   "@resultFormatLabel": {
     "description": "Label of the export format selector."

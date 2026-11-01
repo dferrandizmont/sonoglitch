@@ -362,6 +362,24 @@ abstract class AppLocalizations {
   /// **'high'**
   String get resultLevelHigh;
 
+  /// Low level label for a masculine noun in languages with grammatical gender (noise, motion). resultLevelLow is used for light.
+  ///
+  /// In en, this message translates to:
+  /// **'low'**
+  String get resultLevelLowMasculine;
+
+  /// Medium level label for a masculine noun (noise, motion).
+  ///
+  /// In en, this message translates to:
+  /// **'medium'**
+  String get resultLevelMediumMasculine;
+
+  /// High level label for a masculine noun (noise, motion).
+  ///
+  /// In en, this message translates to:
+  /// **'high'**
+  String get resultLevelHighMasculine;
+
   /// Label of the export format selector.
   ///
   /// In en, this message translates to:

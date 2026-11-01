@@ -65,6 +65,19 @@
 //   historical pixels. Fingerprint-only changes remain <=1 RGB8 code.
 // Live/still use this same recipe and frozen uniforms; no local state.
 
+// Visibility (signature path only; the zero-band/seed legacy recipe is untouched):
+//   pixels outside damaged blocks blend the displaced taps at wet <= min(n^.65,.50)
+//   (was .30); damaged blocks keep .72. With the 45% floor an ordinary pixel
+//   moves <=.55*.50*255 = 70 codes before snow, so only damaged blocks cross the
+//   96-code damage line and the <=20% damaged-area cap is unchanged.
+//   RGB split is *(.008,.009,.013) of onset/tear/damage (was .006,.007,.010);
+//   damaged blocks also move vertically by .010*damage (was .003). The shared 5%
+//   short-side budget still bounds warp+split+trail. D2 broad bound: .020 tear
+//   + .025 damage + .003 bass*noise.
+//   Tear snow: displaced bands and damaged blocks add monochrome grain
+//   (<=.18 before the floor, <=.099 after) on a 360-cell/short-side grid that
+//   refreshes with the tear clock, gated by tearing/damage. Zero at noise zero.
+
 // Fixed float indices: size 0..1, noise 2, light 3, motion 4, time 5,
 // direction 6..7, cover scale 8..9, cover offset 10..11. Image is sampler 0.
 uniform vec2 uSize;
@@ -254,7 +267,7 @@ bool stpD2GeometryEnabled() {
   // Its fine envelope already exceeds epsilon whenever this broad one does.
   float tearing = smoothstep(0.25, 0.65, uNoise);
   float corruption = smoothstep(0.60, 1.0, uNoise);
-  float broadBound = 0.020 * tearing + 0.018 * corruption;
+  float broadBound = 0.020 * tearing + 0.025 * corruption;
   return broadBound >= 0.000001;
 }
 
@@ -413,14 +426,14 @@ vec3 stpSignatureRecipe(float warmth, float grainDivisor) {
   float triangle = 1.0 - 4.0 * abs(fract(y * 1.5 + seed) - 0.5);
   shift = vec2(fineShift + slab * band * 0.020 * tearing
       + blockShift * 0.015 * corruption + triangle * 0.003 * bass * noise,
-      0.003 * blockShift * corruption);
-  float splitAmplitude = (0.006 * onset + 0.007 * tearing + 0.010 * corruption) * detail;
+      0.010 * blockShift * corruption);
+  float splitAmplitude = (0.008 * onset + 0.009 * tearing + 0.013 * corruption) * detail;
   split = vec2(splitAmplitude, 0.0);
 // D2A BEGIN
   float d2FineGain = 1.0;
   if (uMood.w != 0.0 && noise > 0.0 && (tearing > 0.0 || bass > 0.0)) {
     vec2 broadShift = shift - vec2(fineShift, 0.0);
-    float broadBound = 0.020 * tearing + 0.018 * corruption + 0.003 * bass * noise;
+    float broadBound = 0.020 * tearing + 0.025 * corruption + 0.003 * bass * noise;
     float fineBound = 0.003 * onset * detail + splitAmplitude
         + 0.004 * noise * treble;
     // L1 geometry + RGB-grain envelope, including any pulse-scaled split.
@@ -438,7 +451,8 @@ vec3 stpSignatureRecipe(float warmth, float grainDivisor) {
     split = stpD2Rotate(split);
   }
 // D2A END
-  float wet = min(pow(noise, 0.65), mix(0.30, 0.72, broken * corruption));
+  // Ordinary pixels blend at <=.50, damaged blocks at .72 (see Visibility above).
+  float wet = min(pow(noise, 0.65), mix(0.50, 0.72, broken * corruption));
 // D2A BEGIN
   if (uSign.z != 0.0 && noise > 0.0) {
     wet = min(1.0, wet * (1.0 + 0.04 * clamp(uSign.z, -1.0, 1.0) * noise));
@@ -446,6 +460,16 @@ vec3 stpSignatureRecipe(float warmth, float grainDivisor) {
 // D2A END
   vec3 original;
   vec3 color = stpMotionSample(uv, shift, split, wet, original);
+  // Tear snow: monochrome grain inside the displaced bands and damaged blocks,
+  // so a tear reads on flat stripes where moving pixels changes nothing. It is
+  // <=0.18 before the 45% floor (<=0.099 after it), refreshes with the tear
+  // clock and vanishes with tearing, hence at noise zero.
+  float snowMask = max(band * tearing, broken * corruption);
+  if (snowMask > 0.0) {
+    float snow = hash(floor(position * 360.0)
+        + vec2(patternTick, patternTick * 0.37)) * 2.0 - 1.0;
+    color += snow * (0.18 * snowMask);
+  }
 // D2A BEGIN
   if (uMood.x != 0.0 && noise > 0.0 && treble > 0.0) {
     position = (position + 0.5) / grainDivisor - 0.5;

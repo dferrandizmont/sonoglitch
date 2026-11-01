@@ -66,6 +66,21 @@
 //   historical pixels. Fingerprint-only changes remain <=1 RGB8 code.
 // Live/still use this same recipe and frozen uniforms; no local state.
 
+// Visibility (signature path only; the zero-band/seed legacy recipe is untouched):
+//   pixels outside damaged blocks blend the displaced taps at wet <= min(n^.65,.50)
+//   (was .30); damaged blocks keep .72. With the 45% floor an ordinary pixel
+//   moves <=.55*.50*255 = 70 codes before the tape layer, so only damaged blocks
+//   cross the 96-code damage line and the <=20% damaged-area cap is unchanged.
+//   Chroma split is *(.0085,.008,.011) of onset/tear/damage (was .0065,.006,.009);
+//   the shared 5% short-side budget still bounds warp+split+trail.
+//   Head-switching tear: the last rows (uv.y > .925, raster aligned) skew
+//   sideways by <=.040 plus a per-row wobble, gated by tearing; it is added after
+//   the D2 tilt/axis steps and is limited by the same total-displacement budget.
+//   Worn-tape layer: tear bands, tracking bands, head-switch rows and damaged
+//   blocks add horizontal luma streaks (+/-.08), white dropout dashes (+.08) and
+//   wide zero-luma chroma bleed (<=.07), <=.23 per channel before the floor
+//   (<=.13 after it), gated by tearing/damage. Zero at noise zero.
+
 // Fixed float indices: size 0..1, noise 2, light 3, motion 4, time 5,
 // direction 6..7, cover scale 8..9, cover offset 10..11. Image is sampler 0.
 uniform vec2 uSize;
@@ -423,7 +438,7 @@ vec3 stpSignatureRecipe(float warmth, float grainDivisor) {
   shift = vec2(fineShift
       + (slab * band * 0.016 + tracking * 0.012 * (1.0 + 0.15 * bass)) * tearing
       + blockShift * 0.014 * corruption, 0.0);
-  float splitAmplitude = (0.0065 * onset + 0.006 * tearing + 0.009 * corruption) * detail;
+  float splitAmplitude = (0.0085 * onset + 0.008 * tearing + 0.011 * corruption) * detail;
   split = vec2(splitAmplitude, 0.0);
 // D2A BEGIN
   float d2FineGain = 1.0;
@@ -448,9 +463,41 @@ vec3 stpSignatureRecipe(float warmth, float grainDivisor) {
     split = stpD2Rotate(split);
   }
 // D2A END
-  float wet = min(pow(noise, 0.65), mix(0.30, 0.72, broken * corruption));
+  // Head-switching tear (raster aligned, after the D2 tilt/axis steps): the
+  // last rows of the frame skew sideways by a ramp plus a per-row wobble.
+  float headMask = smoothstep(0.925, 0.955, uv.y) * tearing;
+  if (headMask > 0.0) {
+    float headRamp = smoothstep(0.925, 1.0, uv.y);
+    shift.x += headMask * (0.010 + 0.030 * headRamp)
+        * (0.7 + 0.3 * (hash(vec2(row, patternTick + 29.0)) * 2.0 - 1.0));
+  }
+  // Ordinary pixels blend at <=.50, damaged blocks at .72 (see Visibility above).
+  float wet = min(pow(noise, 0.65), mix(0.50, 0.72, broken * corruption));
   vec3 original;
   vec3 color = stpMotionSample(uv, shift, split, wet, original);
+  // Worn-tape layer: horizontal luma streaks, white dropout dashes and wide
+  // chroma bleed inside the tear bands, the tracking bands, the head-switch
+  // rows and the damaged blocks, so a tear reads on flat areas where moving
+  // pixels changes nothing. Per channel <=0.23 before the 45% floor (<=0.13
+  // after it); the bleed vectors have zero luma. Refreshes with the tear clock
+  // and vanishes with tearing, hence at noise zero.
+  float trackMask = smoothstep(0.01, 0.35, tracking) * tearing;
+  float tapeMask = max(max(band * tearing * 0.85, trackMask),
+      max(headMask, broken * corruption));
+  if (tapeMask > 0.0) {
+    float rowRand = hash(vec2(row, patternTick + 41.0));
+    float streak = hash(vec2(floor(position.x * 7.0 + rowRand * 13.0),
+        row + patternTick + 5.0)) * 2.0 - 1.0;
+    float dropout = step(0.93, hash(vec2(floor(position.x * 21.0 + rowRand * 31.0),
+        row + patternTick + 17.0)));
+    vec2 bleedCell = vec2(floor(position.x * 3.0 + rowRand * 5.0),
+        floor(y * 45.0) + patternTick);
+    float bleedA = hash(bleedCell + vec2(7.0, 3.0)) * 2.0 - 1.0;
+    float bleedB = hash(bleedCell + vec2(19.0, 11.0)) * 2.0 - 1.0;
+    vec3 bleed = bleedA * vec3(0.959, -0.285, 0.0)
+        + bleedB * vec3(0.0, 0.100, -0.995);
+    color += (vec3(streak * 0.08 + dropout * 0.08) + bleed * 0.07) * tapeMask;
+  }
 // D2A BEGIN
   if (uMood.x != 0.0 && noise > 0.0 && treble > 0.0) {
     position = (position + 0.5) / grainDivisor - 0.5;

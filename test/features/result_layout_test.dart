@@ -318,6 +318,20 @@ void main() {
     expect(l10n.resultCompareTooltip, contains('hold the photo'));
   });
 
+  testWidgets('Spanish level words agree with light, noise and motion', (
+    tester,
+  ) async {
+    await pumpResult(
+      tester,
+      locale: const Locale('es'),
+      ambient: const AmbientState(noise: 0.9, light: 0.9, motion: 0.9),
+    );
+    // Light (luz) is feminine; noise (ruido) and motion (movimiento) are
+    // masculine. Without decibels the noise reading uses the word too.
+    expect(find.text('Alta'), findsOneWidget);
+    expect(find.text('Alto'), findsNWidgets(2));
+  });
+
   testWidgets(
     'readings form equal columns with role squares and spoken caveat',
     (tester) async {
@@ -356,7 +370,9 @@ void main() {
           findsOneWidget,
         );
         expect(
-          find.bySemanticsLabel(l10n.resultMotionLabel(l10n.resultLevelMedium)),
+          find.bySemanticsLabel(
+            l10n.resultMotionLabel(l10n.resultLevelMediumMasculine),
+          ),
           findsOneWidget,
         );
         final row = tester.widget<Row>(readings);

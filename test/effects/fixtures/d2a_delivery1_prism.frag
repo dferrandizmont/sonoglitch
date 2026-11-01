@@ -369,15 +369,27 @@ vec3 stpSignatureRecipe() {
   float blockShift = (hash(block + vec2(blockTick, 9.0)) * 2.0 - 1.0) * broken;
   vec2 shift;
   vec2 split;
+  // The dispersion axis swings around a diagonal (+0.40 rad), so the colour
+  // fringes also cut horizontal edges; the length is bounded as before.
   float angle = sin(y * 7.0 / (1.0 + 0.15 * bass)
-      + tick * 0.13 + seed * 6.2831853) * 0.55 * (1.0 + 0.15 * bass);
+      + tick * 0.13 + seed * 6.2831853) * 0.55 * (1.0 + 0.15 * bass) + 0.40;
   shift = vec2(jitter * 0.003 * onset + slab * band * 0.018 * tearing
       + blockShift * 0.014 * corruption, blockShift * 0.004 * corruption);
   split = vec2(cos(angle), sin(angle))
-      * (0.007 * onset + 0.008 * tearing + 0.012 * corruption) * detail;
-  float wet = min(pow(noise, 0.65), mix(0.30, 0.72, broken * corruption));
+      * (0.009 * onset + 0.010 * tearing + 0.014 * corruption) * detail;
+  float wet = min(pow(noise, 0.65), mix(0.50, 0.72, broken * corruption));
   vec3 original;
   vec3 color = stpMotionSample(uv, shift, split, wet, original);
+  // Spectral tear tint: the displaced bands and damaged blocks also shift hue,
+  // so a tear reads on flat stripes where moving pixels changes nothing. The
+  // vector sums to zero (luma is untouched), is <=0.164 before the 45% floor
+  // (<=0.09 after it) and vanishes with tearing, hence at noise zero.
+  float spectral = max(band * tearing, broken * corruption);
+  if (spectral > 0.0) {
+    float tint = hash(vec2(bandCell, patternTick + 5.0)) * 2.0 - 1.0;
+    color += vec3(slab, -0.5 * slab + 0.866 * tint, -0.5 * slab - 0.866 * tint)
+        * (0.12 * spectral);
+  }
   float fine = signatureHash(floor((position + 0.5) * 640.0 * detail), seed)
       * 2.0 - 1.0;
   color += fine * 0.004 * noise * treble;

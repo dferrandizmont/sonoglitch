@@ -375,10 +375,33 @@ vec3 stpSignatureRecipe() {
   shift = vec2(jitter * 0.0025 * onset
       + (slab * band * 0.016 + tracking * 0.012 * (1.0 + 0.15 * bass)) * tearing
       + blockShift * 0.014 * corruption, 0.0);
-  split = vec2((0.0065 * onset + 0.006 * tearing + 0.009 * corruption) * detail, 0.0);
-  float wet = min(pow(noise, 0.65), mix(0.30, 0.72, broken * corruption));
+  split = vec2((0.0085 * onset + 0.008 * tearing + 0.011 * corruption) * detail, 0.0);
+  float headMask = smoothstep(0.925, 0.955, uv.y) * tearing;
+  if (headMask > 0.0) {
+    float headRamp = smoothstep(0.925, 1.0, uv.y);
+    shift.x += headMask * (0.010 + 0.030 * headRamp)
+        * (0.7 + 0.3 * (hash(vec2(row, patternTick + 29.0)) * 2.0 - 1.0));
+  }
+  float wet = min(pow(noise, 0.65), mix(0.50, 0.72, broken * corruption));
   vec3 original;
   vec3 color = stpMotionSample(uv, shift, split, wet, original);
+  float trackMask = smoothstep(0.01, 0.35, tracking) * tearing;
+  float tapeMask = max(max(band * tearing * 0.85, trackMask),
+      max(headMask, broken * corruption));
+  if (tapeMask > 0.0) {
+    float rowRand = hash(vec2(row, patternTick + 41.0));
+    float streak = hash(vec2(floor(position.x * 7.0 + rowRand * 13.0),
+        row + patternTick + 5.0)) * 2.0 - 1.0;
+    float dropout = step(0.93, hash(vec2(floor(position.x * 21.0 + rowRand * 31.0),
+        row + patternTick + 17.0)));
+    vec2 bleedCell = vec2(floor(position.x * 3.0 + rowRand * 5.0),
+        floor(y * 45.0) + patternTick);
+    float bleedA = hash(bleedCell + vec2(7.0, 3.0)) * 2.0 - 1.0;
+    float bleedB = hash(bleedCell + vec2(19.0, 11.0)) * 2.0 - 1.0;
+    vec3 bleed = bleedA * vec3(0.959, -0.285, 0.0)
+        + bleedB * vec3(0.0, 0.100, -0.995);
+    color += (vec3(streak * 0.08 + dropout * 0.08) + bleed * 0.07) * tapeMask;
+  }
   float fine = signatureHash(floor((position + 0.5) * 640.0 * detail), seed)
       * 2.0 - 1.0;
   color += fine * 0.004 * noise * treble;
