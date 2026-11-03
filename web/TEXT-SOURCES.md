@@ -73,7 +73,7 @@ Alts and captions describe what each PNG shows (all eight were opened, en and es
 | FAQ 2 | No accounts, works offline, no INTERNET permission in release builds | `README.md:21`; `politica-privacidad.en.md:21-22` |
 | FAQ 4 | Android 10 (API 29)+; early alpha; testing still needed | `README.md:33-36` |
 | FAQ 5 | Google Play closed test open to anyone; F-Droid later; iOS not released | `README.md` (Download) |
-| FAQ 6 | Join the Google Play test: sonoglitch-testers group, opt-in link, 14 days; Play build and GitHub APK signed differently | `README.md` (Join the beta on Google Play); Play Console testers tab |
+| FAQ 6 | Join the Google Play test: sonoglitch-testers group, opt-in link, 14 days; Play build and GitHub APK share one signature (Play signs with the upload key since build 25) | `README.md` (Join the beta on Google Play); Play Console testers tab |
 | FAQ 7 | Install steps, `.sha256` check, unknown apps, Settings > About, debug-key prereleases | `README.md:41-49`; labels `app_en.arb:287,343` (es `Ajustes > Acerca de`, `app_es.arb:116,130`; `README.es.md:45`) |
 | `issue_link` | Issues can be opened in the project repository | `politica-privacidad.en.md:41`; `README.md:111` |
 | `licence_text` | Apache-2.0 | `README.md:120`; `LICENSE` |

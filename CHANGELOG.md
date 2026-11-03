@@ -11,6 +11,11 @@ one with that format.
 
 ## Unreleased
 
+## 0.2.0-alpha.5 · 03-Nov-2026
+
+- Sonoglitch is in closed testing on Google Play; anyone can join through the sonoglitch-testers group (see the README or the website).
+- The Google Play build and the GitHub APK are signed with the same key from this version on, so you can move from one to the other without uninstalling. The app itself does not change.
+
 ## 0.2.0-alpha.4 · 01-Nov-2026
 
 - New screenshots in the README and the store listing, taken with the real effects on photos by the developer.

@@ -43,8 +43,8 @@ still need testing.
 3. Install the app from Google Play. It will update itself.
 
 Stay for 14 days: Google requires 12 testers for 14 days before the app can be
-published. The Play build and the GitHub APK are signed differently, so
-uninstall one before installing the other.
+published. The Play build and the GitHub APK share one signature, so you can
+switch between them without uninstalling.
 Feedback: sonoglitch@mainshai.com.
 
 </details>

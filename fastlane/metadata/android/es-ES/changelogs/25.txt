@@ -1,0 +1,1 @@
+Primera versión distribuida en Google Play. La de Google Play y la de GitHub comparten firma: puedes pasar de una a otra sin desinstalar.

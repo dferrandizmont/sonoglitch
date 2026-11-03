@@ -1,0 +1,1 @@
+First build distributed on Google Play. The Play and GitHub builds share one signature, so you can switch without uninstalling.

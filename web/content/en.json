@@ -166,7 +166,7 @@
     },
     {
       "question": "How do I join the Google Play test?",
-      "answer": "Join the sonoglitch-testers Google group with the account you use on Google Play, then accept the invitation at play.google.com/apps/testing/es.sonoglitch.app and install Sonoglitch. Keep it installed for at least 14 days. The Play build and the GitHub APK are signed differently, so uninstall one before installing the other."
+      "answer": "Join the sonoglitch-testers Google group with the account you use on Google Play, then accept the invitation at play.google.com/apps/testing/es.sonoglitch.app and install Sonoglitch. Keep it installed for at least 14 days. The Play build and the GitHub APK share one signature, so you can switch between them without uninstalling."
     },
     {
       "question": "How do I install the APK?",

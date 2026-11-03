@@ -40,7 +40,7 @@ For a run with diagnostics enabled by default and an explicit displayed
 version:
 
 ```sh
-flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=APP_VERSION=0.2.0-alpha.4
+flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=APP_VERSION=0.2.0-alpha.5
 ```
 
 To start with reproducible manual controls in `noise,light,motion` order:
@@ -52,7 +52,7 @@ flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=SONOGLITCH_MANUAL=
 To build a local APK:
 
 ```sh
-flutter build apk --release --target-platform android-arm64,android-x64 --dart-define=APP_VERSION=0.2.0-alpha.4
+flutter build apk --release --target-platform android-arm64,android-x64 --dart-define=APP_VERSION=0.2.0-alpha.5
 ```
 
 The output is `build/app/outputs/flutter-apk/app-release.apk`; the key it is

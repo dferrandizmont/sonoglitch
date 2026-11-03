@@ -43,8 +43,8 @@ compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo.
 3. Instala la app desde Google Play. Se actualizará sola.
 
 Quédate 14 días: Google exige 12 testers durante 14 días antes de publicarla.
-La versión de Google Play y el APK de GitHub están firmados de forma distinta,
-así que desinstala uno antes de instalar el otro.
+La versión de Google Play y el APK de GitHub comparten firma: puedes pasar de
+una a otra sin desinstalar.
 Comentarios: sonoglitch@mainshai.com.
 
 </details>
