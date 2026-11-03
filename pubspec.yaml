@@ -35,12 +35,12 @@ dependencies:
     sdk: flutter
   intl: ^0.20.3
   # HMAC-SHA256 capture derivation; already locked, BSD-3-Clause.
-  crypto: ^3.0.7
+  crypto: ^3.0.8
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  camera: ^0.12.1
+  camera: ^0.12.2
   noise_meter: ^6.0.0
   sensors_plus: ^7.1.1
   permission_handler: ^13.0.2
