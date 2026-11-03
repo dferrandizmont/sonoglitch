@@ -24,7 +24,7 @@ Paths are relative to the repository root.
 | Key | Claim | Source |
 |---|---|---|
 | `download_intro` | Android 10 (API 29)+; iOS not released; early alpha; only test builds; compatibility, performance and image quality still need testing | `README.md:33-36` |
-| downloads | APK alpha on GitHub releases; Google Play and App Store "Coming soon" with no link | `web/site.toml`; `README.md:26-35` |
+| downloads | APK alpha on GitHub releases; Google Play closed test (opt-in link); App Store "Coming soon" with no link | `web/site.toml`; `README.md` (Download) |
 | `ios_text` | The iPhone version will come from the same code but is not ready for release | `AGENTS.md:3`; `docs/IOS_STATUS.md:3` |
 | `apk_note` | Each test build is an APK with its own `.sha256` file to check before installing | `README.md:42-43` |
 
@@ -72,8 +72,9 @@ Alts and captions describe what each PNG shows (all eight were opened, en and es
 | FAQ 1 | Free, no ads, no purchases; Apache-2.0; the GitHub build has an optional Ko-fi link in Settings | `README.md:14,21,114-116,120`; `docs/SPEC.es.md:4`; `politica-privacidad.en.md:33`; `lib/features/settings/settings_screen.dart:391` |
 | FAQ 2 | No accounts, works offline, no INTERNET permission in release builds | `README.md:21`; `politica-privacidad.en.md:21-22` |
 | FAQ 4 | Android 10 (API 29)+; early alpha; testing still needed | `README.md:33-36` |
-| FAQ 5 | Google Play and F-Droid later; iOS not released; only alpha test builds on GitHub | `README.md:33-35` |
-| FAQ 6 | Install steps, `.sha256` check, unknown apps, Settings > About, debug-key prereleases | `README.md:41-49`; labels `app_en.arb:287,343` (es `Ajustes > Acerca de`, `app_es.arb:116,130`; `README.es.md:45`) |
+| FAQ 5 | Google Play closed test open to anyone; F-Droid later; iOS not released | `README.md` (Download) |
+| FAQ 6 | Join the Google Play test: sonoglitch-testers group, opt-in link, 14 days; Play build and GitHub APK signed differently | `README.md` (Join the beta on Google Play); Play Console testers tab |
+| FAQ 7 | Install steps, `.sha256` check, unknown apps, Settings > About, debug-key prereleases | `README.md:41-49`; labels `app_en.arb:287,343` (es `Ajustes > Acerca de`, `app_es.arb:116,130`; `README.es.md:45`) |
 | `issue_link` | Issues can be opened in the project repository | `politica-privacidad.en.md:41`; `README.md:111` |
 | `licence_text` | Apache-2.0 | `README.md:120`; `LICENSE` |
 | `privacy_date` | 2026-10-27 | `politica-privacidad.en.md:3`; es `politica-privacidad.md:3` |

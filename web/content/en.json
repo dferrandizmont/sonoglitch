@@ -24,7 +24,7 @@
       "text": "Sets how much the picture moves and the trails it leaves."
     }
   ],
-  "download_intro": "Android 10 (API 29) or newer for now; iOS is not released yet. The app is at an early alpha stage, so only test builds are published, and device compatibility, performance and image quality still need testing.",
+  "download_intro": "Android 10 (API 29) or newer for now, as a closed test on Google Play or as an APK on GitHub; iOS is not released yet. The app is at an early alpha stage, and device compatibility, performance and image quality still need testing.",
   "android_note": "Android 10 or newer",
   "ios_note": "Not released yet",
   "ios_text": "The iPhone version will come from the same code, but it is not ready for release yet.",
@@ -162,7 +162,11 @@
     },
     {
       "question": "Is it on Google Play, F-Droid or the App Store?",
-      "answer": "Not yet. Google Play and F-Droid will come later, and iOS is not released; for now only alpha test builds are published on GitHub."
+      "answer": "Google Play has a closed test that anyone can join. F-Droid will come later, and iOS is not released yet."
+    },
+    {
+      "question": "How do I join the Google Play test?",
+      "answer": "Join the sonoglitch-testers Google group with the account you use on Google Play, then accept the invitation at play.google.com/apps/testing/es.sonoglitch.app and install Sonoglitch. Keep it installed for at least 14 days. The Play build and the GitHub APK are signed differently, so uninstall one before installing the other."
     },
     {
       "question": "How do I install the APK?",

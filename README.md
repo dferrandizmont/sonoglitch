@@ -23,17 +23,31 @@ layout, then save it to the gallery or share it.
 ## Download
 
 <p>
+  <a href="https://play.google.com/apps/testing/es.sonoglitch.app"><img src="https://img.shields.io/badge/Google_Play-Beta-414141?logo=googleplay&amp;style=for-the-badge" alt="Beta on Google Play"></a>
   <a href="https://github.com/dferrandizmont/sonoglitch/releases"><img src="https://img.shields.io/badge/Available_on-GitHub-181717?logo=github&amp;style=for-the-badge" alt="Available on GitHub"></a>
   <!--
-  <a href="[PLAY_URL]"><img src="https://img.shields.io/badge/Google_Play-Beta-414141?logo=googleplay&amp;style=for-the-badge" alt="Available on Google Play"></a>
   <a href="[FDROID_URL]"><img src="https://img.shields.io/badge/F--Droid-1976D2?logo=fdroid&amp;style=for-the-badge" alt="Available on F-Droid"></a>
   -->
 </p>
 
-Android now, on Android 10 (API 29) or newer; iOS is not released yet. The app
-is at an early alpha stage, so only test builds are published. Google Play and
+Android 10 (API 29) or newer, in closed testing on Google Play and as test
+builds on GitHub; iOS is not released yet. The app is at an early alpha stage.
 F-Droid will come later. Device compatibility, performance and image quality
 still need testing.
+
+<details>
+<summary>Join the beta on Google Play</summary>
+
+1. Join the testers group: [sonoglitch-testers](https://groups.google.com/g/sonoglitch-testers). With your Google account, tap «Join group».
+2. Accept the test: [play.google.com/apps/testing/es.sonoglitch.app](https://play.google.com/apps/testing/es.sonoglitch.app).
+3. Install the app from Google Play. It will update itself.
+
+Stay for 14 days: Google requires 12 testers for 14 days before the app can be
+published. The Play build and the GitHub APK are signed differently, so
+uninstall one before installing the other.
+Feedback: sonoglitch@mainshai.com.
+
+</details>
 
 <details>
 <summary>Install the APK from GitHub</summary>

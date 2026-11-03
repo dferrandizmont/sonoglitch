@@ -20,6 +20,6 @@ screenshots = [
 privacy = { en = "docs/legal/politica-privacidad.en.md", es = "docs/legal/politica-privacidad.md" }
 downloads = [
   { kind = "apk", state = "alpha", url = "https://github.com/dferrandizmont/sonoglitch/releases" },
-  { kind = "play", state = "soon" },
+  { kind = "play", state = "closed_test", url = "https://play.google.com/apps/testing/es.sonoglitch.app" },
   { kind = "app_store", state = "soon" },
 ]

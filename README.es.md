@@ -23,17 +23,31 @@ foto, elige el recorte y la composición, y guárdala en la galería o compárte
 ## Descargas
 
 <p>
+  <a href="https://play.google.com/apps/testing/es.sonoglitch.app"><img src="https://img.shields.io/badge/Google_Play-Beta-414141?logo=googleplay&amp;style=for-the-badge" alt="Beta en Google Play"></a>
   <a href="https://github.com/dferrandizmont/sonoglitch/releases"><img src="https://img.shields.io/badge/Disponible_en-GitHub-181717?logo=github&amp;style=for-the-badge" alt="Disponible en GitHub"></a>
   <!--
-  <a href="[PLAY_URL]"><img src="https://img.shields.io/badge/Google_Play-Beta-414141?logo=googleplay&amp;style=for-the-badge" alt="Disponible en Google Play"></a>
   <a href="[FDROID_URL]"><img src="https://img.shields.io/badge/F--Droid-1976D2?logo=fdroid&amp;style=for-the-badge" alt="Disponible en F-Droid"></a>
   -->
 </p>
 
-Android ya, en Android 10 (API 29) o posterior; iOS todavía no está publicado.
-La app está en una fase alfa temprana, así que solo se publican versiones de
-prueba. Google Play y F-Droid llegarán más adelante. Aún falta probar la
+Android 10 (API 29) o posterior, en prueba cerrada en Google Play y con
+versiones de prueba en GitHub; iOS todavía no está publicado. La app está en una
+fase alfa temprana. F-Droid llegará más adelante. Aún falta probar la
 compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo.
+
+<details>
+<summary>Únete a la beta de Google Play</summary>
+
+1. Únete al grupo de testers: [sonoglitch-testers](https://groups.google.com/g/sonoglitch-testers). Con tu cuenta de Google, pulsa «Unirse al grupo».
+2. Acepta la prueba: [play.google.com/apps/testing/es.sonoglitch.app](https://play.google.com/apps/testing/es.sonoglitch.app).
+3. Instala la app desde Google Play. Se actualizará sola.
+
+Quédate 14 días: Google exige 12 testers durante 14 días antes de publicarla.
+La versión de Google Play y el APK de GitHub están firmados de forma distinta,
+así que desinstala uno antes de instalar el otro.
+Comentarios: sonoglitch@mainshai.com.
+
+</details>
 
 <details>
 <summary>Instala el APK desde GitHub</summary>

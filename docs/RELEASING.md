@@ -72,10 +72,15 @@ formato y la siguiente ya sigue esta tabla.
 | 29-oct-2026 | GitHub Releases (repositorio público) | 0.2.0-alpha.2 | 22 | `2c27005` (público `eb8041e`) | `sonoglitch-0.2.0-alpha.2.apk`, Actions, clave de depuración | Publicada (prerelease); la etiqueta 0.2.0-alpha.1 del privado nunca se compiló | no archivados |
 | 31-oct-2026 | GitHub Releases (repositorio privado) | 0.2.0-alpha.3 | 23 | `9518d9b` | `sonoglitch-0.2.0-alpha.3.apk`, compilado en local (Actions del privado sin cuota), clave de subida | Publicada (prerelease) | no archivados |
 | 31-oct-2026 | GitHub Releases (repositorio público) | 0.2.0-alpha.3 | 23 | `9518d9b` (público `9ebfcc8`) | `sonoglitch-0.2.0-alpha.3.apk`, Actions, clave de subida (secretos de firma cargados en ambos repositorios) | Publicada (prerelease); misma firma que el APK del privado | no archivados |
+| 01-nov-2026 | GitHub Releases (repositorio privado) | 0.2.0-alpha.4 | 24 | `5f29da6` | `sonoglitch-0.2.0-alpha.4.apk`, compilado en local (Actions del privado sin cuota), clave de subida | Publicada (prerelease) | no archivados |
+| 01-nov-2026 | GitHub Releases (repositorio público) | 0.2.0-alpha.4 | 24 | `5f29da6` (público `f670afd`) | `sonoglitch-0.2.0-alpha.4.apk`, Actions, clave de subida | Publicada (prerelease); misma firma que el APK del privado | no archivados |
 
 Todavía no hay ninguna subida a Google Play ni a TestFlight. El AAB de la build 19 se compiló en local con la clave de
-subida (27-oct-2026, commit `de7defc`) y **no se subió**: quedó obsoleto, y la primera subida a Play usará un build
-mayor que 21.
+subida (27-oct-2026, commit `de7defc`) y **no se subió**: quedó obsoleto. El AAB de la 0.2.0-alpha.4 (build 24) se
+compiló en local el 03-nov-2026 desde `5f29da6` con `build_play_bundle.ps1 -AppVersion 0.2.0-alpha.4`, con la clave
+de subida (la misma que firma los APK de la build 24; SHA-256 del AAB `3c639458…f421e5a3`) y está pendiente de subir.
+Los símbolos nativos van dentro del AAB (`BUNDLE-METADATA/…/debugsymbols`) y el AAB se archiva fuera del repositorio;
+la fila se añade al subirlo.
 
 - La compilación de los Android de GitHub sin los cuatro secretos de firma usa la clave de depuración: sirve para
   alphas. Una versión estable los exige (véase el flujo *Release APK*).

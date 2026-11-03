@@ -24,7 +24,7 @@
       "text": "Marca cuánto se mueve la imagen y las estelas que deja."
     }
   ],
-  "download_intro": "De momento, Android 10 (API 29) o posterior; iOS todavía no está publicado. La app está en una fase alfa temprana, así que solo se publican versiones de prueba, y aún falta probar la compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo.",
+  "download_intro": "De momento, Android 10 (API 29) o posterior, en prueba cerrada en Google Play o como APK en GitHub; iOS todavía no está publicado. La app está en una fase alfa temprana, y aún falta probar la compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo.",
   "android_note": "Android 10 o posterior",
   "ios_note": "Aún no publicada",
   "ios_text": "La versión para iPhone saldrá del mismo código, pero todavía no está lista para publicarse.",
@@ -162,7 +162,11 @@
     },
     {
       "question": "¿Está en Google Play, F-Droid o la App Store?",
-      "answer": "Todavía no. Google Play y F-Droid llegarán más adelante, e iOS aún no está publicado; de momento solo se publican versiones alfa de prueba en GitHub."
+      "answer": "En Google Play hay una prueba cerrada en la que puede entrar cualquiera. F-Droid llegará más adelante, e iOS aún no está publicado."
+    },
+    {
+      "question": "¿Cómo me uno a la prueba de Google Play?",
+      "answer": "Únete al grupo de Google sonoglitch-testers con la cuenta que usas en Google Play, acepta la invitación en play.google.com/apps/testing/es.sonoglitch.app e instala Sonoglitch. Mantenla instalada al menos 14 días. La versión de Google Play y el APK de GitHub están firmados de forma distinta, así que desinstala uno antes de instalar el otro."
     },
     {
       "question": "¿Cómo instalo el APK?",
