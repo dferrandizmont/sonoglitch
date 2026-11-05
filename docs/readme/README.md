@@ -7,12 +7,11 @@ This folder holds the pictures used by [README.md](../../README.md),
 | --- | --- |
 | `header.png` | The banner at the top of both READMEs, 1024 px wide |
 | `icon-512.png` | The app icon, 512 px square |
-| `og.png` | The Open Graph image of the website, only used when it exists |
+| `og.png` | The source of the English Open Graph image of the website (`web/assets/og/en.png`) |
 | `en/NN-*.png`, `es/NN-*.png` | The screenshots of each README, 1080x2400, in the order listed below |
 
 The banner, the icon and the Open Graph image are made by
-`tool/readme/make_banner.py`. The screenshots are processed by
-`tool/readme/process_screenshots.py`.
+`tool/readme/make_banner.py` (Pillow required).
 
 ## The screenshots
 
@@ -26,17 +25,6 @@ The banner, the icon and the Open Graph image are made by
 | `06-result-poster.png` | The result screen with the Poster export layout, a framed print with the name of the style |
 | `07-before-after.png` | The result screen with the compare button on: the original photo, without the effect |
 | `08-landscape-result.png` | The result of a photo taken in horizontal |
-| `09-settings.png` | The Settings screen, optional |
-
-Only these names are accepted, and the extension of the output is always
-`.png`, whatever the extension of the capture was. The names of the other
-images of the folder (`header`, `icon-512` and `og`) are reserved: a capture
-cannot overwrite them. The tool checks every name before it writes anything,
-and refuses the run when one is unexpected or when two captures would end up
-with the same name.
-
-The section of the README that shows the screenshots is inside an HTML comment
-until the pictures exist. Uncomment it once the files are here.
 
 ## How the current screenshots were made
 
@@ -60,50 +48,14 @@ to remove advertising.
 The Google Play images are generated from them into `docs/store/` (not
 published) with the `store_shots.py` tool of the shared README template.
 
-The tools below still write the older layout (screenshots at the root of
-this folder and `play/`); adapt them before processing captures from a
-phone.
-
 ## How to regenerate them
 
-1. Take the screenshots on a phone with the app and copy them to
-   `.local/capturas/`, with the names of the table above. The folder is
-   ignored by git, so the raw captures never enter the repository.
-2. Run the pipeline, with Pillow installed:
-
-   ```sh
-   python tool/readme/process_screenshots.py
-   ```
-
-3. Run the tests:
-
-   ```sh
-   python -m unittest discover -s tool/readme -p "test_process_screenshots.py"
-   ```
-
+1. Build and install the screenshot build, push the photo source and set the
+   demo status bar as described in [RELEASING.md](../RELEASING.md)
+   ("Screenshot build").
+2. Take the screenshots on the emulator in English and in Spanish, with the
+   names of the table above, and save them in `en/` and `es/`. Keep the raw
+   captures and the original photos in `.local/capturas/`, which git ignores.
+3. Regenerate the Google Play images of `docs/store/` with `store_shots.py`
+   and `docs/store/shots.json`.
 4. Regenerate and deploy the website, which reads these screenshots.
-
-The tool prints a table with the size of every file it writes.
-
-## The two versions
-
-The version of this folder is the one the README and the website use: PNG, at
-most 1080 px on the long side, and no metadata.
-
-The version of `play/` is the one Google Play accepts: PNG in 24 bit with no
-alpha channel, every side between 320 px and 3840 px, and a long side of at
-most twice the short side. A phone screenshot in vertical is taller than 2:1,
-so it is padded with the background of the app (`#0D0D11`) until the ratio is
-exactly 2:1. The picture itself is never stretched and never cropped. One
-scale is computed for the whole picture, so the padded canvas and the picture
-inside it always respect both limits at the same time.
-
-Google Play also accepts a file of at most 8 MB. The tool checks the bytes
-of the file it writes: if the PNG is too big, the picture is scaled down
-inside the same limits, and if no PNG fits, it is written as a 24 bit JPEG
-with a lower quality. The extension of the file of the store follows the
-encoding, and the table the tool prints says which one was used.
-
-The longest side of the store version can be changed with `--max-side`, but
-it has to stay between 640 px (twice the minimum side) and 3840 px, the
-maximum the store accepts.
