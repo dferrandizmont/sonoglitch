@@ -3,3 +3,7 @@ tags:
   # with every plain `flutter test`; CI skips them on pull requests in the
   # private repository unless shader-related files changed (see ci.yml).
   slow:
+    # CI runs one test file per vCPU (`--concurrency=$(nproc)`), so the CPU
+    # renders compete for the cores and a matrix can take longer than the
+    # default 30-second timeout (3 minutes here).
+    timeout: 6x
