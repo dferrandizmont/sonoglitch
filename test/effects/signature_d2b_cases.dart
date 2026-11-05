@@ -17,6 +17,9 @@ import 'new_styles_test.dart' show sig2bScene;
 // Independently captured before D2 edits: uniforms, helpers AND the entire D1
 // recipe. The dispatcher must call this exact implementation at neutral inputs,
 // including nonzero bands/seed (the older GPU oracles predate those recipes).
+/// Styles covered by [signatureD2bTests], one test file each.
+final signatureD2bStyleIds = _delivery1.keys.toSet();
+
 const _delivery1 = {
   'phosphor':
       'ea2f0eb2c11e2160afbb1177eaf9ab6231583f8ab6b05b7497b94fbc2e1e3e85',
@@ -145,9 +148,16 @@ double _correlation(List<double> a, List<double> b) {
   return covariance / math.sqrt(varianceA * varianceB);
 }
 
-void main() {
+/// Phosphor, Ripple and Thermal delivery-2 cases for the style [id].
+///
+/// Each style runs from its own `signature_d2b_<id>_test.dart` file so that
+/// the CPU-rendered matrices run in parallel test processes.
+void signatureD2bTests(String id) {
+  if (!_delivery1.containsKey(id)) {
+    throw ArgumentError.value(id, 'id', 'Not a delivery-2B style');
+  }
   TestWidgetsFlutterBinding.ensureInitialized();
-  for (final style in kStyles.where((s) => _delivery1.containsKey(s.id))) {
+  for (final style in [kStyles.singleWhere((s) => s.id == id)]) {
     group('${style.id} D2', () {
       test('neutral dispatcher preserves the exact delivery-1 implementation', () {
         final source = File(style.shaderAsset)

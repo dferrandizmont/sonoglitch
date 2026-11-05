@@ -1,18 +1,48 @@
 name: CI
 
+# A run takes about 17 minutes, most of it `flutter test`. Private repositories
+# pay for Actions minutes, so the private development repository only checks
+# pull requests (including Dependabot's) and manual runs. Pushes to `main` are
+# checked locally before they land, and every published release is checked
+# again, for free, in the public repository, where this runs on every push.
+
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'fastlane/**'
+      - 'fdroid/**'
+      - 'site/**'
+      - 'web/**'
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'fastlane/**'
+      - 'fdroid/**'
+      - 'site/**'
+      - 'web/**'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
+    if: ${{ github.event_name != 'push' || !github.event.repository.private }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The parent of a pull request's merge commit is its base, which
+          # tells the test step below which files the pull request changed.
+          fetch-depth: 2
       - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: stable
@@ -21,4 +51,26 @@ jobs:
       - run: flutter pub get
       - run: dart format --output=none --set-exit-if-changed .
       - run: flutter analyze
-      - run: flutter test
+      # Private runners have two vCPUs and public ones four; without an explicit
+      # concurrency `flutter test` uses half of them. The `slow` tag
+      # (dart_test.yaml) marks the CPU-rendered shader matrices, about 70 % of
+      # the suite's time. Pull requests in the private repository, which pays
+      # for its minutes, skip them unless a shader-related file changed; every
+      # other run, including the public release build, runs the whole suite.
+      - name: flutter test
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          PRIVATE: ${{ github.event.repository.private }}
+        run: |
+          set -euo pipefail
+          args=(--concurrency="$(nproc)")
+          if [[ "$EVENT" == pull_request && "$PRIVATE" == true ]]; then
+            relevant='^(shaders/|lib/effects/|lib/ambient/|test/effects/|pubspec\.(yaml|lock)$|dart_test\.yaml$|\.github/workflows/)'
+            if changed=$(git diff --name-only HEAD^1 HEAD) &&
+              ! grep -qE "$relevant" <<< "$changed"; then
+              echo '::notice::No shader-related file changed: skipping the tests tagged slow.'
+              args+=(--exclude-tags=slow)
+            fi
+          fi
+          flutter test "${args[@]}"

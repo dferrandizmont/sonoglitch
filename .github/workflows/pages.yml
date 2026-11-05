@@ -2,7 +2,8 @@ name: Pages
 
 # Publishes `site/` to GitHub Pages. It only holds hand-written redirects from the
 # old address to https://sonoglitch.mainshai.com, whose source is `web/`. The
-# repository must be public and Pages must use "GitHub Actions" as its source.
+# repository must be public and Pages must use "GitHub Actions" as its source,
+# so the job is skipped in the private development repository.
 
 on:
   push:
@@ -20,6 +21,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

@@ -1,0 +1,5 @@
+tags:
+  # CPU-rendered shader matrices that take most of the suite's time. They run
+  # with every plain `flutter test`; CI skips them on pull requests in the
+  # private repository unless shader-related files changed (see ci.yml).
+  slow:

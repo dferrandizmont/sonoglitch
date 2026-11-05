@@ -1,6 +1,6 @@
 # Contributing to Sonoglitch
 
-Sonoglitch is in early development, with pre-release alpha builds only. Read [AGENTS.md](AGENTS.md) for project conventions and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the implemented design. The [Spanish product specification](docs/SPEC.es.md) contains goals as well as current behavior; verify changes against the code. Every change the users notice goes into the [changelog](CHANGELOG.md) in the same commit, and the [releasing guide](docs/RELEASING.md) explains how the three channels differ.
+Sonoglitch is in early development, with pre-release alpha builds only. Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the implemented design. The [Spanish product specification](docs/SPEC.es.md) contains goals as well as current behavior; verify changes against the code. Every change the users notice goes into the [changelog](CHANGELOG.md) in the same commit, and the [releasing guide](docs/RELEASING.md) explains how the three channels differ.
 
 Follow the [code of conduct](CODE_OF_CONDUCT.md). Use the [security policy](SECURITY.md) to report vulnerabilities privately rather than opening a public issue with sensitive details. iOS work must account for the unverified Mac/device checks in [iOS status](docs/IOS_STATUS.md).
 
@@ -81,6 +81,8 @@ dart format --output=none --set-exit-if-changed .
 flutter analyze
 flutter test
 ```
+
+Tests tagged `slow` in `dart_test.yaml` (the CPU-rendered shader matrices under `test/effects/`) take most of the suite's time. `flutter test` runs them; `flutter test --exclude-tags=slow` skips them for a quick check while you work, but run the whole suite before merging. Pull requests in the private development repository skip them in CI unless they change shader-related files.
 
 Use `dart format .` when you need to apply formatting. If Flutter tooling rewrites `analysis_options.yaml` without an intended configuration change, restore that incidental rewrite before committing. Add meaningful tests for changed behavior. Camera orientation, permission handling, gallery export and sharing also need physical-device checks; passing unit tests does not establish those results.
 
@@ -182,7 +184,7 @@ When that file exists, Gradle creates a `release` signing configuration from it 
 
 ## Release workflow
 
-The workflow in `.github/workflows/release.yml` runs on `v*` tags. Use a version such as `v0.1.0-alpha.1` or `v0.1.0`. Tags containing `-alpha`, `-beta` or `-rc` create GitHub prereleases; other accepted version tags create normal releases. Tag publication and releases are maintainer actions.
+The workflow in `.github/workflows/release.yml` runs on `v*` tags in public repositories; in a private repository a tag push skips it, and it only builds when started by hand on a tag. Use a version such as `v0.1.0-alpha.1` or `v0.1.0`. Tags containing `-alpha`, `-beta` or `-rc` create GitHub prereleases; other accepted version tags create normal releases. Tag publication and releases are maintainer actions.
 
 The workflow builds one release APK containing `android-arm64` and `android-x64`, sets the displayed `APP_VERSION` from the tag without the leading `v`, and attaches the APK and its SHA-256 file. Android's build name uses the numeric part of the version; the build number still comes from `pubspec.yaml` unless deliberately updated separately. Store version codes must increase for subsequent store submissions. The Gradle build of the workflow is debug-signed, because the keystore of the repository is not part of the checkout; the signing job replaces that signature.
 

@@ -74,13 +74,19 @@ formato y la siguiente ya sigue esta tabla.
 | 31-oct-2026 | GitHub Releases (repositorio público) | 0.2.0-alpha.3 | 23 | `9518d9b` (público `9ebfcc8`) | `sonoglitch-0.2.0-alpha.3.apk`, Actions, clave de subida (secretos de firma cargados en ambos repositorios) | Publicada (prerelease); misma firma que el APK del privado | no archivados |
 | 01-nov-2026 | GitHub Releases (repositorio privado) | 0.2.0-alpha.4 | 24 | `5f29da6` | `sonoglitch-0.2.0-alpha.4.apk`, compilado en local (Actions del privado sin cuota), clave de subida | Publicada (prerelease) | no archivados |
 | 01-nov-2026 | GitHub Releases (repositorio público) | 0.2.0-alpha.4 | 24 | `5f29da6` (público `f670afd`) | `sonoglitch-0.2.0-alpha.4.apk`, Actions, clave de subida | Publicada (prerelease); misma firma que el APK del privado | no archivados |
+| 03-nov-2026 | Google Play (prueba cerrada) | 0.2.0-alpha.4 | 24 | `5f29da6` | `sonoglitch-0.2.0-alpha.4-v24.aab` (SHA-256 `3c639458…f421e5a3`), compilado en local, clave de subida; Play lo firmó con una clave generada por Google | Publicada a las 15:33; inservible tras el cambio de clave de firma (0 instalaciones) | dentro del AAB |
+| 03-nov-2026 | Google Play (prueba cerrada) | 0.2.0-alpha.5 | 25 | `bece2ef` | `sonoglitch-0.2.0-alpha.5-v25.aab` (SHA-256 `4080d51c…4236bd78`), compilado en local, clave de subida | En revisión; Play firma con la clave de subida | dentro del AAB |
+| 03-nov-2026 | GitHub Releases (repositorio privado) | 0.2.0-alpha.5 | 25 | `bece2ef` | `sonoglitch-0.2.0-alpha.5.apk`, compilado en local (Actions del privado sin cuota), clave de subida | Publicada (prerelease) | no archivados |
+| 03-nov-2026 | GitHub Releases (repositorio público) | 0.2.0-alpha.5 | 25 | `bece2ef` (público `4fa548d`) | `sonoglitch-0.2.0-alpha.5.apk`, Actions, clave de subida | Publicada (prerelease); misma firma que el APK del privado y que Google Play | no archivados |
 
-Todavía no hay ninguna subida a Google Play ni a TestFlight. El AAB de la build 19 se compiló en local con la clave de
-subida (27-oct-2026, commit `de7defc`) y **no se subió**: quedó obsoleto. El AAB de la 0.2.0-alpha.4 (build 24) se
-compiló en local el 03-nov-2026 desde `5f29da6` con `build_play_bundle.ps1 -AppVersion 0.2.0-alpha.4`, con la clave
-de subida (la misma que firma los APK de la build 24; SHA-256 del AAB `3c639458…f421e5a3`) y está pendiente de subir.
-Los símbolos nativos van dentro del AAB (`BUNDLE-METADATA/…/debugsymbols`) y el AAB se archiva fuera del repositorio;
-la fila se añade al subirlo.
+Todavía no hay ninguna subida a TestFlight. El AAB de la build 19 se compiló en local con la clave de subida
+(27-oct-2026, commit `de7defc`) y **no se subió**: quedó obsoleto. Los símbolos nativos van dentro del AAB
+(`BUNDLE-METADATA/…/debugsymbols`) y los AAB se archivan fuera del repositorio.
+
+**Clave de firma de Play:** desde el 03-nov-2026 Play firma con la clave de subida (`sonoglitch-upload.jks`, SHA-256
+`B6:3C:9E:7D:…:C5:5A:49`), exportada con PEPK en Play Console → Firma de aplicaciones → Cambiar clave. Así la versión
+de Play, los APK de GitHub (los dos repositorios) y los AAB tienen la misma firma, y se puede pasar de una a otra sin
+desinstalar. No generes otra clave de subida: rompería esa igualdad.
 
 - La compilación de los Android de GitHub sin los cuatro secretos de firma usa la clave de depuración: sirve para
   alphas. Una versión estable los exige (véase el flujo *Release APK*).
@@ -90,6 +96,20 @@ la fila se añade al subirlo.
 ## Public and private repositories
 
 Development happens in a private repository. This public repository receives one commit per release, a snapshot of the tagged tree, with the version tag; the development history is not published. `tool/publish/publish_public.ps1 -Tag vX.Y.Z` makes the snapshot from tracked files only, scans it for secrets and pushes it (use `-DryRun` first). Pushing the tag starts the *Release APK* workflow, which builds, signs and publishes the GitHub release. F-Droid builds from these tags. Pull requests to this repository are reviewed here and ported to the private repository by the maintainer.
+
+### GitHub Actions in each repository
+
+Actions minutes are free in the public repository and paid in the private one (a CI run takes about 17 minutes, a release build about 32). The workflows are the same files in both, and each job checks `github.event.repository.private`:
+
+| Workflow | Public repository | Private repository |
+| --- | --- | --- |
+| *CI* (`ci.yml`) | every push to `main` and every pull request | pull requests (Dependabot's included) and manual runs; pushes to `main` are skipped |
+| *Release APK* (`release.yml`) | every `v*` tag | skipped on tag pushes; only a manual run on a tag builds |
+| *Pages* (`pages.yml`) | pushes to `main` that change `site/` | skipped (GitHub Pages needs a public repository) |
+
+*CI* ignores changes that only touch `docs/`, `fastlane/`, `fdroid/`, `site/`, `web/` or Markdown files, and a new run cancels the one in progress on the same branch. Run the three checks locally before pushing to `main` of the private repository: nothing checks those pushes there.
+
+From 24 to 31 October 2026 the private repository had no Actions minutes (a failed payment), so its runs failed within seconds and the private releases were built locally. When the minutes came back, the tag pushes of 0.2.0-alpha.4 and 0.2.0-alpha.5 built for 30 minutes and then failed, because the release made by hand already existed. That is why the private repository no longer builds releases on a tag push.
 
 ### Identity in the public repository
 
@@ -104,12 +124,12 @@ Tests: `python -m unittest discover -s tool/publish` (Windows, PowerShell). They
 
 ### Release flow: test privately first, then publish
 
-1. Commit `chore: release`, bump `pubspec.yaml`, `CHANGELOG.md` and the F-Droid recipe, and create the tag `vX.Y.Z` in the private repository. Push the commit and the tag there: its *Release APK* workflow builds a private prerelease with the same tree.
-2. Install that APK on a phone and test it (it carries the signature of the signing secrets, so it updates over the previous one).
+1. Commit `chore: release`, bump `pubspec.yaml`, `CHANGELOG.md` and the F-Droid recipe, and create the tag `vX.Y.Z` in the private repository. Push the commit and the tag there (no workflow runs), build the APK locally with the upload key and publish it as a private prerelease, as described in [GitHub releases](#github-releases).
+2. Install that APK on a phone and test it (it carries the upload key signature, so it updates over the previous one).
 3. Only if it is good, run `tool/publish/publish_public.ps1 -Tag vX.Y.Z` (first with `-DryRun`). The public workflow builds the public release from the snapshot of the same tree.
 4. Add the row to the register of uploads in *Versionado y trazabilidad*.
 
-Both repositories need the four signing secrets (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`) with the **same** upload key, so that every APK has the same signature and installs over the previous one. Without them the workflow signs with a debug key that is new on every run: only acceptable for prereleases, and each build must then be uninstalled before the next one. Set them with `gh secret set <NAME> --repo <owner/repo> --body <value>`, reading the values from `android/key.properties` and the `.jks` without printing them. Never commit or paste them.
+The public repository needs the four signing secrets (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`), and the private one keeps them for a manual run of *Release APK*, always with the **same** upload key, so that every APK has the same signature and installs over the previous one. Without them the workflow signs with a debug key that is new on every run: only acceptable for prereleases, and each build must then be uninstalled before the next one. Set them with `gh secret set <NAME> --repo <owner/repo> --body <value>`, reading the values from `android/key.properties` and the `.jks` without printing them. Never commit or paste them.
 
 ### Screenshot build
 
@@ -218,4 +238,4 @@ The *Donate* link of the F-Droid listing comes from the recipe's `Donate:` field
 
 ## GitHub releases
 
-Push a `v*` tag. The [workflow](../.github/workflows/release.yml) builds, signs with the repository secrets and publishes the APK with its checksum, including the Ko-fi link. If Actions are unavailable, build locally with the same command and `--build-number=N`, copy the APK to `sonoglitch-<version>.apk`, write its checksum with `sha256sum`, and create the release with `gh release create v<version> <apk> <checksum> --target main --prerelease` (use `--prerelease` for every alpha). A local build without `android/key.properties` is signed with the debug key, which is only acceptable for private test builds; stable releases must use the real key.
+In the public repository, push a `v*` tag (`publish_public.ps1` does it). The [workflow](../.github/workflows/release.yml) builds, signs with the repository secrets and publishes the APK with its checksum, including the Ko-fi link. In the private repository a tag push does not build (see [GitHub Actions in each repository](#github-actions-in-each-repository)); build locally with the same command and `--build-number=N`, copy the APK to `sonoglitch-<version>.apk`, write its checksum with `sha256sum`, and create the release with `gh release create v<version> <apk> <checksum> --target main --prerelease` (use `--prerelease` for every alpha). A local build without `android/key.properties` is signed with the debug key, which is only acceptable for private test builds; stable releases must use the real key.

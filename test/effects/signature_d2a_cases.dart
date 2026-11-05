@@ -14,7 +14,8 @@ import 'package:sonoglitch/effects/style_definition.dart';
 import 'effect_renderer_test.dart' show difference, pixels, testImage;
 import 'new_styles_test.dart' show sig2bScene;
 
-const _ids = {'static', 'tape', 'prism'};
+/// Styles covered by [signatureD2aTests], one test file each.
+const signatureD2aStyleIds = {'static', 'tape', 'prism'};
 // Frozen before D2A edits; the delivery-1 shared helper is inlined verbatim.
 // Static, Prism and Tape were re-frozen when their visibility was raised (wet floor,
 // dispersion/block amplitude, tear tint/snow/tape layer); neutral D2 still equals them.
@@ -219,9 +220,16 @@ void _expectConserved(double broad, double fine, double tilt) {
   expect(after, closeTo(before, math.max(1e-12, before.abs() * 3e-7)));
 }
 
-void main() {
+/// Static, Tape and Prism delivery-2 cases for the style [id].
+///
+/// Each style runs from its own `signature_d2a_<id>_test.dart` file so that
+/// the CPU-rendered matrices run in parallel test processes.
+void signatureD2aTests(String id) {
+  if (!signatureD2aStyleIds.contains(id)) {
+    throw ArgumentError.value(id, 'id', 'Not a delivery-2A style');
+  }
   TestWidgetsFlutterBinding.ensureInitialized();
-  for (final style in kStyles.where((s) => _ids.contains(s.id))) {
+  for (final style in [kStyles.singleWhere((s) => s.id == id)]) {
     test('${style.id} recipe eligibility is independent of pulse', () {
       final shader = File('shaders/${style.id}.frag').readAsStringSync();
       final eligibility = shader.substring(

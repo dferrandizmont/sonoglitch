@@ -3,3 +3,15 @@
 
 # Store listing screenshots are generated here but never published.
 docs/store
+
+# Instructions for coding agents: private working notes.
+AGENTS.md
+CLAUDE.md
+
+# Dependency updates run on the private repository; in the public one their
+# pull requests would be overwritten by the next snapshot.
+.github/dependabot.yml
+
+# Internal QA plans and the website's copy notes.
+docs/qa
+web/TEXT-SOURCES.md
