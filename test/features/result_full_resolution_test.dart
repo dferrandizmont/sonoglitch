@@ -19,6 +19,7 @@ import 'package:sonoglitch/features/settings/preferences_store.dart';
 import 'package:sonoglitch/l10n/app_localizations.dart';
 
 import '../support/fakes.dart';
+import '../support/style_fakes.dart';
 
 class Original extends Fake implements StillSource {}
 
@@ -94,6 +95,13 @@ class QueuedExporter extends PhotoExporter {
   }
 }
 
+/// Taps a chip of the controls, which may be below the strip of styles.
+Future<void> tapChip(WidgetTester tester, Finder finder) async {
+  await tester.ensureVisible(finder);
+  await tester.pump();
+  await tester.tap(finder);
+}
+
 void main() {
   for (final change in ['cached return', 'rapid misses', 'settings']) {
     testWidgets(
@@ -145,6 +153,7 @@ void main() {
               ),
               export: export,
               photoExporter: pipeline,
+              styleStills: NoStills(),
               settings: settings,
               log: log,
               capture: CaptureMetrics(),
@@ -158,9 +167,10 @@ void main() {
           await settings.setFileType(ExportFileType.jpeg);
           await tester.pump();
         } else {
-          await tester.tap(find.text('Square 1:1'));
+          await tapChip(tester, find.text('Square 1:1'));
           await tester.pump();
-          await tester.tap(
+          await tapChip(
+            tester,
             find.text(change == 'cached return' ? 'Original' : 'Portrait 4:5'),
           );
           await tester.pump();
@@ -267,6 +277,7 @@ void main() {
               ),
               export: export,
               photoExporter: pipeline,
+              styleStills: NoStills(),
               settings: AppSettings(store: InMemoryPreferencesStore()),
               log: log,
               capture: capture,
@@ -308,7 +319,7 @@ void main() {
             ...photo.metadata,
             'width': 3000,
           });
-          await tester.tap(find.text('Square 1:1'));
+          await tapChip(tester, find.text('Square 1:1'));
           await tester.pump();
           await tester.pump();
           expect(pipeline.formats, [
@@ -321,7 +332,7 @@ void main() {
             replacement,
           );
           expect(file.existsSync(), isTrue);
-          await tester.tap(find.text('Original'));
+          await tapChip(tester, find.text('Original'));
           await tester.pump();
           expect(pipeline.formats, [
             ExportFormat.original,

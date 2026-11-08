@@ -1,6 +1,6 @@
 # Privacy policy
 
-*Last updated: 2026-10-27. Applies to Sonoglitch (all versions).*
+*Last updated: 2026-11-08. Applies to Sonoglitch (all versions).*
 
 Sonoglitch is a camera app that distorts photos according to the sound level, the light and the movement around you. It is free, open source software and it works entirely on your device.
 
@@ -30,7 +30,7 @@ The app keeps a small text log in its private storage on your device: technical 
 
 ## Optional links
 
-Some builds (F-Droid and the GitHub releases) show an optional "Support the project" link to a Ko-fi page; the Google Play build has none. Tapping it opens the link in another app on your device, normally your browser. Nothing is sent by the app itself, and the app does not know whether you donate.
+The GitHub releases show an optional "Support the project" link to a Ko-fi page; the Google Play build has none. Tapping it opens the link in another app on your device, normally your browser. Nothing is sent by the app itself, and the app does not know whether you donate.
 
 ## Children
 

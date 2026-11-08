@@ -15,3 +15,17 @@ CLAUDE.md
 # Internal QA plans and the website's copy notes.
 docs/qa
 web/TEXT-SOURCES.md
+
+# Release manifest, shipping notes and per-version release state (release skill):
+# internal working files.
+release.json
+SHIPPING.md
+store
+
+# Play store screenshots copied for the upload script, and their manifest:
+# private like docs/store.
+fastlane/metadata/android/*/images/phoneScreenshots
+fastlane/metadata/android/shots-manifest.json
+
+# Per-version QA reports (test-like-a-human): internal.
+qa

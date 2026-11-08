@@ -56,8 +56,8 @@ android {
     buildTypes {
         release {
             // Without key.properties the build falls back to the debug key, so
-            // `flutter run --release` installs. F-Droid and the release
-            // workflow sign the APK again with their own keys.
+            // `flutter run --release` installs. The release
+            // workflow signs the APK again with its own key.
             signingConfig =
                 if (keyPropertiesFile.exists()) {
                     signingConfigs.getByName("release")

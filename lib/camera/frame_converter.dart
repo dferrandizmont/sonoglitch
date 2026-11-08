@@ -22,6 +22,15 @@ class FrameConverter {
   /// Longest side of the converted image, in pixels.
   final int targetLongSide;
 
+  /// The settings of the converter, in a form that can travel to another
+  /// isolate.
+  ///
+  /// The background isolate rebuilds the converter from this configuration
+  /// instead of from the defaults, so the preview and the still path share
+  /// the same contract even when the converter grows a new option.
+  FrameConverterConfig get config =>
+      FrameConverterConfig(targetLongSide: targetLongSide);
+
   /// Converts [frame] into an upright RGBA buffer.
   ///
   /// [rotationDegrees] is the clockwise rotation applied to the frame so it
@@ -227,4 +236,29 @@ class FrameConverter {
     if (value >= 255) return 255;
     return value.round();
   }
+}
+
+/// The settings of a [FrameConverter], in a form that can travel to another
+/// isolate.
+///
+/// The background isolate rebuilds the converter from this configuration, so
+/// it uses the same settings as the service and not the defaults of the
+/// library. A new option of the converter must be added here, so the preview
+/// and the still path keep the same contract.
+class FrameConverterConfig {
+  const FrameConverterConfig({this.targetLongSide = 360});
+
+  /// Longest side of the converted image, in pixels.
+  final int targetLongSide;
+
+  /// Rebuilds the converter of these settings.
+  FrameConverter toConverter() =>
+      FrameConverter(targetLongSide: targetLongSide);
+
+  @override
+  bool operator ==(Object other) =>
+      other is FrameConverterConfig && other.targetLongSide == targetLongSide;
+
+  @override
+  int get hashCode => targetLongSide.hashCode;
 }

@@ -10,6 +10,7 @@ import 'package:sonoglitch/ambient/ambient_state.dart';
 import 'package:sonoglitch/ambient/signature/signature_state.dart';
 import 'package:sonoglitch/effects/effect_renderer.dart';
 import 'package:sonoglitch/effects/style_definition.dart';
+import 'package:sonoglitch_test_shaders/sonoglitch_test_shaders.dart';
 
 import 'effect_renderer_test.dart' show difference, pixels, testImage;
 import 'new_styles_test.dart' show sig2bScene;
@@ -133,7 +134,7 @@ void main() {
           StyleDefinition(
             id: '${style.id}-legacy',
             name: 'Frozen legacy oracle',
-            shaderAsset: 'test/effects/fixtures/sig2b_legacy_${style.id}.frag',
+            shaderAsset: testOracleAsset('sig2b_legacy_${style.id}'),
           ),
         );
         sources = [

@@ -66,8 +66,8 @@ class AppConfig {
   /// Link behind the "Support the project" row.
   ///
   /// Empty means the row is hidden. The Google Play build is made without it
-  /// (the app is free and shows no donation link there); the F-Droid and GitHub
-  /// builds set it with `--dart-define=DONATION_URL=...`.
+  /// (the app is free and shows no donation link there); the GitHub
+  /// build sets it with `--dart-define=DONATION_URL=...`.
   static const String donationUrl = String.fromEnvironment(
     'DONATION_URL',
     defaultValue: '',

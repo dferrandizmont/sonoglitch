@@ -1,0 +1,26 @@
+name: sonoglitch_test_shaders
+description: "Frozen GPU test oracles for Sonoglitch, shipped only with the tests."
+publish_to: 'none'
+version: 0.0.1
+
+environment:
+  sdk: ^3.13.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+# The shaders are declared here, and not in the app, so that they are compiled
+# into the test asset bundle but never into a release build: Flutter bundles the
+# assets of the packages that are only dev_dependencies when it runs the tests,
+# and leaves them out of every other build.
+flutter:
+  shaders:
+    # Frozen delivery-1 GPU test oracles.
+    - shaders/d2a_delivery1_static.frag
+    - shaders/d2a_delivery1_tape.frag
+    - shaders/d2a_delivery1_prism.frag
+    # Frozen pre-signature (SIG-2B) GPU test oracles.
+    - shaders/sig2b_legacy_phosphor.frag
+    - shaders/sig2b_legacy_ripple.frag
+    - shaders/sig2b_legacy_thermal.frag

@@ -17,6 +17,7 @@ import 'camera_device.dart';
 import 'camera_metrics.dart';
 import 'exif.dart';
 import 'frame_converter.dart';
+import 'frame_worker.dart';
 import 'raw_frame.dart';
 import 'oriented_still.dart';
 import 'still_source.dart';
@@ -72,9 +73,11 @@ class CameraService {
     CameraDeviceFactory? deviceFactory,
     CameraLister? lister,
     Future<ui.Image> Function(FrameConversion)? imageFactory,
+    FrameWorkerFactory? workerFactory,
   }) : _deviceFactory = deviceFactory ?? pluginCameraDevice,
        _lister = lister ?? availableCameras,
-       _imageFactory = imageFactory ?? _toUiImage;
+       _imageFactory = imageFactory ?? _toUiImage,
+       _workerFactory = workerFactory ?? inlineFrameWorker;
 
   /// Where the brightness of the scene is measured.
   final LightService light;
@@ -110,6 +113,9 @@ class CameraService {
   /// Creates the live image; injectable to control asynchronous completion.
   final Future<ui.Image> Function(FrameConversion) _imageFactory;
 
+  /// Builds the worker that converts the frames of the running stream.
+  final FrameWorkerFactory _workerFactory;
+
   /// Longest side of the still picture, in pixels.
   static const int stillMaxSide = 4096;
 
@@ -131,6 +137,13 @@ class CameraService {
   int _streamGeneration = 0;
   int _pauseRequestGeneration = 0;
   int _lastLogMicros = 0;
+
+  /// The worker that converts the frames of the running stream.
+  ///
+  /// It is created when the stream starts and closed when the stream stops,
+  /// so a frame that is in flight when the camera is closed is dropped
+  /// instead of arriving late.
+  FrameConversionWorker? _worker;
 
   /// The operations that change the camera, one after the other.
   ///
@@ -215,7 +228,11 @@ class CameraService {
     // camera is hidden, even if the stream takes a moment to stop.
     _paused = paused;
     final request = ++_pauseRequestGeneration;
-    if (paused) _streamGeneration++;
+    if (paused) {
+      _streamGeneration++;
+      // The stream stops, so the worker of the frames goes with it.
+      _closeWorker();
+    }
     motion?.resetScene();
     // The colourfulness of the previous camera is forgotten: a paused camera
     // must never lend its colours to the next one.
@@ -338,6 +355,9 @@ class CameraService {
     // and releases the camera it was opening.
     _disposed = true;
     _generation++;
+    // The worker of the frames is closed at once: a frame that is in flight
+    // is dropped, not published after the camera is gone.
+    _closeWorker();
     await _serial(() async {
       try {
         await _teardownLive();
@@ -458,7 +478,58 @@ class CameraService {
       return;
     }
     final generation = ++_streamGeneration;
+    await _openWorker();
+    // The camera may have been hidden while the worker was starting: the
+    // stream must not start behind the back of the viewfinder.
+    if (_disposed ||
+        _paused ||
+        (resumeRequest != null && resumeRequest != _pauseRequestGeneration)) {
+      _closeWorker();
+      return;
+    }
     await device.startImageStream((frame) => _onFrame(frame, generation));
+  }
+
+  /// Creates the worker that converts the frames, if there is none.
+  ///
+  /// The worker lives as long as the stream: it is closed when the stream
+  /// stops, so a frame that was in flight is dropped with it.
+  Future<void> _openWorker() async {
+    if (_worker != null) return;
+    FrameConversionWorker? worker;
+    try {
+      worker = _workerFactory(converter);
+      await worker.start();
+    } catch (error, stackTrace) {
+      // A worker that cannot be built or cannot start would leave the
+      // preview without frames, so the conversion goes back to the isolate
+      // of the caller.
+      log.error('camera', 'the frame worker did not start', error, stackTrace);
+      worker?.dispose();
+      worker = inlineFrameWorker(converter);
+      await worker.start();
+    }
+    // The camera may have been hidden or closed while the worker was
+    // starting: the worker that was just created is released instead of
+    // staying alive behind a closed viewfinder.
+    if (_disposed || _paused) {
+      worker.dispose();
+      return;
+    }
+    _worker = worker;
+    if (!worker.usesBackgroundIsolate) {
+      log.info('camera', 'the frames are converted in the UI isolate');
+    }
+  }
+
+  /// Closes the worker of the frames, if there is one.
+  ///
+  /// The frame that was in flight is dropped, not thrown, and the resources
+  /// of the worker are released.
+  void _closeWorker() {
+    final worker = _worker;
+    _worker = null;
+    worker?.dispose();
   }
 
   Future<void> _teardownLive() async {
@@ -466,6 +537,9 @@ class CameraService {
     _device = null;
     _generation++;
     _streamGeneration++;
+    // The worker of the frames goes with the stream: a frame that is in
+    // flight is dropped instead of arriving after the camera is closed.
+    _closeWorker();
     motion?.resetScene();
     // Another camera may be opened next: the colours of this one are dropped.
     signals?.clearScene();
@@ -490,7 +564,11 @@ class CameraService {
     }
   }
 
-  Future<void> _onFrame(RawFrame frame, int generation) async {
+  /// Takes a frame of the stream and hands it to the worker.
+  ///
+  /// Only one frame is converted at a time: the frames that arrive while
+  /// the conversion is running are counted as dropped.
+  void _onFrame(RawFrame frame, int generation) {
     if (_disposed || _paused || generation != _streamGeneration) {
       // The camera is hidden: the frame is not converted and the light of
       // the scene is not measured.
@@ -500,14 +578,45 @@ class CameraService {
       metrics.recordDroppedFrame();
       return;
     }
+    final worker = _worker;
+    if (worker == null) {
+      // The stream is not running, so there is nobody to convert the frame.
+      return;
+    }
     _converting = true;
     final started = clock();
+    // The orientation is read once, with the frame: the picture must not
+    // change its rotation while it is converted.
+    final rotation = _rotationDegrees();
+    final mirror = _shouldMirror();
+    worker.convert(
+      frame,
+      rotationDegrees: rotation,
+      mirror: mirror,
+      onConverted: (conversion) =>
+          _onConverted(conversion, frame, generation, started),
+      onError: _onConversionFailed,
+    );
+  }
+
+  /// Publishes the frame the worker converted.
+  Future<void> _onConverted(
+    FrameConversion? conversion,
+    RawFrame frame,
+    int generation,
+    int started,
+  ) async {
     try {
-      final conversion = converter.convert(
-        frame,
-        rotationDegrees: _rotationDegrees(),
-        mirror: _shouldMirror(),
-      );
+      if (conversion == null) {
+        // The worker was closed while the frame was converted: the frame is
+        // dropped, it is not published.
+        return;
+      }
+      if (_disposed || _paused || generation != _streamGeneration) {
+        // The frame belongs to a stream that is not the current one: it is
+        // dropped whole. It is not measured and it is not published.
+        return;
+      }
       light.addLuma(conversion.meanLuma);
       // The colourfulness of the frame feeds the contextual lanes. Only the
       // numbers of the frame travel: the pixels stay in the conversion.
@@ -543,6 +652,12 @@ class CameraService {
     } finally {
       _converting = false;
     }
+  }
+
+  /// Releases the conversion when the worker could not do it.
+  void _onConversionFailed(Object error, StackTrace stackTrace) {
+    log.error('camera', 'the frame conversion failed', error, stackTrace);
+    _converting = false;
   }
 
   void _logMetrics(

@@ -1,0 +1,1 @@
+Prueba tu foto en los demás estilos: una fila de miniaturas bajo la imagen te deja cambiar de estilo antes de guardarla o compartirla. El visor prepara los fotogramas en segundo plano, para que vaya más fluido, y los sensores de movimiento leen menos a menudo con el móvil quieto, para ahorrar batería.

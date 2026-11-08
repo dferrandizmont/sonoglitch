@@ -7,10 +7,13 @@ import '../../export/export_layout.dart';
 import '../../export/export_quality.dart';
 import 'capture_result.dart';
 
-/// CaptureResult identity also freezes the source, effect and ambient values.
-/// Compare is a display-only original variant; exports always use processed.
+/// CaptureResult identity also freezes the source, time and ambient values;
+/// [styleId] is the style the picture is drawn with, which starts as the style
+/// of the capture. Compare is a display-only original variant; exports always
+/// use processed.
 typedef ResultCacheKey = ({
   CaptureResult capture,
+  String styleId,
   ExportFormat format,
   ExportLayout layout,
   ExportReadingsMode readingsMode,
@@ -82,6 +85,48 @@ class ResultCache {
       entry.dispose();
     }
     _entries.clear();
+  }
+}
+
+/// The small previews of one capture in each style, for the strip of styles.
+///
+/// Every image is at most [maxSide] pixels on its longer side, and the
+/// number of styles is bounded, so the whole cache stays under 8 MiB. The
+/// cache owns its images and disposes them on replacement and on [clear].
+class StyleThumbnailCache {
+  static const maxSide = 512;
+  static const maxEntries = 16;
+  final _images = <String, ui.Image>{};
+
+  int get length => _images.length;
+
+  int get imageBytes => _images.values.fold(
+    0,
+    (sum, image) => sum + image.width * image.height * 4,
+  );
+
+  bool contains(String styleId) => _images.containsKey(styleId);
+
+  ui.Image? get(String styleId) => _images[styleId];
+
+  /// Takes the ownership of [image].
+  void put(String styleId, ui.Image image) {
+    if (image.width > maxSide || image.height > maxSide) {
+      image.dispose();
+      throw ArgumentError('Only bounded previews can enter the style cache');
+    }
+    _images.remove(styleId)?.dispose();
+    _images[styleId] = image;
+    while (_images.length > maxEntries) {
+      _images.remove(_images.keys.first)!.dispose();
+    }
+  }
+
+  void clear() {
+    for (final image in _images.values) {
+      image.dispose();
+    }
+    _images.clear();
   }
 }
 

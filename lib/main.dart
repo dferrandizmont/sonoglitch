@@ -10,6 +10,7 @@ import 'ambient/motion_service.dart';
 import 'ambient/noise_service.dart';
 import 'app_config.dart';
 import 'camera/camera_service.dart';
+import 'camera/frame_worker.dart';
 import 'camera/screenshot_photo_source.dart';
 import 'debug/capture_metrics.dart';
 import 'debug/debug_log.dart';
@@ -68,6 +69,9 @@ Future<void> main() async {
     deviceFactory: photoSource?.deviceFactory,
     lister: photoSource?.lister,
     preserveSourceOrientation: photoSource?.active ?? false,
+    // The frames are converted in a background isolate, so the UI isolate
+    // is free while a frame is converted.
+    workerFactory: isolateFrameWorker,
   );
   final styles = StyleController(log: log);
   final export = ExportService(log: log);

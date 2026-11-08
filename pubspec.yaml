@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.2.0+25
+version: 0.2.0+26
 
 environment:
   sdk: ^3.13.5
@@ -59,6 +59,11 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
 
+  # The frozen GPU test oracles live in a dev-only package: `flutter test`
+  # bundles them, and no release build does.
+  sonoglitch_test_shaders:
+    path: packages/sonoglitch_test_shaders
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -79,13 +84,6 @@ flutter:
     - shaders/bleed.frag
     - shaders/kaleido.frag
     - shaders/mosaic.frag
-    # Frozen delivery-1 and SIG-2B GPU test oracles (not app styles).
-    - test/effects/fixtures/d2a_delivery1_static.frag
-    - test/effects/fixtures/d2a_delivery1_tape.frag
-    - test/effects/fixtures/d2a_delivery1_prism.frag
-    - test/effects/fixtures/sig2b_legacy_phosphor.frag
-    - test/effects/fixtures/sig2b_legacy_ripple.frag
-    - test/effects/fixtures/sig2b_legacy_thermal.frag
 
 
   # The following line ensures that the Material Icons font is

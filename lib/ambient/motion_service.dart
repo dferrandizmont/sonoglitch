@@ -6,6 +6,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 import '../camera/capture_orientation.dart';
 import 'ambient_config.dart';
+import 'motion_sensor_rate.dart';
 import 'scene_motion.dart';
 import 'clock.dart';
 import 'context_sensors.dart' show SensorVector;
@@ -27,6 +28,14 @@ class AccelSample {
 /// Stream of raw acceleration samples.
 typedef AccelStream = Stream<AccelSample>;
 
+/// Builds a stream of samples with the given sampling period.
+///
+/// The period is the interval the sensor asks the platform for: the
+/// accelerometer and the gyroscope are read at
+/// [AmbientConfig.motionSensorPeriod] while the phone moves and at
+/// [AmbientConfig.motionSensorQuietPeriod] while it is still.
+typedef AccelStreamFactory = AccelStream Function(Duration samplingPeriod);
+
 /// Combines scene displacement, angular velocity and linear acceleration into
 /// max(scene, gyro, 0.8 * accel), with the dominant source's screen direction.
 ///
@@ -36,18 +45,27 @@ typedef AccelStream = Stream<AccelSample>;
 class MotionService {
   /// Creates the service.
   ///
-  /// [samples] is injected so tests can feed known values.
+  /// [samples] is injected so tests can feed known values. A stream that is
+  /// given to the service is read at its own rate: the rate can only be
+  /// changed when the service builds the streams itself, with
+  /// [sampleFactory] and [gyroSampleFactory].
   MotionService({
     AccelStream? samples,
     AccelStream? gyroSamples,
     AccelStream? gravitySamples,
+    AccelStreamFactory? sampleFactory,
+    AccelStreamFactory? gyroSampleFactory,
     SmoothedValue? magnitudeSmoother,
     SmoothedValue? directionXSmoother,
     SmoothedValue? directionYSmoother,
     this.clock = stopwatchClock,
-  }) : samples = samples ?? accelerometerSampleStream(),
-       gyroSamples = gyroSamples ?? gyroscopeSampleStream(),
+  }) : samples = samples,
+       gyroSamples = gyroSamples,
        gravitySamples = gravitySamples ?? gravitySampleStream(),
+       _sampleFactory =
+           sampleFactory ?? (samples == null ? _accelerometerStream : null),
+       _gyroSampleFactory =
+           gyroSampleFactory ?? (gyroSamples == null ? _gyroscopeStream : null),
        magnitude =
            magnitudeSmoother ??
            SmoothedValue(
@@ -68,8 +86,25 @@ class MotionService {
            );
 
   /// The source of the raw acceleration samples.
-  final AccelStream samples;
-  final AccelStream gyroSamples;
+  ///
+  /// It is null when the service builds the stream itself, with the period
+  /// the sensors must be read with.
+  final AccelStream? samples;
+
+  /// The source of the raw gyroscope samples.
+  ///
+  /// It is null when the service builds the stream itself, with the period
+  /// the sensors must be read with.
+  final AccelStream? gyroSamples;
+
+  /// Builds the streams of the sensors with the period they must be read
+  /// with.
+  ///
+  /// They are null when the streams were given to the service: a stream that
+  /// is already built cannot change its rate, so the sensors of the tests
+  /// are always read at their own rate.
+  final AccelStreamFactory? _sampleFactory;
+  final AccelStreamFactory? _gyroSampleFactory;
   final AccelStream gravitySamples;
   final CaptureOrientationTracker orientation = CaptureOrientationTracker();
   final SceneMotion scene = SceneMotion();
@@ -99,6 +134,12 @@ class MotionService {
   bool _mirrored = false;
   int? _lastGravityMicros;
   AccelSample? _latestGravitySample;
+
+  /// Decides how often the sensors are read.
+  final MotionSensorRate _sensorRate = MotionSensorRate();
+
+  /// The period the sensors are read with right now.
+  Duration _samplingPeriod = AmbientConfig.motionSensorPeriod;
 
   /// Latest shared gravity and monotonic timestamp; no additional subscription.
   ({SensorVector vector, int timeMicros})? get latestGravity {
@@ -229,6 +270,8 @@ class MotionService {
       _gyroY = y / length;
     }
     _smoothDirection();
+    // The phone may have stopped moving: the sensors can be read slowly.
+    _updateSensorRate();
   }
 
   static bool _valid(AccelSample sample) =>
@@ -260,6 +303,31 @@ class MotionService {
   bool _hasSample = false;
   double _rawAccel = 0;
 
+  /// The number of the switch of the sensors.
+  ///
+  /// It tells a switch that was started before another one whether it is
+  /// still the one that must read the sensors again.
+  int _epoch = 0;
+
+  /// Whether the sensors are being switched right now.
+  bool _switching = false;
+
+  /// The period of a switch that was asked for while another one was
+  /// running.
+  ///
+  /// It is applied when the running switch finishes, so the sensors always
+  /// end up with the period the last reading asked for.
+  Duration? _pendingPeriod;
+
+  /// The last change of the subscriptions of the sensors.
+  ///
+  /// A new session waits for it, so the platform never holds two listeners
+  /// of the same channel.
+  Future<void> _lifecycle = Future<void>.value();
+
+  /// Whether the last change of the subscriptions is still running.
+  bool _lifecyclePending = false;
+
   /// Whether the accelerometer is being read.
   ///
   /// The sensor must not run while the viewfinder is not visible, so the
@@ -271,6 +339,12 @@ class MotionService {
     sceneLevel,
     math.max(gyroLevel, AmbientConfig.accelWeight * accelLevel),
   );
+
+  /// The period the gyroscope and the accelerometer are read with.
+  ///
+  /// It is [AmbientConfig.motionSensorPeriod] while the phone moves and
+  /// [AmbientConfig.motionSensorQuietPeriod] while it is still.
+  Duration get sensorSamplingPeriod => _samplingPeriod;
 
   /// Direction of the movement in screen space, on the x axis.
   ///
@@ -288,13 +362,33 @@ class MotionService {
     if (_running) return;
     _running = true;
     _lastSampleMicros = clock();
-    _subscription = _listen(samples, _onSample, _onError);
-    _gyroSubscription = _listen(gyroSamples, addGyroSample, (e, s) {
-      _signatureGyro.clear();
-      _gyro.reset(0);
-      rawGyro = null;
-      _lastGyroMicros = null;
-    });
+    // A new session starts with the fast rate: the phone may have been
+    // still while the viewfinder was hidden.
+    _sensorRate.reset();
+    _samplingPeriod = _sensorRate.period;
+    // The sensors of the previous session may still be cancelling: the new
+    // ones are only read once the old ones are gone, so the platform never
+    // holds two listeners of the same channel.
+    final previous = _lifecycle;
+    if (_lifecyclePending) {
+      final started = Completer<void>();
+      _lifecycle = started.future;
+      _lifecyclePending = true;
+      previous.whenComplete(() {
+        if (!started.isCompleted) started.complete();
+        if (!_running) return;
+        _listenToSensors();
+        _lifecyclePending = false;
+      });
+      return;
+    }
+    _listenToSensors();
+  }
+
+  /// Reads the sensors of the platform with the current period.
+  void _listenToSensors() {
+    _subscription = _listen(_accelStream(), _onSample, _onError);
+    _gyroSubscription = _listen(_gyroStream(), addGyroSample, _onGyroError);
     _gravitySubscription = _listen(
       gravitySamples,
       (s) {
@@ -322,19 +416,135 @@ class MotionService {
     _signatureAccel.clear();
     _signatureGyro.clear();
     _running = false;
+    // The switch of the rate is abandoned: a subscription that is still
+    // being cancelled must not read the sensors again.
+    _epoch++;
+    _switching = false;
+    _pendingPeriod = null;
     final subscription = _subscription;
+    final gyro = _gyroSubscription;
+    final gravity = _gravitySubscription;
     _subscription = null;
-    unawaited(subscription?.cancel());
-    unawaited(_gyroSubscription?.cancel());
-    unawaited(_gravitySubscription?.cancel());
-    _gyroSubscription = _gravitySubscription = null;
+    _gyroSubscription = null;
+    _gravitySubscription = null;
+    final cancelled = Completer<void>();
+    _lifecycle = cancelled.future;
+    _lifecyclePending = true;
+    // The cancellations are awaited before anything else is read: the
+    // platform has one listener per channel, so a new one must never be
+    // registered before the old one is gone.
+    Future.wait<void>([
+      if (subscription != null) subscription.cancel(),
+      if (gyro != null) gyro.cancel(),
+      if (gravity != null) gravity.cancel(),
+    ]).whenComplete(() {
+      if (!cancelled.isCompleted) cancelled.complete();
+      _lifecyclePending = false;
+    });
     _gyro.reset(0);
     _lastGyroMicros = null;
     rawGyro = null;
     _lastGravityMicros = null;
     _latestGravitySample = null;
     _lastDirectionMicros = null;
+    _sensorRate.reset();
+    _samplingPeriod = _sensorRate.period;
     resetScene();
+  }
+
+  /// The stream of acceleration samples with the current period.
+  AccelStream _accelStream() {
+    final factory = _sampleFactory;
+    if (factory != null) return factory(_samplingPeriod);
+    return samples ?? const Stream<AccelSample>.empty();
+  }
+
+  /// The stream of gyroscope samples with the current period.
+  AccelStream _gyroStream() {
+    final factory = _gyroSampleFactory;
+    if (factory != null) return factory(_samplingPeriod);
+    return gyroSamples ?? const Stream<AccelSample>.empty();
+  }
+
+  /// Reads the sensors again when the phone moves or stops moving.
+  ///
+  /// The scene is not part of the decision: it is measured from the
+  /// pictures, not from the sensors, so it cannot say whether the phone
+  /// itself is still.
+  void _updateSensorRate() {
+    final accelFactory = _sampleFactory;
+    final gyroFactory = _gyroSampleFactory;
+    if (accelFactory == null && gyroFactory == null) {
+      // The streams were given to the service: a stream that is already
+      // built cannot change its rate, so the sensors keep the rate they
+      // were given.
+      return;
+    }
+    final level = math.max(accelLevel, gyroLevel);
+    final period = _sensorRate.observe(level, clock());
+    if (period == _samplingPeriod) return;
+    _samplingPeriod = period;
+    // The switch is serialised inside: the old subscriptions are cancelled
+    // before the new ones are registered.
+    unawaited(_resubscribe(period));
+  }
+
+  /// Reads the sensors again with the given period.
+  ///
+  /// The streams of the platform are built with the period they ask for, so
+  /// the sensors have to be read again to change it. The switch is
+  /// serialised: the old subscriptions are cancelled before the new ones
+  /// are registered, because the platform keeps one listener per channel and
+  /// a new listener registered too early would cancel the new one.
+  Future<void> _resubscribe(Duration period) async {
+    final accelFactory = _sampleFactory;
+    final gyroFactory = _gyroSampleFactory;
+    if (accelFactory == null && gyroFactory == null) return;
+    if (_switching) {
+      // A switch is already running: the period asked for now is the one
+      // that matters, so the running switch applies it when it finishes.
+      _pendingPeriod = period;
+      return;
+    }
+    _switching = true;
+    final serial = ++_epoch;
+    final accel = _subscription;
+    final gyro = _gyroSubscription;
+    _subscription = null;
+    _gyroSubscription = null;
+    try {
+      await accel?.cancel();
+      await gyro?.cancel();
+    } finally {
+      _switching = false;
+    }
+    // Another switch happened, or the sensors are not wanted any more.
+    if (serial != _epoch || !_running) return;
+    if (accelFactory != null) {
+      _subscription = _listen(accelFactory(period), _onSample, _onError);
+    }
+    if (gyroFactory != null) {
+      _gyroSubscription = _listen(
+        gyroFactory(period),
+        addGyroSample,
+        _onGyroError,
+      );
+    }
+    final pending = _pendingPeriod;
+    if (pending != null && pending != period) {
+      _pendingPeriod = null;
+      await _resubscribe(pending);
+    } else {
+      _pendingPeriod = null;
+    }
+  }
+
+  /// Forgets the gyroscope when its stream fails.
+  void _onGyroError(Object error, StackTrace stackTrace) {
+    _signatureGyro.clear();
+    _gyro.reset(0);
+    rawGyro = null;
+    _lastGyroMicros = null;
   }
 
   StreamSubscription<AccelSample>? _listen(
@@ -382,6 +592,8 @@ class MotionService {
     directionX.update(screenX, elapsed);
     directionY.update(screenY, elapsed);
     if (_lastDirectionMicros != null) _smoothDirection();
+    // The phone may have stopped moving: the sensors can be read slowly.
+    _updateSensorRate();
   }
 
   /// The time since the previous sample.
@@ -437,16 +649,28 @@ class MotionService {
 
 /// The default accelerometer source: the user accelerometer of `sensors_plus`,
 /// which does not include the gravity.
-AccelStream accelerometerSampleStream() => userAccelerometerEventStream(
-  samplingPeriod: const Duration(milliseconds: 20),
-).map((event) => AccelSample(event.x, event.y, event.z));
+AccelStream accelerometerSampleStream({
+  Duration samplingPeriod = AmbientConfig.motionSensorPeriod,
+}) =>
+    userAccelerometerEventStream(samplingPeriod: samplingPeriod)
+        .map((event) => AccelSample(event.x, event.y, event.z));
 
 /// Angular velocity only; no audio or image data passes through this stream.
-AccelStream gyroscopeSampleStream() =>
-    gyroscopeEventStream(samplingPeriod: const Duration(milliseconds: 20))
+AccelStream gyroscopeSampleStream({
+  Duration samplingPeriod = AmbientConfig.motionSensorPeriod,
+}) =>
+    gyroscopeEventStream(samplingPeriod: samplingPeriod)
         .map((e) => AccelSample(e.x, e.y, e.z));
 
 /// Gravity is used only to infer the still orientation while the preview runs.
 AccelStream gravitySampleStream() =>
     accelerometerEventStream(samplingPeriod: const Duration(milliseconds: 100))
         .map((e) => AccelSample(e.x, e.y, e.z));
+
+/// The accelerometer of the platform, read with the given period.
+AccelStream _accelerometerStream(Duration samplingPeriod) =>
+    accelerometerSampleStream(samplingPeriod: samplingPeriod);
+
+/// The gyroscope of the platform, read with the given period.
+AccelStream _gyroscopeStream(Duration samplingPeriod) =>
+    gyroscopeSampleStream(samplingPeriod: samplingPeriod);

@@ -161,8 +161,8 @@
       "answer": "En móviles con Android 10 (API 29) o posterior. Es una alfa temprana, así que aún falta probar la compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo."
     },
     {
-      "question": "¿Está en Google Play, F-Droid o la App Store?",
-      "answer": "En Google Play hay una prueba cerrada en la que puede entrar cualquiera. F-Droid llegará más adelante, e iOS aún no está publicado."
+      "question": "¿Está en Google Play o en la App Store?",
+      "answer": "En Google Play hay una prueba cerrada en la que puede entrar cualquiera, e iOS aún no está publicado. No está previsto publicarla en F-Droid: el APK está en GitHub."
     },
     {
       "question": "¿Cómo me uno a la prueba de Google Play?",
@@ -177,5 +177,5 @@
   "mail_text": "Escribe a",
   "issue_link": "Abre una incidencia en GitHub",
   "licence_text": "Licencia Apache-2.0",
-  "privacy_date": "2026-10-27"
+  "privacy_date": "2026-11-08"
 }

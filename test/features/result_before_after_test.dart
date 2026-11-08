@@ -21,6 +21,7 @@ import 'package:sonoglitch/features/settings/preferences_store.dart';
 import 'package:sonoglitch/l10n/app_localizations.dart';
 
 import '../support/fakes.dart';
+import '../support/style_fakes.dart';
 
 /// A source that gives the picture of the test, without decoding anything.
 class FakeSource implements StillSource {
@@ -37,8 +38,15 @@ class FakeSource implements StillSource {
   @override
   int get compressedBytes => 4096;
 
+  /// Every copy that was given, which the screen has to release.
+  final decoded = <ui.Image>[];
+
   @override
-  Future<ui.Image> decode(int width, int height) async => image;
+  Future<ui.Image> decode(int width, int height) async {
+    final copy = image.clone();
+    decoded.add(copy);
+    return copy;
+  }
 }
 
 /// An exporter that returns the picture of the test.
@@ -75,10 +83,18 @@ class ControlledExporter extends PhotoExporter {
   }
 }
 
+/// Taps a chip of the controls, which may be below the strip of styles.
+Future<void> tapChip(WidgetTester tester, Finder finder) async {
+  await tester.ensureVisible(finder);
+  await tester.pump();
+  await tester.tap(finder);
+}
+
 void main() {
   late Directory directory;
   late DebugLog log;
   late FakeExportService export;
+  late FakeSource source;
 
   setUp(() {
     directory = Directory.systemTemp.createTempSync('sonoglitch_result_');
@@ -107,7 +123,7 @@ void main() {
         supportedLocales: AppLocalizations.supportedLocales,
         home: ResultScreen(
           result: CaptureResult.source(
-            source: FakeSource(original),
+            source: source = FakeSource(original),
             quality: ExportQuality.high,
             render: (_, _) async =>
                 throw StateError('The fake exporter owns the rendering'),
@@ -116,6 +132,7 @@ void main() {
           ),
           export: export,
           photoExporter: pipeline,
+          styleStills: NoStills(),
           settings: settings,
           log: log,
           capture: CaptureMetrics(),
@@ -264,13 +281,13 @@ void main() {
       settings: settings,
     );
 
-    expect(original.debugDisposed, isFalse);
+    expect(source.decoded.any((copy) => !copy.debugDisposed), isTrue);
     expect(cropped.debugDisposed, isFalse);
 
     await tester.pumpWidget(const SizedBox.shrink());
 
     expect(
-      original.debugDisposed,
+      source.decoded.every((copy) => copy.debugDisposed),
       isTrue,
       reason: 'The decoded copy of the original only lives with the screen',
     );
@@ -333,12 +350,12 @@ void main() {
         );
         await tester.tap(find.byKey(const ValueKey('res-compare')));
         await tester.pump();
-        await tester.tap(find.text('Square 1:1'));
+        await tapChip(tester, find.text('Square 1:1'));
         await tester.pump();
         if (close) {
           await tester.pumpWidget(const SizedBox.shrink());
         } else {
-          await tester.tap(find.text('Original'));
+          await tapChip(tester, find.text('Original'));
           await tester.pump();
           newGate.complete();
           await tester.pump();
@@ -357,7 +374,7 @@ void main() {
           );
           await tester.pumpWidget(const SizedBox.shrink());
         }
-        expect(original.debugDisposed, isTrue);
+        expect(source.decoded.every((copy) => copy.debugDisposed), isTrue);
         expect(tester.takeException(), isNull);
       },
     );

@@ -78,6 +78,15 @@ jobs:
             --dart-define="APP_VERSION=$APP_VERSION" \
             --dart-define="DONATION_URL=https://ko-fi.com/danielmfdev"
 
+      # The app promises that it never touches the network. The check runs
+      # before the APK is uploaded, so a release with a network permission
+      # never leaves the runner.
+      - name: Check the permissions of the APK
+        run: |
+          set -euo pipefail
+          python3 tool/release/check_permissions.py \
+            build/app/outputs/flutter-apk/app-release.apk
+
       # The APK is signed in a separate job that runs no third-party actions,
       # so signing secrets never share a job with third-party code.
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

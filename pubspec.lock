@@ -586,6 +586,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  sonoglitch_test_shaders:
+    dependency: "direct dev"
+    description:
+      path: "packages/sonoglitch_test_shaders"
+      relative: true
+    source: path
+    version: "0.0.1"
   source_span:
     dependency: transitive
     description:

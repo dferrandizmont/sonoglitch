@@ -1,10 +1,9 @@
 # Releasing Sonoglitch
 
-Sonoglitch is free everywhere. It ships through three channels that differ only in the signing key and in the optional "Support the project" row of Settings, which is controlled by one build-time define:
+Sonoglitch is free everywhere. It ships through two channels that differ only in the signing key and in the optional "Support the project" row of Settings, which is controlled by one build-time define:
 
 | Channel | Signed by | Donation link (`DONATION_URL`) |
 | --- | --- | --- |
-| **F-Droid** | F-Droid, from this repository | `https://ko-fi.com/danielmfdev` |
 | **GitHub releases** | the repository keystore (see [Contributing](../CONTRIBUTING.md#release-workflow)) | `https://ko-fi.com/danielmfdev` |
 | **Google Play** | Google Play App Signing, with the upload key below | none: the build is made without the define and the row is hidden |
 
@@ -17,7 +16,7 @@ veces no cambia nada, y la tienda rechaza el segundo build. Además, **iOS y And
 
 | Campo | Regla | Dónde se aplica |
 |---|---|---|
-| Nombre de versión | Semántica (`0.1.1`), el mismo en todos los canales y el que muestra la app (`--dart-define=APP_VERSION=`) | `pubspec.yaml`, `--build-name`, receta de F-Droid |
+| Nombre de versión | Semántica (`0.1.1`), el mismo en todos los canales y el que muestra la app (`--dart-define=APP_VERSION=`) | `pubspec.yaml`, `--build-name` |
 | Número de build | **Estrictamente creciente**: uno nuevo por cada subida | `pubspec.yaml` (`0.1.1+22`), `--build-number` |
 | `pubspec.yaml` | Lleva la versión y el build que se va a compilar; se sube en el commit `chore: release` | `pubspec.yaml` |
 | Commit | El que se compila, etiquetado `vX.Y.Z` y anotado en el registro | etiqueta de git |
@@ -50,8 +49,7 @@ formato y la siguiente ya sigue esta tabla.
   Android.
 - Lo que va a salir se apunta en **[CHANGELOG.md](../CHANGELOG.md)** (en inglés, sección «Unreleased»), con cada cambio que note
   el usuario. El día de la versión se convierte en su sección y es la base de las notas de la release y de la ficha.
-- Cada release lleva además `fastlane/metadata/android/{en-US,es-ES}/changelogs/<build>.txt` (como mucho 500 bytes) y la
-  receta de [F-Droid](../fdroid/es.sonoglitch.app.yml) con el mismo nombre de versión, build y etiqueta.
+- Cada release lleva además `fastlane/metadata/android/{en-US,es-ES}/changelogs/<build>.txt` (como mucho 500 bytes) con el mismo número de build.
 
 **Registro de subidas** (una fila por subida; se rellena en el momento, no al final):
 
@@ -95,7 +93,7 @@ desinstalar. No generes otra clave de subida: rompería esa igualdad.
 
 ## Public and private repositories
 
-Development happens in a private repository. This public repository receives one commit per release, a snapshot of the tagged tree, with the version tag; the development history is not published. `tool/publish/publish_public.ps1 -Tag vX.Y.Z` makes the snapshot from tracked files only, scans it for secrets and pushes it (use `-DryRun` first). Pushing the tag starts the *Release APK* workflow, which builds, signs and publishes the GitHub release. F-Droid builds from these tags. Pull requests to this repository are reviewed here and ported to the private repository by the maintainer.
+Development happens in a private repository. This public repository receives one commit per release, a snapshot of the tagged tree, with the version tag; the development history is not published. `tool/publish/publish_public.ps1 -Tag vX.Y.Z` makes the snapshot from tracked files only, scans it for secrets and pushes it (use `-DryRun` first). Pushing the tag starts the *Release APK* workflow, which builds, signs and publishes the GitHub release. Pull requests to this repository are reviewed here and ported to the private repository by the maintainer.
 
 ### GitHub Actions in each repository
 
@@ -107,7 +105,7 @@ Actions minutes are free in the public repository and paid in the private one (a
 | *Release APK* (`release.yml`) | every `v*` tag | skipped on tag pushes; only a manual run on a tag builds |
 | *Pages* (`pages.yml`) | pushes to `main` that change `site/` | skipped (GitHub Pages needs a public repository) |
 
-*CI* ignores changes that only touch `docs/`, `fastlane/`, `fdroid/`, `site/`, `web/` or Markdown files, and a new run cancels the one in progress on the same branch. Run the three checks locally before pushing to `main` of the private repository: nothing checks those pushes there.
+*CI* ignores changes that only touch `docs/`, `fastlane/`, `site/`, `web/` or Markdown files, and a new run cancels the one in progress on the same branch. Run the three checks locally before pushing to `main` of the private repository: nothing checks those pushes there.
 
 From 24 to 31 October 2026 the private repository had no Actions minutes (a failed payment), so its runs failed within seconds and the private releases were built locally. When the minutes came back, the tag pushes of 0.2.0-alpha.4 and 0.2.0-alpha.5 built for 30 minutes and then failed, because the release made by hand already existed. That is why the private repository no longer builds releases on a tag push.
 
@@ -124,7 +122,7 @@ Tests: `python -m unittest discover -s tool/publish` (Windows, PowerShell). They
 
 ### Release flow: test privately first, then publish
 
-1. Commit `chore: release`, bump `pubspec.yaml`, `CHANGELOG.md` and the F-Droid recipe, and create the tag `vX.Y.Z` in the private repository. Push the commit and the tag there (no workflow runs), build the APK locally with the upload key and publish it as a private prerelease, as described in [GitHub releases](#github-releases).
+1. Commit `chore: release`, bump `pubspec.yaml` and `CHANGELOG.md`, and create the tag `vX.Y.Z` in the private repository. Push the commit and the tag there (no workflow runs), build the APK locally with the upload key and publish it as a private prerelease, as described in [GitHub releases](#github-releases).
 2. Install that APK on a phone and test it (it carries the upload key signature, so it updates over the previous one).
 3. Only if it is good, run `tool/publish/publish_public.ps1 -Tag vX.Y.Z` (first with `-DryRun`). The public workflow builds the public release from the snapshot of the same tree.
 4. Add the row to the register of uploads in *Versionado y trazabilidad*.
@@ -145,7 +143,7 @@ or adjust Custom. The values survive navigation and captures, but reset on app
 restart. Presets also set illustrative bass, mid and treble levels; sliders can
 adjust all nine values independently.
 
-**Never publish or upload this APK. Play, F-Droid and GitHub release builds must
+**Never publish or upload this APK. Play and GitHub release builds must
 never pass `SONOGLITCH_SCREENSHOTS=true`.** The section is absent by default.
 
 **Photo source.** To use a JPEG or PNG instead of the emulator camera, launch
@@ -226,15 +224,7 @@ The app collects and shares nothing: answer *No* to "Does your app collect or sh
 
 ## F-Droid
 
-F-Droid builds the app from source with its own key. The recipe is [`fdroid/es.sonoglitch.app.yml`](../fdroid/es.sonoglitch.app.yml). Title, descriptions, changelogs and images come from `fastlane/metadata/android`.
-
-1. Tag the release commit (`v0.1.0-alpha.N`) and push the tag.
-2. Fork `https://gitlab.com/fdroid/fdroiddata` and copy the recipe to `metadata/es.sonoglitch.app.yml`. Update `versionName`, `versionCode`, `commit`, `CurrentVersion`, `CurrentVersionCode` and, in the `build` command, `--build-name`, `--build-number` and `APP_VERSION`, so the version shown in About matches.
-3. Open a merge request. The F-Droid team reviews the recipe and builds it. Fix whatever their scanner or build reports.
-4. Later releases need a new `Builds` entry. Automatic updates (`UpdateCheckMode: Tags` with `AutoUpdateMode: Version`) can be configured later, once the tag pattern is stable.
-5. The recipe is untested against the real F-Droid build server: expect a round or two of fixes from the reviewers (scanner findings on pub packages, toolchain provisioning).
-
-The *Donate* link of the F-Droid listing comes from the recipe's `Donate:` field; the build also passes `DONATION_URL` for the row in Settings. Check that the merged manifest still declares only `CAMERA` and `RECORD_AUDIO` (no `INTERNET`).
+Sonoglitch is not published on F-Droid (decided on 2026-11-08): it ships on Google Play and GitHub only. The recipe was removed from the repository.
 
 ## GitHub releases
 

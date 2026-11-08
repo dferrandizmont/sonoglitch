@@ -98,6 +98,15 @@
   "resultLevelLowMasculine": "bajo",
   "resultLevelMediumMasculine": "medio",
   "resultLevelHighMasculine": "alto",
+  "resultStyleLabel": "Estilo",
+  "resultStyleSemantics": "Estilo {name}",
+  "@resultStyleSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "resultFormatLabel": "Formato",
   "resultFormatOriginal": "Original",
   "resultFormatSquare": "Cuadrado 1:1",
@@ -250,7 +259,8 @@
   "resultLayoutHintPoster": "Un marco con el estilo y las lecturas.",
   "@resultLayoutHintPoster": {
     "description": "Hint that explains the layout with the frame."
-  },
+  }
+,
   "processingLabel": "Procesando",
   "@processingLabel": {
     "description": "Accessibility label of the glitch loader shown while the picture is processed."

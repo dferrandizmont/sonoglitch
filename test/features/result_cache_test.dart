@@ -114,6 +114,7 @@ void main() {
       );
       ResultCacheKey key({
         CaptureResult? identity,
+        String styleId = 'static',
         ExportFormat format = ExportFormat.original,
         ExportLayout layout = ExportLayout.full,
         ExportReadingsMode readingsMode = ExportReadingsMode.full,
@@ -124,6 +125,7 @@ void main() {
         bool original = false,
       }) => (
         capture: identity ?? capture,
+        styleId: styleId,
         format: format,
         layout: layout,
         readingsMode: readingsMode,
@@ -135,6 +137,7 @@ void main() {
       );
       expect({
         key(),
+        key(styleId: 'tape'),
         key(format: ExportFormat.square),
         key(layout: ExportLayout.poster),
         key(readingsMode: ExportReadingsMode.numbers),
@@ -151,7 +154,7 @@ void main() {
             styleId: 'static',
           ),
         ),
-      }, hasLength(11));
+      }, hasLength(12));
     },
   );
 
@@ -175,6 +178,7 @@ void main() {
     );
     ResultCacheKey key(CaptureResult capture) => (
       capture: capture,
+      styleId: capture.styleId,
       format: ExportFormat.original,
       layout: ExportLayout.full,
       readingsMode: ExportReadingsMode.full,
@@ -201,6 +205,7 @@ void main() {
     );
     final key = (
       capture: capture,
+      styleId: capture.styleId,
       format: ExportFormat.original,
       layout: ExportLayout.full,
       readingsMode: ExportReadingsMode.full,
@@ -236,6 +241,7 @@ void main() {
     final files = <File>[];
     ResultCacheKey key(ExportFormat format) => (
       capture: capture,
+      styleId: capture.styleId,
       format: format,
       layout: ExportLayout.full,
       readingsMode: ExportReadingsMode.full,

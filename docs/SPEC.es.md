@@ -3,7 +3,7 @@
 > - **Nombre:** Sonoglitch (Murmur está ocupado en Google Play).
 > - **Licencia y modelo:** Apache-2.0. App gratuita, sin compras ni anuncios y con donaciones opcionales. Se eliminan la sección *Monetización* y la fase 4 de compras (sin `in_app_purchase`).
 > - **Marca de agua:** pequeña y desactivable en ajustes.
-> - **Distribución:** GitHub Releases, F-Droid y, opcionalmente, Google Play.
+> - **Distribución:** GitHub Releases y Google Play (F-Droid descartado el 2026-11-08).
 > - **Fase 0 (nueva):** prueba de viabilidad cámara a shader en un Pixel 10 Pro, antes del prototipo de ruido.
 > - **Captura:** por defecto se aplica el shader a la foto a resolución completa; no se captura el widget del visor.
 > - **Ruido:** los dB se muestran como nivel aproximado, con normalización adaptativa por dispositivo.

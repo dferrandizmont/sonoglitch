@@ -224,6 +224,19 @@
   "@resultLevelHighMasculine": {
     "description": "High level label for a masculine noun (noise, motion)."
   },
+  "resultStyleLabel": "Style",
+  "@resultStyleLabel": {
+    "description": "Label of the strip of styles on the result screen, where the photo can be tried in every style."
+  },
+  "resultStyleSemantics": "{name} style",
+  "@resultStyleSemantics": {
+    "description": "Screen reader label of one style in the strip of the result screen. The name is the name of the style, such as Tape.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "resultFormatLabel": "Format",
   "@resultFormatLabel": {
     "description": "Label of the export format selector."
@@ -523,7 +536,8 @@
   "resultLayoutHintPoster": "A framed print with the style and readings.",
   "@resultLayoutHintPoster": {
     "description": "Hint that explains the layout with the frame."
-  },
+  }
+,
   "processingLabel": "Processing",
   "@processingLabel": {
     "description": "Accessibility label of the glitch loader shown while the picture is processed."

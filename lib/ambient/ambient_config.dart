@@ -83,6 +83,48 @@ class AmbientConfig {
   /// hard shake, so it is a sensible full scale.
   static const double motionFullScale = 20;
 
+  /// How often the gyroscope and the accelerometer are read while the phone
+  /// moves: 50 Hz.
+  ///
+  /// The sensors are the fastest input of the app, so they are read as
+  /// often as the platform allows while there is something to measure.
+  static const Duration motionSensorPeriod = Duration(milliseconds: 20);
+
+  /// How often the gyroscope and the accelerometer are read while the phone
+  /// is still: 10 Hz.
+  ///
+  /// A phone that does not move does not need fifty readings per second.
+  /// The slower rate costs less battery and leaves the CPU of the phone
+  /// free for the picture.
+  static const Duration motionSensorQuietPeriod = Duration(milliseconds: 100);
+
+  /// How long the readings of the sensors have to stay below
+  /// [motionSensorQuietLevel] before they are read slowly.
+  ///
+  /// Three seconds is long enough to be sure the phone is not moving and
+  /// short enough to save the battery of a phone that rests on a table.
+  static const Duration motionSensorQuietAfter = Duration(seconds: 3);
+
+  /// The level of the movement below which the phone counts as still.
+  ///
+  /// The accelerometer maps 0..20 m/s^2 to 0..1, so this level is 1 m/s^2:
+  /// above the tremor of a phone held in the hand and below the movement of
+  /// a person walking. The gyroscope maps 0.15..2 rad/s, so the same level
+  /// is about 0.24 rad/s of rotation.
+  static const double motionSensorQuietLevel = 0.05;
+
+  /// The level of the movement above which the phone counts as moving again.
+  ///
+  /// It is above [motionSensorQuietLevel], so a phone held in the hand,
+  /// which hovers around the threshold, does not change the rate of the
+  /// sensors every few seconds.
+  static const double motionSensorWakeLevel = 0.10;
+
+  /// How long the sensors stay in the quiet rate at least.
+  ///
+  /// It stops two changes of the rate from happening one after the other.
+  static const Duration motionSensorQuietDwell = Duration(seconds: 1);
+
   static const double accelWeight = 0.8;
   static const double gyroFloor = 0.15;
   static const double gyroCeiling = 2.0;

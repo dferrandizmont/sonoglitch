@@ -182,6 +182,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get resultLevelHighMasculine => 'alto';
 
   @override
+  String get resultStyleLabel => 'Estilo';
+
+  @override
+  String resultStyleSemantics(String name) {
+    return 'Estilo $name';
+  }
+
+  @override
   String get resultFormatLabel => 'Formato';
 
   @override

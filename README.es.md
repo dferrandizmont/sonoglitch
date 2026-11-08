@@ -25,14 +25,11 @@ foto, elige el recorte y la composición, y guárdala en la galería o compárte
 <p>
   <a href="https://play.google.com/apps/testing/es.sonoglitch.app"><img src="https://img.shields.io/badge/Google_Play-Beta-414141?logo=googleplay&amp;style=for-the-badge" alt="Beta en Google Play"></a>
   <a href="https://github.com/dferrandizmont/sonoglitch/releases"><img src="https://img.shields.io/badge/Disponible_en-GitHub-181717?logo=github&amp;style=for-the-badge" alt="Disponible en GitHub"></a>
-  <!--
-  <a href="[FDROID_URL]"><img src="https://img.shields.io/badge/F--Droid-1976D2?logo=fdroid&amp;style=for-the-badge" alt="Disponible en F-Droid"></a>
-  -->
 </p>
 
 Android 10 (API 29) o posterior, en prueba cerrada en Google Play y con
 versiones de prueba en GitHub; iOS todavía no está publicado. La app está en una
-fase alfa temprana. F-Droid llegará más adelante. Aún falta probar la
+fase alfa temprana. Aún falta probar la
 compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo.
 
 <details>
@@ -119,6 +116,9 @@ servidores.
 
 ## Novedades
 
+**0.2.0-alpha.6** (2026-11-08): después de hacer una foto puedes probarla en los demás estilos y quedarte con el que
+más te guste, y el visor prepara los fotogramas en segundo plano.
+
 Consulta el [CHANGELOG.md](CHANGELOG.md) o las [versiones](https://github.com/dferrandizmont/sonoglitch/releases).
 
 ## Contribuir
@@ -126,7 +126,7 @@ Consulta el [CHANGELOG.md](CHANGELOG.md) o las [versiones](https://github.com/df
 Las incidencias, las ideas y las traducciones son bienvenidas. Cómo compilar,
 probar y contribuir: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Las versiones de GitHub y de F-Droid incluyen un enlace opcional a
+Las versiones de GitHub incluyen un enlace opcional a
 [Ko-fi](https://ko-fi.com/danielmfdev) en Ajustes; la versión de Google Play no
 lo tiene, porque Play no permite donaciones fuera de su propia facturación.
 

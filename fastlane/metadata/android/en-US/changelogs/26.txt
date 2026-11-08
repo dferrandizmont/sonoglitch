@@ -1,0 +1,1 @@
+Try your photo in the other styles: a row of previews under the picture lets you switch style before you save or share it. The viewfinder prepares its frames in the background, which should keep it smoother, and the motion sensors read less often while the phone is still, to save battery.

@@ -11,25 +11,31 @@ one with that format.
 
 ## Unreleased
 
-## 0.2.0-alpha.5 · 03-Nov-2026
+## 0.2.0-alpha.6 · 2026-11-08
+
+- The viewfinder prepares its frames in the background, which should keep it smoother on mid-range phones, and the motion sensors read less often while the phone is still, to save battery.
+- After taking a photo you can try it in the other styles and keep the one you like: a row of small previews under the photo changes the style before you save or share it.
+- Sonoglitch will not be published on F-Droid: get it from the Google Play closed test or as an APK on GitHub.
+
+## 0.2.0-alpha.5 · 2026-11-03
 
 - Sonoglitch is in closed testing on Google Play; anyone can join through the sonoglitch-testers group (see the README or the website).
 - The Google Play build and the GitHub APK are signed with the same key from this version on, so you can move from one to the other without uninstalling. The app itself does not change.
 
-## 0.2.0-alpha.4 · 01-Nov-2026
+## 0.2.0-alpha.4 · 2026-11-01
 
 - New screenshots in the README and the store listing, taken with the real effects on photos by the developer.
 - In Spanish, the photo screen says "alto", "medio" and "bajo" for noise and movement (it said "alta", "media" and "baja", which only agree with light).
 - Prism, Static and Tape are much easier to recognise at high noise and movement: Prism tints the torn bands with colour, Static adds snow to them, and Tape adds worn-videotape streaks, dropout dashes, colour bleed and a skewed bottom edge, and all three show stronger colour splits, also on calm scenes such as a striped lighthouse.
 
-## 0.2.0-alpha.3 · 31-Oct-2026
+## 0.2.0-alpha.3 · 2026-10-31
 
 - The README and the contributing guide follow the common layout of the family of apps: the README is shorter, and the build, the diagnostics, the checks and the project layout move to the contributing guide.
 - The privacy policy is now also available in Spanish.
 - New website at https://sonoglitch.mainshai.com, in English and Spanish, with the full privacy policy. The old address on GitHub Pages redirects to it.
 - The before-and-after screenshot of the README and the website now shows the original photo; it was a copy of the result screenshot.
 
-## 0.2.0-alpha.2 · 29-Oct-2026
+## 0.2.0-alpha.2 · 2026-10-29
 
 - Volume up and down take the photo on Android (Settings > Volume buttons).
 - The first-run camera tip shows its full text at large font sizes and scrolls when space is limited.
@@ -41,31 +47,31 @@ one with that format.
 - Photo actions, readings and the style picker stay readable with large text and on small screens.
 - Onboarding and photo actions have larger touch targets; viewfinder controls retain a 48 dp hit area around their compact icons.
 
-## 0.1.0-alpha.21 · 27-Oct-2026
+## 0.1.0-alpha.21 · 2026-10-27
 
 - The glitch loader now sits over the photo area while a picture is processed, so it stays in view when the controls below are scrolled.
 
-## 0.1.0-alpha.20 · 27-Oct-2026
+## 0.1.0-alpha.20 · 2026-10-27
 
 - A Readings selector for the Sound strip and the Poster: full (numbers and square ladders), numbers only, or hidden. The photo ID stays in every mode and the last choice is remembered.
 - A glitch loader (a row of square cells with a chromatic fringe) replaces the round spinner while a photo is processed; it stays still when reduced motion is on.
 
-## 0.1.0-alpha.19 · 27-Oct-2026
+## 0.1.0-alpha.19 · 2026-10-27
 
 - Website regenerated from the updated privacy policy; iOS project uses the `es.sonoglitch.app` bundle id.
 
-## 0.1.0-alpha.18 · 27-Oct-2026
+## 0.1.0-alpha.18 · 2026-10-27
 
 - The application id is now `es.sonoglitch.app`, ready for Google Play. Older alpha builds with the previous id are separate apps and do not update to this one.
 - Store descriptions rewritten for the per-shot signature and the contextual signals; the privacy policy now covers the compass, barometer and clock.
 
-## 0.1.0-alpha.16 · 27-Oct-2026
+## 0.1.0-alpha.16 · 2026-10-27
 
 - Each shot now also carries the moment and the place: the time of day (cold night, warm evening), the date and moon phase, the compass heading, the rhythm of the place, the spectral tilt of the sound (dark and bassy versus bright and hissy) and how colourful the scene is nudge the six styles within the same bounded distortion budget. They never replace noise, light or motion, nothing is stored or sent, and a place without a beat or a compass simply adds nothing.
 
 - Phosphor, Ripple, Thermal, Static, Tape and Prism skip canvases smaller than one pixel.
 
-## 0.1.0-alpha.15 · 27-Oct-2026
+## 0.1.0-alpha.15 · 2026-10-27
 
 - Every photo gets its own signature: a random seed fixed per shot plus the three sound bands (bass, mid, treble) reshape the pattern of all six styles within a bounded distortion budget, so the subject stays recognisable and no two shots repeat the same layout. A tiny per-shot micro-fingerprint (at most one 8-bit code value per channel) is added to the final pixels.
 - An 8-character photo ID such as `A3F9-17C2` is printed discreetly on the Sound strip and the Poster. It is a visual reference, not a global identifier; nothing is stored or sent.
@@ -73,7 +79,7 @@ one with that format.
 
 - The watermark is a glitch wordmark like the project banner; the Sound strip and Poster are redesigned with square cells, spectrum ladders and a print palette.
 
-## 0.1.0-alpha.14 · 26-Oct-2026
+## 0.1.0-alpha.14 · 2026-10-26
 
 - A new look: squarer, instrument-like controls (4 dp corners instead of pills), one segmented style bar with the style name and a counter, segmented violet, warm and cyan meters, a shutter with a thin chromatic fringe, calmer sheets with numbered style rows, and a result screen with a single primary action (Save) and quiet square option tiles. The result photo area uses the app background instead of pure black.
 - Keyboard and D-pad focus with a visible focus state on the viewfinder controls; the help sheet follows the reduced-motion setting.
@@ -81,7 +87,7 @@ one with that format.
 - The selected style row and its press feedback were painted behind the sheet background.
 - The style counter and unlit meter segments had too little contrast over bright scenes.
 
-## 0.1.0-alpha.13 · 26-Oct-2026
+## 0.1.0-alpha.13 · 2026-10-26
 
 - Cleaner viewfinder: one style button with previous and next arrows that opens a sheet with every style described in one line (and the Random and Match this place actions), the three level meters as a card that opens a "How it works" sheet, and a first-run hint. Nothing overlaps from 320x568 up, and every control is at least 48 dp.
 - "Moment" is now "Auto shot" ("Disparo auto"), with a plain explanation: it takes the photo on a loud sound or a sudden movement. The count badge and the notice that covered the result buttons are gone; the triple tap on the image opens diagnostics only in debug builds.
@@ -92,12 +98,12 @@ one with that format.
 - Settings switches (watermark, Auto shot, Diagnostics) did not redraw after a tap, so a second tap could repeat the same value.
 - The selected style tile now moves when another style is chosen on the styles screen.
 
-## 0.1.0-alpha.12 · 26-Oct-2026
+## 0.1.0-alpha.12 · 2026-10-26
 
 - An optional "Support the project" row in Settings, linking to Ko-fi, in the F-Droid and GitHub builds. The Google Play build is made without it and stays free of donation links.
 - Releasing guide (`docs/RELEASING.md`), the F-Droid build recipe and the GitHub funding button.
 
-## 0.1.0-alpha.11 · 26-Oct-2026
+## 0.1.0-alpha.11 · 2026-10-26
 
 - Security reporting policy and a code of conduct.
 - Weekly grouped minor/patch dependency update pull requests for GitHub Actions and Dart packages.
@@ -113,7 +119,7 @@ one with that format.
 - The three frequency bands are measured in memory and printed in the export layouts, but the selectable styles do not read them, so they do not change the effect of a photo. Moment mode fires when the sound crosses a threshold after a quiet period, not at the loudest peak of a clip.
 - The 24-megapixel cap of the export applies to the cropped picture: the sound strip and the poster add a band or a frame, so the exported file can be slightly larger.
 
-## 0.1.0-alpha.1 · 24-Oct-2026
+## 0.1.0-alpha.1 · 2026-10-24
 
 First test version.
 

@@ -161,8 +161,8 @@
       "answer": "Android phones with Android 10 (API 29) or newer. It is an early alpha, so device compatibility, performance and image quality still need testing."
     },
     {
-      "question": "Is it on Google Play, F-Droid or the App Store?",
-      "answer": "Google Play has a closed test that anyone can join. F-Droid will come later, and iOS is not released yet."
+      "question": "Is it on Google Play or the App Store?",
+      "answer": "Google Play has a closed test that anyone can join, and iOS is not released yet. Sonoglitch is not planned for F-Droid: the APK is on GitHub."
     },
     {
       "question": "How do I join the Google Play test?",
@@ -177,5 +177,5 @@
   "mail_text": "Write to",
   "issue_link": "Open an issue on GitHub",
   "licence_text": "Apache-2.0 license",
-  "privacy_date": "2026-10-27"
+  "privacy_date": "2026-11-08"
 }

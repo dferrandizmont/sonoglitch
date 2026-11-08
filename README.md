@@ -25,14 +25,11 @@ layout, then save it to the gallery or share it.
 <p>
   <a href="https://play.google.com/apps/testing/es.sonoglitch.app"><img src="https://img.shields.io/badge/Google_Play-Beta-414141?logo=googleplay&amp;style=for-the-badge" alt="Beta on Google Play"></a>
   <a href="https://github.com/dferrandizmont/sonoglitch/releases"><img src="https://img.shields.io/badge/Available_on-GitHub-181717?logo=github&amp;style=for-the-badge" alt="Available on GitHub"></a>
-  <!--
-  <a href="[FDROID_URL]"><img src="https://img.shields.io/badge/F--Droid-1976D2?logo=fdroid&amp;style=for-the-badge" alt="Available on F-Droid"></a>
-  -->
 </p>
 
 Android 10 (API 29) or newer, in closed testing on Google Play and as test
 builds on GitHub; iOS is not released yet. The app is at an early alpha stage.
-F-Droid will come later. Device compatibility, performance and image quality
+Device compatibility, performance and image quality
 still need testing.
 
 <details>
@@ -118,6 +115,9 @@ processing is local, with no accounts, no ads, no analytics and no servers.
 
 ## What's new
 
+**0.2.0-alpha.6** (2026-11-08): after taking a photo you can try it in the other styles and keep the one you like,
+and the viewfinder prepares its frames in the background.
+
 See [CHANGELOG.md](CHANGELOG.md) or the [releases](https://github.com/dferrandizmont/sonoglitch/releases).
 
 ## Contributing
@@ -125,7 +125,7 @@ See [CHANGELOG.md](CHANGELOG.md) or the [releases](https://github.com/dferrandiz
 Bug reports, ideas and translations are welcome. How to build, test and
 contribute: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-The GitHub and F-Droid builds include an optional [Ko-fi](https://ko-fi.com/danielmfdev)
+The GitHub builds include an optional [Ko-fi](https://ko-fi.com/danielmfdev)
 link in Settings; the Google Play build has none, because Play does not allow
 donations outside its own billing.
 

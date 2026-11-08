@@ -380,6 +380,18 @@ abstract class AppLocalizations {
   /// **'high'**
   String get resultLevelHighMasculine;
 
+  /// Label of the strip of styles on the result screen, where the photo can be tried in every style.
+  ///
+  /// In en, this message translates to:
+  /// **'Style'**
+  String get resultStyleLabel;
+
+  /// Screen reader label of one style in the strip of the result screen. The name is the name of the style, such as Tape.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} style'**
+  String resultStyleSemantics(String name);
+
   /// Label of the export format selector.
   ///
   /// In en, this message translates to:

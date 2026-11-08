@@ -39,7 +39,7 @@
 <div class="wrap">
 <div class="sec-head">{{ marker(2) }}<h2>{{ t.download }}</h2><p>{{ c.download_intro }}</p></div>
 <div class="platforms">
-{% for platform, kinds, note in [('android', ['apk', 'play', 'fdroid'], c.android_note), ('ios', ['app_store', 'testflight'], c.ios_note)] %}
+{% for platform, kinds, note in [('android', ['apk', 'play'], c.android_note), ('ios', ['app_store', 'testflight'], c.ios_note)] %}
 <div class="card platform">
 <div class="card-head"><h3>{{ t[platform] }}</h3><span class="mono">{{ note }}</span></div>
 {% for item in site.downloads if item.kind in kinds %}

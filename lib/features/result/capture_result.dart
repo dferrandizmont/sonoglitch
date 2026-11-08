@@ -19,6 +19,7 @@ class CaptureResult {
   }) : _rendered = rendered, // ignore: prefer_initializing_formals
        source = null,
        render = null,
+       time = 0,
        quality = ExportQuality.high;
 
   const CaptureResult.source({
@@ -27,6 +28,7 @@ class CaptureResult {
     required this.quality,
     required this.ambient,
     required this.styleId,
+    this.time = 0,
     this.context,
   }) : _rendered = null;
 
@@ -34,6 +36,12 @@ class CaptureResult {
   final StillSource? source;
   final StillRender? render;
   final ExportQuality quality;
+
+  /// The time of the animation at the shutter, in seconds.
+  ///
+  /// It is frozen with [ambient], so the same capture drawn with another
+  /// style shows the same frame of the animation.
+  final double time;
 
   /// Legacy pre-rendered input; camera originals are decoded on demand.
   final ui.Image? _rendered;
