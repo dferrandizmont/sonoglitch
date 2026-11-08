@@ -62,3 +62,6 @@ opencode.json
 key.properties
 .env
 .env.*
+
+# QA evidence (screenshots, logs) is regenerable; the reports are versioned.
+qa/*/evidence/

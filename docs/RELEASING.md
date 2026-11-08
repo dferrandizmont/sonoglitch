@@ -76,6 +76,7 @@ formato y la siguiente ya sigue esta tabla.
 | 03-nov-2026 | Google Play (prueba cerrada) | 0.2.0-alpha.5 | 25 | `bece2ef` | `sonoglitch-0.2.0-alpha.5-v25.aab` (SHA-256 `4080d51c…4236bd78`), compilado en local, clave de subida | En revisión; Play firma con la clave de subida | dentro del AAB |
 | 03-nov-2026 | GitHub Releases (repositorio privado) | 0.2.0-alpha.5 | 25 | `bece2ef` | `sonoglitch-0.2.0-alpha.5.apk`, compilado en local (Actions del privado sin cuota), clave de subida | Publicada (prerelease) | no archivados |
 | 03-nov-2026 | GitHub Releases (repositorio público) | 0.2.0-alpha.5 | 25 | `bece2ef` (público `4fa548d`) | `sonoglitch-0.2.0-alpha.5.apk`, Actions, clave de subida | Publicada (prerelease); misma firma que el APK del privado y que Google Play | no archivados |
+| 08-nov-2026 | Google Play (prueba cerrada) | 0.2.0-alpha.6 | 26 | `3e8f9ed` | `sonoglitch-0.2.0-alpha.6-v26.aab` (SHA-256 `40defb5a…47dbc3e3`), compilado en local, clave de subida; subido con `play-upload.py` | Borrador en el track `alpha`, pendiente de que el propietario lo publique | `mapping.txt` subido; símbolos nativos dentro del AAB |
 
 Todavía no hay ninguna subida a TestFlight. El AAB de la build 19 se compiló en local con la clave de subida
 (27-oct-2026, commit `de7defc`) y **no se subió**: quedó obsoleto. Los símbolos nativos van dentro del AAB
