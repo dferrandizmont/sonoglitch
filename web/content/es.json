@@ -4,9 +4,9 @@
   "description": "Cámara gratuita y de código abierto para Android: el sonido, la luz y el movimiento que te rodean deforman la foto. Sin anuncios, sin cuentas y funciona sin conexión.",
   "eyebrow": "App de cámara · Android 10+ · Alfa temprana",
   "headline": "Una cámara moldeada por el sonido, la luz y el movimiento",
-  "intro": "Sonoglitch es una cámara gratuita y de código abierto para quien quiere que una foto cuente cómo sonaba un lugar y qué se sentía al estar allí, no solo cómo se veía. El nivel de sonido, la luz y el movimiento que te rodean deforman la imagen en directo, ya en el visor.",
+  "intro": "Una cámara creativa para Android: el sonido, la luz y el movimiento transforman la imagen en directo. Elige un estilo, haz la foto y compártela.",
   "key_facts": "Gratis · Sin anuncios · Sin cuentas · Funciona sin conexión · Código abierto",
-  "cta_download": "Descargar",
+  "cta_download": "Probar en Android",
   "cta_code": "Ver el código",
   "nav_label": "Secciones",
   "readings_label": "Las tres lecturas",
@@ -26,8 +26,9 @@
   ],
   "download_intro": "De momento, Android 10 (API 29) o posterior, en prueba cerrada en Google Play o como APK en GitHub; iOS todavía no está publicado. La app está en una fase alfa temprana, y aún falta probar la compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo.",
   "android_note": "Android 10 o posterior",
+  "closed_test_note": "Usa la misma cuenta de Google en los tres pasos.",
   "ios_note": "Aún no publicada",
-  "ios_text": "La versión para iPhone saldrá del mismo código, pero todavía no está lista para publicarse.",
+  "ios_text": "La versión para iPhone aún no está disponible.",
   "apk_note": "Cada versión de prueba es un APK con su propio archivo .sha256, para que puedas comprobarlo antes de instalarlo.",
   "apk_howto": "Cómo instalarlo",
   "shots_hint": "Desliza en horizontal",
@@ -35,21 +36,21 @@
     "01-prism-live": "Prism · en directo",
     "02-thermal-live": "Thermal · en directo",
     "03-ripple-live": "Ripple · en directo",
-    "04-result-full": "Completa · 4:5",
+    "04-result-full": "Static · con efecto",
     "05-result-sound-strip": "Banda de sonido",
     "06-result-poster": "Póster · 9:16",
-    "07-before-after": "Comparar",
+    "07-before-after": "Original · sin efecto",
     "08-landscape-result": "Horizontal"
   },
   "screenshot_alts": {
-    "01-prism-live": "Visor en directo con el estilo Prism sobre un puesto de fruta de un mercado nocturno, con los medidores de ruido, luz y movimiento arriba",
-    "02-thermal-live": "Visor en directo con el estilo Thermal sobre el mismo puesto, con colores y curvas de cámara térmica",
-    "03-ripple-live": "Visor en directo con el estilo Ripple sobre una puesta de sol en un lago, con los medidores de ruido, luz y movimiento arriba",
-    "04-result-full": "Pantalla de la foto con la composición Completa y el recorte Vertical 4:5, con los botones Repetir, Compartir y Guardar",
-    "05-result-sound-strip": "Pantalla de la foto con la composición Banda de sonido: una banda bajo la imagen muestra las lecturas de sonido, luz y movimiento",
-    "06-result-poster": "Pantalla de la foto con la composición Póster y el recorte Historia 9:16: un marco blanco con el nombre del estilo Thermal y las lecturas",
-    "07-before-after": "Pantalla de la foto con el botón de comparar activado: la foto original del mercado nocturno, sin el efecto, en la composición Completa y el recorte Vertical 4:5",
-    "08-landscape-result": "Pantalla de la foto con una puesta de sol en horizontal, en la composición Banda de sonido y el recorte Original"
+    "01-prism-live": "Visor en directo con el estilo Prism sobre fuegos artificiales, con los medidores de ruido, luz y movimiento arriba",
+    "02-thermal-live": "Visor en directo con el estilo Thermal sobre una torre humana en una plaza",
+    "03-ripple-live": "Visor en directo con el estilo Ripple sobre un faro, con ondas concéntricas en el cielo",
+    "04-result-full": "Pantalla de la foto de una persona entre chispas con el estilo Static, el recorte Vertical 4:5 y la composición Completa, con los botones Repetir, Compartir y Guardar",
+    "05-result-sound-strip": "Pantalla de la foto con la composición Banda de sonido: bajo la foto de chispas, una banda con las lecturas de sonido, luz y movimiento",
+    "06-result-poster": "Foto de una persona entre chispas con la composición Póster, el recorte Historia 9:16, el estilo Static y las lecturas del ambiente",
+    "07-before-after": "Foto original de la persona entre chispas, sin el efecto, en el modo de comparación",
+    "08-landscape-result": "Foto horizontal de una costa con un hotel y una piscina, con el estilo Phosphor, la composición Banda de sonido y el recorte Original"
   },
   "features_intro": "Cada estilo usa las tres lecturas a su manera, y el efecto está acotado, así que el sujeto sigue siendo reconocible.",
   "styles_label": "Los seis estilos",
@@ -93,7 +94,7 @@
     "La cámara hace la foto sola cuando el sonido supera un umbral tras un segundo de calma, o cuando la escena da un salto.",
     "Completa es solo la foto, Banda de sonido añade una banda con el sonido, la luz y el movimiento, y Póster es un marco con el estilo y las lecturas.",
     "Original, Cuadrado 1:1, Vertical 4:5 e Historia 9:16.",
-    "Elige Estándar (hasta 2048 px en el lado largo de la foto), Alta (hasta 4096 px) o Máxima (hasta el tamaño original), según el tamaño del original y los límites del dispositivo, y exporta en PNG o JPEG. El tope de 24 MP se aplica a la foto recortada; Banda de sonido y Póster pueden aumentar el tamaño de la imagen exportada. Guarda la foto en la galería o compártela, y mantenla pulsada para compararla con el original."
+    "Guarda o comparte tus fotos en PNG o JPEG. Elige calidad Estándar, Alta o Máxima y mantén pulsada la foto para compararla con el original."
   ],
   "privacy_summary": [
     "Del micrófono, Sonoglitch solo mide el nivel de volumen y la energía de tres bandas de frecuencia, en memoria: no se graba, almacena ni envía audio.",
@@ -161,21 +162,30 @@
       "answer": "En móviles con Android 10 (API 29) o posterior. Es una alfa temprana, así que aún falta probar la compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo."
     },
     {
+      "question": "¿Qué resolución puedo exportar?",
+      "answer": "Elige Estándar (hasta 2048 px en el lado largo de la foto), Alta (hasta 4096 px) o Máxima (hasta el tamaño original), según el tamaño del original y los límites del dispositivo. El tope de 24 MP se aplica a la foto recortada; Banda de sonido y Póster pueden aumentar el tamaño de la imagen exportada."
+    },
+    {
       "question": "¿Está en Google Play o en la App Store?",
       "answer": "En Google Play hay una prueba cerrada en la que puede entrar cualquiera, e iOS aún no está publicado. No está previsto publicarla en F-Droid: el APK está en GitHub."
     },
     {
       "question": "¿Cómo me uno a la prueba de Google Play?",
-      "answer": "Únete al grupo de Google sonoglitch-testers con la cuenta que usas en Google Play, acepta la invitación en play.google.com/apps/testing/es.sonoglitch.app e instala Sonoglitch. Mantenla instalada al menos 14 días. La versión de Google Play y el APK de GitHub comparten firma: puedes pasar de una a otra sin desinstalar."
+      "answer": "Sigue los tres pasos de la sección Descargas, siempre con la misma cuenta de Google: únete al grupo sonoglitch-testers, acepta la prueba en Google Play e instala Sonoglitch. Mantenla instalada al menos 14 días. La versión de Google Play y el APK de GitHub comparten firma: puedes pasar de una a otra sin desinstalar."
     },
     {
       "question": "¿Cómo instalo el APK?",
-      "answer": "Abre la página de versiones en GitHub, elige la prerelease más reciente y descarga sonoglitch-<versión>.apk con su archivo .sha256. Comprueba el APK con ese hash, instálalo permitiendo aplicaciones de origen desconocido y mira la versión en Ajustes > Acerca de. Algunas versiones de prueba están firmadas con la clave de depuración. Si Android indica que las firmas no coinciden al actualizar, desinstala la versión instalada e instala la nueva."
+      "answer": "Abre la página de versiones en GitHub, elige la versión de prueba más reciente y descarga sonoglitch-<versión>.apk con su archivo .sha256. Comprueba el APK con ese hash, instálalo permitiendo aplicaciones de origen desconocido y mira la versión en Ajustes > Acerca de. Algunas versiones de prueba están firmadas con la clave de depuración. Si Android indica que las firmas no coinciden al actualizar, desinstala la versión instalada e instala la nueva."
     }
   ],
   "mail_label": "¿Sigues con dudas?",
   "mail_text": "Escribe a",
   "issue_link": "Abre una incidencia en GitHub",
   "licence_text": "Licencia Apache-2.0",
-  "privacy_date": "2026-11-08"
+  "sensor_values": [
+    { "value": "82", "unit": "dB" },
+    { "value": "420", "unit": "lx" },
+    { "value": "0.70", "unit": "m/s²" }
+  ],
+  "privacy_date": "2026-11-16"
 }

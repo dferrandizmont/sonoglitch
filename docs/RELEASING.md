@@ -217,7 +217,7 @@ Do **not** pass `DONATION_URL`. Upload `build/app/outputs/bundle/release/app-rel
 
 - Title, short and full descriptions: `fastlane/metadata/android/<locale>/` (English and Spanish).
 - Privacy policy URL: `https://sonoglitch.mainshai.com/privacy/` (English; source: `docs/legal/politica-privacidad.en.md`).
-- Contact email: `sonoglitch@mainshai.com` (forwards to the developer mailbox; the privacy policy, SECURITY.md and the code of conduct keep `dev@mainshai.com`). Website: `https://sonoglitch.mainshai.com`.
+- Contact email: `sonoglitch@mainshai.com` (forwards to the developer mailbox; the privacy policy uses it too since 2026-11-16, while SECURITY.md and the code of conduct keep `dev@mainshai.com`). Website: `https://sonoglitch.mainshai.com`.
 - Price: free, no ads, no in-app purchases.
 - Assets that must be made on a device: a 512×512 icon, a 1024×500 feature graphic and at least two phone screenshots.
 

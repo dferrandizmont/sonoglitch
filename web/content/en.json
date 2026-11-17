@@ -4,9 +4,9 @@
   "description": "A free, open source camera app for Android: the sound, light and movement around you distort the photo. No ads, no account, works offline.",
   "eyebrow": "Camera app · Android 10+ · Early alpha",
   "headline": "A camera shaped by sound, light and motion",
-  "intro": "Sonoglitch is a free, open source camera app for anyone who wants a photo to show how a place sounded and felt, not only how it looked. The sound level, the light and the movement around you distort the picture live, right in the viewfinder.",
+  "intro": "A creative camera for Android: sound, light and motion transform the image live. Choose a style, take a photo and share it.",
   "key_facts": "Free · No ads · No account · Works offline · Open source",
-  "cta_download": "Download",
+  "cta_download": "Try it on Android",
   "cta_code": "View the code",
   "nav_label": "Sections",
   "readings_label": "The three readings",
@@ -26,8 +26,9 @@
   ],
   "download_intro": "Android 10 (API 29) or newer for now, as a closed test on Google Play or as an APK on GitHub; iOS is not released yet. The app is at an early alpha stage, and device compatibility, performance and image quality still need testing.",
   "android_note": "Android 10 or newer",
+  "closed_test_note": "Use the same Google account in all three steps.",
   "ios_note": "Not released yet",
-  "ios_text": "The iPhone version will come from the same code, but it is not ready for release yet.",
+  "ios_text": "The iPhone version is not available yet.",
   "apk_note": "Each test build is an APK with its own .sha256 file, so you can check it before installing.",
   "apk_howto": "How to install it",
   "shots_hint": "Scroll sideways",
@@ -35,21 +36,21 @@
     "01-prism-live": "Prism · live",
     "02-thermal-live": "Thermal · live",
     "03-ripple-live": "Ripple · live",
-    "04-result-full": "Full · 4:5",
+    "04-result-full": "Static · effect applied",
     "05-result-sound-strip": "Sound strip",
     "06-result-poster": "Poster · 9:16",
-    "07-before-after": "Compare",
+    "07-before-after": "Original · no effect",
     "08-landscape-result": "Landscape"
   },
   "screenshot_alts": {
-    "01-prism-live": "Live viewfinder with the Prism style over a night-market fruit stall, with the noise, light and movement meters at the top",
-    "02-thermal-live": "Live viewfinder with the Thermal style over the same stall, in heat-camera colours and contours",
-    "03-ripple-live": "Live viewfinder with the Ripple style over a sunset on a lake, with the noise, light and movement meters at the top",
-    "04-result-full": "Photo screen with the Full layout and the Portrait 4:5 crop, with the Retake, Share and Save buttons",
-    "05-result-sound-strip": "Photo screen with the Sound strip layout: a band under the picture shows the sound, light and movement readings",
-    "06-result-poster": "Photo screen with the Poster layout and the Story 9:16 crop: a white frame with the Thermal style name and the readings",
-    "07-before-after": "Photo screen with the compare button on: the original night market photo, without the effect, in the Full layout and the Portrait 4:5 crop",
-    "08-landscape-result": "Photo screen with a landscape sunset photo in the Sound strip layout and the Original crop"
+    "01-prism-live": "Live viewfinder with the Prism style over fireworks, with the noise, light and movement meters at the top",
+    "02-thermal-live": "Live viewfinder with the Thermal style over a human tower in a square",
+    "03-ripple-live": "Live viewfinder with the Ripple style over a lighthouse, with concentric waves in the sky",
+    "04-result-full": "Photo screen of a person amid sparks with the Static style, the Portrait 4:5 crop and the Full layout, with the Retake, Share and Save buttons",
+    "05-result-sound-strip": "Photo screen with the Sound strip layout: under the photo of sparks, a band with the sound, light and movement readings",
+    "06-result-poster": "Photo of a person amid sparks with the Poster layout, the Story 9:16 crop, the Static style and the ambient readings",
+    "07-before-after": "Original photo of the person amid sparks, without the effect, in comparison mode",
+    "08-landscape-result": "Landscape photo of a coast with a hotel and a pool, with the Phosphor style, the Sound strip layout and the Original crop"
   },
   "features_intro": "Every style uses the three readings in its own way, and the effect stays bounded, so the subject is still recognisable.",
   "styles_label": "The six styles",
@@ -93,7 +94,7 @@
     "The camera takes the photo by itself when the sound crosses a threshold after a quiet second, or when the scene jumps.",
     "Full is just the photo, Sound strip adds a band with the sound, light and movement, and Poster is a framed print with the style and readings.",
     "Original, Square 1:1, Portrait 4:5 and Story 9:16.",
-    "Choose Standard (up to 2048 px on the photo's long side), High (up to 4096 px) or Maximum (up to native size), within the limits of the original image and the device, and export as PNG or JPEG. The cropped photo is capped at 24 MP; Sound strip and Poster can make the exported image larger. Save the photo to the gallery or share it, and press and hold it to compare it with the original."
+    "Save or share your photos as PNG or JPEG. Choose Standard, High or Maximum quality, and press and hold the photo to compare it with the original."
   ],
   "privacy_summary": [
     "From the microphone, Sonoglitch measures only the volume level and the energy of three frequency bands, in memory: no audio is recorded, stored or sent.",
@@ -161,12 +162,16 @@
       "answer": "Android phones with Android 10 (API 29) or newer. It is an early alpha, so device compatibility, performance and image quality still need testing."
     },
     {
+      "question": "What resolution can I export?",
+      "answer": "Choose Standard (up to 2048 px on the photo's long side), High (up to 4096 px) or Maximum (up to the original size), within the limits of the original image and the device. The cropped photo is capped at 24 MP; Sound strip and Poster can make the exported image larger."
+    },
+    {
       "question": "Is it on Google Play or the App Store?",
       "answer": "Google Play has a closed test that anyone can join, and iOS is not released yet. Sonoglitch is not planned for F-Droid: the APK is on GitHub."
     },
     {
       "question": "How do I join the Google Play test?",
-      "answer": "Join the sonoglitch-testers Google group with the account you use on Google Play, then accept the invitation at play.google.com/apps/testing/es.sonoglitch.app and install Sonoglitch. Keep it installed for at least 14 days. The Play build and the GitHub APK share one signature, so you can switch between them without uninstalling."
+      "answer": "Follow the three steps in the Download section, always with the same Google account: join the sonoglitch-testers group, accept the test on Google Play and install Sonoglitch. Keep it installed for at least 14 days. The Play build and the GitHub APK share one signature, so you can switch between them without uninstalling."
     },
     {
       "question": "How do I install the APK?",
@@ -177,5 +182,10 @@
   "mail_text": "Write to",
   "issue_link": "Open an issue on GitHub",
   "licence_text": "Apache-2.0 license",
-  "privacy_date": "2026-11-08"
+  "sensor_values": [
+    { "value": "82", "unit": "dB" },
+    { "value": "420", "unit": "lx" },
+    { "value": "0.70", "unit": "m/s²" }
+  ],
+  "privacy_date": "2026-11-16"
 }

@@ -14,6 +14,8 @@
   --accent-hover: #CDBBFF;
   --on-accent: #17121F;
   --accent-tint: rgba(182, 156, 255, .14);
+  --accent-rgb: 182, 156, 255; /* channels of --accent, for shadows whose alpha is set where they are used */
+  --mono-track: .12em; /* letter-spacing of the uppercase mono labels */
   --warm: #FFB37A;
   --cyan: #55E5F2;
   --magenta: #F36CCB;
@@ -71,7 +73,7 @@ a:hover { color: var(--accent-hover); }
   font-family: var(--mono);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: .12em;
+  letter-spacing: var(--mono-track);
   text-transform: uppercase;
   color: var(--text-2);
 }
@@ -82,7 +84,11 @@ a:hover { color: var(--accent-hover); }
   left: 16px;
   top: -100px;
   z-index: 10;
-  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
   border-radius: var(--r-sm);
   background: var(--surface-high);
   color: var(--text);
@@ -127,27 +133,30 @@ a:hover { color: var(--accent-hover); }
 
 .sections {
   grid-area: nav;
-  display: flex;
-  gap: 4px;
+  /* Phone: five links in two rows (3 + 2) so none is cut off; every link is at least 44 px tall. */
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0 4px;
   margin: 0 calc(var(--gutter) * -1);
   padding: 0 8px;
-  scroll-padding-inline: 8px;
   border-top: 1px solid var(--outline);
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-.sections::-webkit-scrollbar { display: none; }
 .sections a {
+  grid-column: span 2;
   display: flex;
   align-items: center;
+  justify-content: center;
   min-height: 44px;
-  padding: 0 10px;
+  padding: 0 6px;
   color: var(--text-2);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
-  white-space: nowrap;
+  text-align: center;
+  overflow-wrap: normal;
+  hyphens: none;
 }
+.sections a:nth-child(n+4) { grid-column: span 3; }
 .sections a:hover { color: var(--text); }
 .sections a:focus-visible { outline-offset: -4px; }
 
@@ -226,7 +235,7 @@ a:hover { color: var(--accent-hover); }
 .hero { padding: 40px 0 56px; }
 .hero-grid { display: flex; flex-direction: column; gap: 32px; }
 .hero-text { display: flex; flex-direction: column; gap: 22px; }
-.hero h1 { font-size: 40px; line-height: 1.08; }
+.hero h1 { font-size: 40px; line-height: 1.08; text-wrap: balance; }
 .lede { font-size: 17px; line-height: 1.55; color: var(--text-2); max-width: 34em; }
 
 .facts {
@@ -295,12 +304,12 @@ a:hover { color: var(--accent-hover); }
 a.store:hover { border-color: var(--accent); color: var(--text); }
 .store .l { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .store .l svg { flex: none; }
-.store .st {
+.store .st, .store-link .download-state {
   flex: none;
   font-family: var(--mono);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: .12em;
+  letter-spacing: var(--mono-track);
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--text);
@@ -308,10 +317,101 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
   border-radius: var(--r-xs);
   padding: 3px 7px;
 }
+/* Official store badge (shared download macro): the image is shown as delivered, only its size and offset are set so
+   that the visible artwork is --badge-height tall and starts at the left edge of the card's content, like the APK
+   button. The Google PNGs (646x250) carry different transparent margins by language, and the macro tells them apart
+   with a class (proportions from the shared contract): -full (ca, de, es, fr, it, pt) has its artwork at 646x192,
+   y=29; -inset (en, eu, gl) has it at 564x168, x=41, y=41. The clear space around the artwork (a quarter of its
+   height) is the padding of the link, which may overlap the card's own padding and gap. */
+.store-link {
+  --badge-height: 48px;
+  align-self: flex-start;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--badge-height) / 4);
+  padding: calc(var(--badge-height) / 4);
+  margin: -6px 0 -6px calc(var(--badge-height) / -4);
+  border-radius: var(--r-sm);
+  text-align: center;
+  text-decoration: none;
+}
+.store-badge { display: block; width: auto; max-width: none; flex: none; }
+.store-badge-play-full {
+  height: calc(var(--badge-height) * 250 / 192);
+  margin-block: calc(var(--badge-height) * -29 / 192);
+}
+.store-badge-play-inset {
+  height: calc(var(--badge-height) * 250 / 168);
+  margin: calc(var(--badge-height) * -41 / 168);
+}
+.store-link .download-state { line-height: 1.5; }
+.store-link:hover .download-state { color: var(--accent-hover); }
 .store.soon { border-style: dashed; border-color: var(--edge); color: var(--text-2); }
 .store.soon .st { border-color: var(--edge); color: var(--text-2); }
 
 .note { color: var(--text-2); margin-top: 16px; font-size: 15px; }
+
+/* Closed test on Google Play: three steps under the Android store links. */
+.closed-test-steps {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  counter-reset: ct;
+  border-top: 1px solid var(--outline);
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.closed-test-steps li {
+  counter-increment: ct;
+  position: relative;
+  padding: 12px 0 12px 40px;
+  border-bottom: 1px solid var(--outline);
+  overflow-wrap: anywhere;
+}
+.closed-test-steps li::before {
+  content: counter(ct, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: var(--mono-track);
+  color: var(--accent);
+}
+.closed-test-steps a { font-weight: 600; }
+/* A step that is only a link: the link is the whole row and a 44 px target (it cancels the row padding). */
+.closed-test-steps li > a:only-child { display: flex; align-items: center; min-height: 44px; margin-block: -12px; }
+.closed-test-steps li:last-child { border-bottom: 0; padding-bottom: 0; }
+.closed-test-steps li:last-child > a:only-child { margin-bottom: 0; }
+
+/* Pause/resume button for the looping animations (script from the shared loop toggle). */
+.loop-toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 32px;
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid var(--edge-ui);
+  border-radius: var(--r-sm);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: var(--mono-track);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s, color .15s;
+}
+.loop-toggle[hidden] { display: none; }
+.loop-toggle:hover { border-color: var(--accent); color: var(--accent-hover); }
+.loop-toggle[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-tint); }
+.loop-toggle + .readings { margin-top: 12px; }
 
 /* ---------- Screenshots: a film strip ---------- */
 
@@ -344,6 +444,23 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
 .film img { width: 100%; height: auto; border: 1px solid var(--outline); border-radius: var(--r-sm); background: var(--bg); }
 .film figcaption { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; }
 .film .frm { color: var(--accent); }
+/* Optional link to the larger version of a frame, below the caption. */
+.screenshot-enlarge {
+  order: 1;
+  align-self: flex-start;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: var(--mono-track);
+  text-transform: uppercase;
+  color: var(--text-2);
+  text-decoration-color: var(--edge);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.screenshot-enlarge:hover { color: var(--accent-hover); text-decoration-color: currentColor; }
+.screenshot-enlarge:focus-visible { outline-offset: 2px; border-radius: var(--r-xs); }
 
 /* ---------- Features ---------- */
 
@@ -379,7 +496,7 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
 .priv { display: grid; gap: 24px; }
 .priv .sec-head p:not(.mono) { color: var(--text-2); }
 .priv .sec-head p:first-of-type { color: var(--text); font-size: 17px; }
-.more { font-weight: 600; }
+.more { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; }
 
 .glance { list-style: none; padding: 0; border: 1px solid var(--outline); border-radius: var(--r-md); background: var(--surface); }
 .glance li {
@@ -474,16 +591,7 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
   line-height: 1.65;
   color: var(--prose);
 }
-/* The Markdown title repeats the page heading: kept for assistive technology, hidden on screen. */
-.policy > h2:first-child {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-.policy h3 {
+.policy h2 {
   counter-increment: sec;
   display: flex;
   flex-direction: column;
@@ -495,16 +603,17 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
   color: var(--text);
   letter-spacing: -.01em;
 }
-.policy h3::before {
+.policy h2::before {
   content: counter(sec, decimal-leading-zero);
   font-family: var(--mono);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: .12em;
+  letter-spacing: var(--mono-track);
   color: var(--accent);
 }
-.policy h4 { font-size: 18px; color: var(--text); margin-top: 12px; }
+.policy h3 { font-size: 18px; color: var(--text); margin-top: 12px; }
 .policy p, .policy ul, .policy ol, .policy table { margin: 0; }
+.policy h2, .policy h3 { scroll-margin-top: 24px; }
 .policy ul, .policy ol { padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
 .policy strong { color: var(--text); font-weight: 600; }
 .policy code {
@@ -517,19 +626,74 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
   overflow-wrap: anywhere;
 }
 
-/* A wide table scrolls inside its own box, with the first column held in place. */
-.policy table {
-  display: block;
+/* Table of contents above the policy: a boxed list of links to its sections. */
+.privacy-toc {
+  max-width: 760px;
+  margin-top: 32px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-md);
+}
+.privacy-toc h2 {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: var(--mono-track);
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.privacy-toc ul { list-style: none; padding: 0; margin: 8px 0 0; counter-reset: toc; }
+.privacy-toc li { counter-increment: toc; border-top: 1px solid var(--outline); }
+.privacy-toc li:first-child { border-top: 0; }
+.privacy-toc a {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 0;
+  color: var(--text);
+  text-decoration: none;
+  line-height: 1.35;
+}
+.privacy-toc a::before {
+  content: counter(toc, decimal-leading-zero);
+  flex: none;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: var(--mono-track);
+  color: var(--accent);
+}
+.privacy-toc a:hover { color: var(--accent-hover); text-decoration: underline; text-underline-offset: 3px; }
+.privacy-toc a:focus-visible { outline-offset: -2px; }
+.privacy-toc + .policy { padding-top: 24px; }
+
+/* A wide table scrolls inside its own box (the generator wraps each table in .table-wrap, a focusable region).
+   The soft edges on the sides show that there is more to scroll to. */
+.policy .table-wrap {
   max-width: 100%;
   overflow-x: auto;
   border: 1px solid var(--outline);
   border-radius: var(--r-md);
-  background: var(--surface);
+  --scroll-a: .28; /* strength of the edge shadow */
+  --scroll-w: 14px; /* width of the edge shadow */
+  --scroll-fade: 40px; /* width of the cover that hides the shadow at the end of the scroll */
+  background:
+    linear-gradient(to right, var(--surface) 30%, transparent) left center / var(--scroll-fade) 100% no-repeat local,
+    linear-gradient(to left, var(--surface) 30%, transparent) right center / var(--scroll-fade) 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(var(--accent-rgb), var(--scroll-a)), transparent) left center / var(--scroll-w) 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(var(--accent-rgb), var(--scroll-a)), transparent) right center / var(--scroll-w) 100% no-repeat scroll,
+    var(--surface);
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge-ui) var(--surface);
+}
+.policy table {
+  width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   font-size: 14px;
   line-height: 1.5;
-  scrollbar-color: var(--edge) var(--surface);
 }
 .policy th {
   background: var(--surface-high);
@@ -537,17 +701,25 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
   font-family: var(--mono);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: .12em;
+  letter-spacing: var(--mono-track);
   text-transform: uppercase;
   color: var(--text-2);
   padding: 10px 12px;
   border-bottom: 1px solid var(--outline);
 }
 .policy td { padding: 12px; vertical-align: top; border-top: 1px solid var(--outline); min-width: 200px; }
-.policy tr:first-child td { border-top: 0; }
+.policy tbody tr:first-child td { border-top: 0; }
 .policy td:first-child { min-width: 140px; font-weight: 600; color: var(--text); }
-.policy th:first-child, .policy td:first-child { position: sticky; left: 0; z-index: 1; border-right: 1px solid var(--outline); }
-.policy td:first-child { background: var(--surface); }
+.policy th:first-child, .policy td:first-child { border-right: 1px solid var(--outline); }
+
+/* Phone: still a native table inside the scrollable region, with narrower columns so more of it is visible, a
+   stronger edge shadow as the scroll cue and no sticky column (that starts at 600 px). */
+@media (max-width: 599px) {
+  .policy .table-wrap { --scroll-a: .45; --scroll-w: 18px; --scroll-fade: 36px; }
+  .policy td { min-width: 140px; }
+  .policy th:first-child { padding-inline: 10px; }
+  .policy td:first-child { width: 116px; min-width: 116px; padding-inline: 10px; font-size: 13px; overflow-wrap: anywhere; }
+}
 
 .not-found { border-bottom: 0; padding: 64px 0 96px; }
 .not-found .lede { max-width: 34em; }
@@ -579,12 +751,23 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
   .foot-top { flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; }
   .foot-links { flex-direction: row; flex-wrap: wrap; gap: 0 28px; }
   .foot-links li { border-top: 0; }
+  /* From tablet width the five links fit on one row again. */
+  .sections { display: flex; gap: 4px; }
+  .sections a { justify-content: flex-start; padding: 0 10px; white-space: nowrap; }
+  /* The table is wide enough here to hold its first column in place while the rest scrolls. */
+  .policy th:first-child, .policy td:first-child { position: sticky; left: 0; z-index: 1; }
+  .policy td:first-child { background: var(--surface); }
+}
+
+/* Three readings do not fit side by side below ~700 px: their cells pushed the page sideways. */
+@media (min-width: 600px) and (max-width: 699px) {
+  .readings { grid-template-columns: 1fr; }
 }
 
 @media (min-width: 900px) {
   :root { --gutter: 48px; --pad: 24px; --gap: 16px; }
   .site-head .bar { grid-template-columns: auto 1fr auto; grid-template-areas: "brand nav lang"; column-gap: 32px; }
-  .sections { margin: 0; padding: 0; border-top: 0; gap: 8px; overflow: visible; }
+  .sections { margin: 0; padding: 0; border-top: 0; gap: 8px; }
   .sections a { padding: 0 8px; }
   .lang a { padding: 0 14px; }
 
@@ -651,7 +834,7 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
   .page-intro .back { display: none; }
   .page-intro h1 { font-size: 52px; letter-spacing: -.025em; text-shadow: -3px 0 var(--fringe-c), 3px 0 var(--fringe-m); }
   .policy { padding: 56px 0 96px; font-size: 17px; line-height: 1.7; gap: 18px; }
-  .policy h3 { flex-direction: row; align-items: baseline; gap: 14px; font-size: 26px; margin-top: 28px; }
+  .policy h2 { flex-direction: row; align-items: baseline; gap: 14px; font-size: 26px; margin-top: 28px; }
   .policy table { font-size: 15px; line-height: 1.55; }
   .policy th { padding: 12px 16px; font-size: 12px; }
   .policy td { padding: 14px 16px; }
@@ -671,15 +854,375 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
   .hero-grid { gap: 80px; }
 }
 
-/* Motion: nothing on the page animates (no smooth scrolling either: the checker rejects that property name).
-   Under reduced motion the chevron does not turn smoothly and the fringe is softened. */
-@media (prefers-reduced-motion: no-preference) {
-  .faq summary svg { transition: transform .15s ease-out; }
+/* ---------- Motion ----------
+   Quiet and with a purpose, like the app: only transform, opacity and clip-path move, nothing overshoots and nothing
+   flashes (the biggest swing is a 2 px cyan and magenta double that settles). Without assets/site.js the page is whole;
+   with "reduce motion" nothing moves and each small scene shows its last frame. (No smooth scrolling either: the
+   checker rejects that property name.) */
+:root { --soft: cubic-bezier(.25, .8, .35, 1); }
+@supports (transition-timing-function: linear(0, 1)) {
+  :root { --soft: linear(0, 0.06, 0.18, 0.317, 0.451, 0.57, 0.671, 0.752, 0.817, 0.867, 0.904, 0.932, 0.953, 0.967, 0.978, 0.985, 0.99, 0.994, 0.996, 0.998, 0.999, 0.999, 1); }
+}
+
+@keyframes sg-rise { from { opacity: 0; transform: translateY(14px); } }
+
+/* Cover: text comes in 70 ms apart, the viewfinder locks on (corners close in, a 2 px double settles). */
+.hero-text > * { animation: sg-rise .6s var(--soft) both; }
+.hero-text > :nth-child(2) { animation-delay: .07s; }
+.hero-text > :nth-child(3) { animation-delay: .14s; }
+.hero-text > :nth-child(4) { animation-delay: .21s; }
+.hero-text > :nth-child(5) { animation-delay: .28s; }
+.vf { animation: sg-rise .7s var(--soft) .1s both; }
+.vf .tl { --lx: -9px; --ly: -9px; }
+.vf .tr { --lx: 9px; --ly: -9px; }
+.vf .bl { --lx: -9px; --ly: 9px; }
+.vf .br { --lx: 9px; --ly: 9px; }
+.vf .c { animation: sg-lock .9s var(--soft) .35s both; }
+@keyframes sg-lock { from { opacity: 0; transform: translate(var(--lx), var(--ly)); } }
+.vf::before, .vf::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 2px solid var(--cyan);
+  border-radius: var(--r-md);
+  opacity: 0;
+  pointer-events: none;
+}
+.vf::after { border-color: var(--magenta); }
+.vf::before { animation: sg-ghost-c 1.1s var(--soft) .55s both; }
+.vf::after { animation: sg-ghost-m 1.1s var(--soft) .55s both; }
+@keyframes sg-ghost-c { from { opacity: .8; transform: translateX(-3px); } to { opacity: 0; transform: none; } }
+@keyframes sg-ghost-m { from { opacity: .8; transform: translateX(3px); } to { opacity: 0; transform: none; } }
+
+/* The three meters under the cover: the last lit cell and the next one take turns, like a live level. */
+.cells i { position: relative; }
+.cells i.nx::after, .cells i.end::after { content: ""; position: absolute; inset: 0; }
+.cells i.nx::after { opacity: 0; animation: cell-up 3.6s ease-in-out infinite; }
+.cells i.end::after { background: var(--surface); opacity: 0; animation: cell-down 3.6s ease-in-out infinite; }
+.noise .cells i.nx::after { background: var(--accent); }
+.light .cells i.nx::after { background: var(--warm); animation-delay: -1.2s; }
+.move .cells i.nx::after { background: var(--cyan); animation-delay: -2.4s; }
+.light .cells i.end::after { animation-delay: -1.2s; }
+.move .cells i.end::after { animation-delay: -2.4s; }
+@keyframes cell-up { 0%, 30%, 100% { opacity: 0; } 42%, 58% { opacity: 1; } }
+@keyframes cell-down { 0%, 62%, 100% { opacity: 0; } 72%, 88% { opacity: .7; } }
+
+/* Small scenes inside the first three feature cards. They are drawings (aria-hidden), the text of the card says the
+   same. They use the app's real photo (the Before/After screenshot, cropped). Final frame = base style. */
+.feat li.has-stage { padding-top: calc(var(--pad) - 4px); }
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--outline);
+  border-radius: var(--r-sm);
+  background: var(--bg);
+  isolation: isolate;
+  margin-bottom: 4px;
+}
+/* The screenshot is 1080 x 2400 and its picture sits at x 114-966, y 306-1368: this crops it to a 4:3 band with the
+   dancer in it. */
+.stage .ph { position: absolute; max-width: none; width: 126.761%; height: auto; left: -13.38%; top: -107.72%; }
+.strip { position: absolute; inset: 0; opacity: 0; }
+
+/* Scene 1: three sensors. 12 s: each reading takes 3 s to bend the frame. Noise cuts it in bands, light dims it and
+   brightens it, movement tilts it. */
+.st-sens .st-view, .st-sens .tilt { position: absolute; inset: 0; }
+.st-sens .st-view { overflow: hidden; }
+.st-sens .tilt { animation: sn-tilt 12s infinite both; }
+.st-sens .strip { animation: sn-slide 12s infinite both; }
+.st-sens .strip:nth-child(2) { clip-path: inset(0 0 80% 0); --dx: 9px; }
+.st-sens .strip:nth-child(3) { clip-path: inset(20% 0 60% 0); --dx: -7px; animation-delay: .05s; }
+.st-sens .strip:nth-child(4) { clip-path: inset(40% 0 40% 0); --dx: 11px; animation-delay: .1s; }
+.st-sens .strip:nth-child(5) { clip-path: inset(60% 0 20% 0); --dx: -6px; animation-delay: .15s; }
+.st-sens .strip:nth-child(6) { clip-path: inset(80% 0 0 0); --dx: 8px; animation-delay: .2s; }
+.st-dim, .st-glow { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.st-dim { background: var(--bg); animation: sn-dim 12s infinite both; }
+.st-glow { background: #FFF1DF; animation: sn-glow 12s infinite both; }
+@keyframes sn-slide {
+  0%, 4% { opacity: 0; transform: none; animation-timing-function: var(--soft); }
+  4.1% { opacity: 1; transform: none; animation-timing-function: var(--soft); }
+  8% { opacity: 1; transform: translateX(var(--dx)); animation-timing-function: var(--soft); }
+  14% { opacity: 1; transform: translateX(calc(var(--dx) * -.7)); animation-timing-function: var(--soft); }
+  21% { opacity: 1; transform: translateX(calc(var(--dx) * .5)); animation-timing-function: var(--soft); }
+  28% { opacity: 1; transform: none; }
+  28.1%, 100% { opacity: 0; transform: none; }
+}
+@keyframes sn-dim {
+  0%, 36% { opacity: 0; animation-timing-function: var(--soft); }
+  43% { opacity: .5; animation-timing-function: var(--soft); }
+  50%, 100% { opacity: 0; }
+}
+@keyframes sn-glow {
+  0%, 50% { opacity: 0; animation-timing-function: var(--soft); }
+  57% { opacity: .26; animation-timing-function: var(--soft); }
+  64%, 100% { opacity: 0; }
+}
+@keyframes sn-tilt {
+  0%, 66% { transform: none; animation-timing-function: var(--soft); }
+  70% { transform: scale(1.06); animation-timing-function: var(--soft); }
+  77% { transform: scale(1.06) rotate(-1.8deg); animation-timing-function: var(--soft); }
+  87% { transform: scale(1.06) rotate(1.4deg); animation-timing-function: var(--soft); }
+  96% { transform: scale(1.06); animation-timing-function: var(--soft); }
+  100% { transform: none; }
+}
+
+/* The legend of the app (three rows of twelve cells), with the real readings of the Sound strip screenshot. */
+.legend {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: var(--r-md);
+  background: rgba(12, 10, 18, .82);
+}
+.lg { display: flex; align-items: center; gap: 6px; color: var(--c); }
+.lg-noise { --c: var(--accent); }
+.lg-light { --c: var(--warm); }
+.lg-move { --c: var(--cyan); }
+.lg svg { flex: none; }
+.val { min-width: 62px; font-family: var(--mono); font-size: 10.5px; line-height: 1; letter-spacing: .02em; color: var(--text-2); white-space: nowrap; }
+.val b { color: var(--text); font-weight: 700; }
+.st-sens .lg { animation-duration: 12s; animation-iteration-count: infinite; animation-fill-mode: both; }
+.st-sens .lg-noise { animation-name: lg-noise; }
+.st-sens .lg-light { animation-name: lg-light; }
+.st-sens .lg-move { animation-name: lg-move; }
+@keyframes lg-noise { 0%, 29% { opacity: 1; } 34%, 100% { opacity: .5; } }
+@keyframes lg-light { 0%, 33% { opacity: .5; } 37%, 64% { opacity: 1; } 69%, 100% { opacity: .5; } }
+@keyframes lg-move { 0%, 66% { opacity: .5; } 70%, 97% { opacity: 1; } 100% { opacity: .5; } }
+.mt { position: relative; display: block; flex: none; width: 82px; height: 5px; background: repeating-linear-gradient(90deg, var(--cell-off) 0 5px, transparent 5px 7px); }
+.mt-lit { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, var(--c, var(--accent)) 0 5px, transparent 5px 7px); }
+.mt-9 { clip-path: inset(0 21px 0 0); }
+.mt-4 { clip-path: inset(0 56px 0 0); }
+.mt-7 { clip-path: inset(0 35px 0 0); }
+.st-sens .lg-noise .mt-lit { animation: mt-noise 12s infinite both; }
+.st-sens .lg-light .mt-lit { animation: mt-light 12s infinite both; }
+.st-sens .lg-move .mt-lit { animation: mt-move 12s infinite both; }
+@keyframes mt-noise {
+  0%, 3% { clip-path: inset(0 21px 0 0); animation-timing-function: var(--soft); }
+  8% { clip-path: inset(0 7px 0 0); animation-timing-function: var(--soft); }
+  13% { clip-path: inset(0 35px 0 0); animation-timing-function: var(--soft); }
+  19% { clip-path: inset(0 14px 0 0); animation-timing-function: var(--soft); }
+  25% { clip-path: inset(0 28px 0 0); animation-timing-function: var(--soft); }
+  31%, 100% { clip-path: inset(0 21px 0 0); }
+}
+@keyframes mt-light {
+  0%, 36% { clip-path: inset(0 56px 0 0); animation-timing-function: var(--soft); }
+  43% { clip-path: inset(0 70px 0 0); animation-timing-function: var(--soft); }
+  50% { clip-path: inset(0 56px 0 0); animation-timing-function: var(--soft); }
+  57% { clip-path: inset(0 21px 0 0); animation-timing-function: var(--soft); }
+  64%, 100% { clip-path: inset(0 56px 0 0); }
+}
+@keyframes mt-move {
+  0%, 69% { clip-path: inset(0 35px 0 0); animation-timing-function: var(--soft); }
+  76% { clip-path: inset(0 14px 0 0); animation-timing-function: var(--soft); }
+  83% { clip-path: inset(0 49px 0 0); animation-timing-function: var(--soft); }
+  90% { clip-path: inset(0 21px 0 0); animation-timing-function: var(--soft); }
+  97%, 100% { clip-path: inset(0 35px 0 0); }
+}
+
+/* Scene 2: the photo listens. Level bars under the picture and the picture sliding in seven horizontal bands, to a
+   3.2 s beat with two hits. The slide is at most 11 px and always comes back. */
+.st-listen .strip { animation: ls-slide 3.2s infinite both; }
+.st-listen .strip:nth-child(2) { clip-path: inset(0 0 85.7% 0); --dx: 9px; }
+.st-listen .strip:nth-child(3) { clip-path: inset(14.3% 0 71.4% 0); --dx: -7px; animation-delay: .04s; }
+.st-listen .strip:nth-child(4) { clip-path: inset(28.6% 0 57.1% 0); --dx: 11px; animation-delay: .08s; }
+.st-listen .strip:nth-child(5) { clip-path: inset(42.9% 0 42.9% 0); --dx: -6px; animation-delay: .12s; }
+.st-listen .strip:nth-child(6) { clip-path: inset(57.1% 0 28.6% 0); --dx: 8px; animation-delay: .16s; }
+.st-listen .strip:nth-child(7) { clip-path: inset(71.4% 0 14.3% 0); --dx: -10px; animation-delay: .2s; }
+@keyframes ls-slide {
+  0%, 4% { opacity: 0; transform: none; animation-timing-function: var(--soft); }
+  4.1% { opacity: 1; transform: none; animation-timing-function: var(--soft); }
+  12% { opacity: 1; transform: translateX(var(--dx)); animation-timing-function: var(--soft); }
+  26% { opacity: 1; transform: none; }
+  26.1%, 50% { opacity: 0; transform: none; }
+  50.1% { opacity: 1; transform: none; animation-timing-function: var(--soft); }
+  58% { opacity: 1; transform: translateX(calc(var(--dx) * -.6)); animation-timing-function: var(--soft); }
+  74% { opacity: 1; transform: none; }
+  74.1%, 100% { opacity: 0; transform: none; }
+}
+.bars {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 26%;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 7px 8px;
+  background: rgba(12, 10, 18, .82);
+}
+.bars i { flex: 1; height: 100%; background: var(--accent); transform-origin: 50% 100%; transform: scaleY(var(--a)); animation: ls-bar 3.2s infinite both; }
+.bars i:nth-child(1) { --a: .28; --b: .82; }
+.bars i:nth-child(2) { --a: .42; --b: .6; animation-delay: .03s; }
+.bars i:nth-child(3) { --a: .22; --b: .95; animation-delay: .06s; }
+.bars i:nth-child(4) { --a: .5; --b: .7; animation-delay: .09s; }
+.bars i:nth-child(5) { --a: .34; --b: .9; animation-delay: .12s; }
+.bars i:nth-child(6) { --a: .2; --b: .55; }
+.bars i:nth-child(7) { --a: .46; --b: 1; animation-delay: .03s; }
+.bars i:nth-child(8) { --a: .3; --b: .76; animation-delay: .06s; }
+.bars i:nth-child(9) { --a: .54; --b: .64; animation-delay: .09s; }
+.bars i:nth-child(10) { --a: .24; --b: .92; animation-delay: .12s; }
+.bars i:nth-child(11) { --a: .4; --b: .58; }
+.bars i:nth-child(12) { --a: .2; --b: .88; animation-delay: .03s; }
+.bars i:nth-child(13) { --a: .48; --b: .72; animation-delay: .06s; }
+.bars i:nth-child(14) { --a: .32; --b: 1; animation-delay: .09s; }
+.bars i:nth-child(15) { --a: .26; --b: .62; animation-delay: .12s; }
+.bars i:nth-child(16) { --a: .5; --b: .8; }
+.bars i:nth-child(17) { --a: .22; --b: .94; animation-delay: .03s; }
+.bars i:nth-child(18) { --a: .38; --b: .56; animation-delay: .06s; }
+.bars i:nth-child(19) { --a: .3; --b: .84; animation-delay: .09s; }
+.bars i:nth-child(20) { --a: .18; --b: .68; animation-delay: .12s; }
+@keyframes ls-bar {
+  0%, 3% { transform: scaleY(var(--a)); animation-timing-function: var(--soft); }
+  9% { transform: scaleY(var(--b)); animation-timing-function: var(--soft); }
+  30% { transform: scaleY(var(--a)); }
+  48% { transform: scaleY(var(--a)); animation-timing-function: var(--soft); }
+  56% { transform: scaleY(var(--b)); animation-timing-function: var(--soft); }
+  80%, 100% { transform: scaleY(var(--a)); }
+}
+
+/* Scene 3: the shot. 9 s: the meter rises, the shutter is pressed, the frame freezes with a 2 px cyan and magenta
+   double that settles, then the picture shrinks into the gallery strip. At rest it shows the picture in the strip. */
+.st-shot .live { position: absolute; inset: 0; animation: sh-live 9s infinite both; }
+.st-shot .c { position: absolute; width: 14px; height: 14px; border: 0 solid var(--accent); animation: sh-brk 9s infinite both; }
+.st-shot .tl { top: 9px; left: 9px; border-top-width: 2px; border-left-width: 2px; --bx: 5px; --by: 5px; }
+.st-shot .tr { top: 9px; right: 9px; border-top-width: 2px; border-right-width: 2px; --bx: -5px; --by: 5px; }
+.st-shot .bl { bottom: calc(26% + 9px); left: 9px; border-bottom-width: 2px; border-left-width: 2px; --bx: 5px; --by: -5px; }
+.st-shot .br { bottom: calc(26% + 9px); right: 9px; border-bottom-width: 2px; border-right-width: 2px; --bx: -5px; --by: -5px; }
+.mic { position: absolute; left: 22px; top: 22px; display: flex; align-items: center; gap: 6px; padding: 5px 8px; color: var(--accent); border: 1px solid rgba(255, 255, 255, .12); border-radius: var(--r-md); background: rgba(12, 10, 18, .82); }
+.mic .mt-lit { animation: mt-shot 9s infinite both; }
+.ring {
+  position: absolute;
+  left: 50%;
+  bottom: calc(26% + 12px);
+  width: 30px;
+  height: 30px;
+  margin-left: -15px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--accent), -2px 0 0 5px var(--fringe-c-strong), 2px 0 0 5px var(--fringe-m-strong);
+  animation: sh-ring 9s infinite both;
+}
+.gal {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 26%;
+  display: flex;
+  align-items: center;
+  gap: 3%;
+  padding: 0 3%;
+  background: rgba(12, 10, 18, .82);
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
+.gal i { flex: none; width: 17%; aspect-ratio: 4 / 3; border: 1px solid var(--edge); border-radius: var(--r-xs); background: var(--surface-high); }
+.gal i:first-child { position: relative; background: var(--surface); }
+.gal i:first-child::after { content: ""; position: absolute; inset: -1px; border: 1px solid var(--accent); border-radius: inherit; animation: sh-slot 9s infinite both; }
+/* Frozen frame: at the shot it covers the viewfinder, then shrinks to the first slot of the strip. */
+.snap {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  transform: translate(3%, 76.5%) scale(.17);
+  clip-path: inset(0 round 20px);
+  animation: sh-snap 9s infinite both;
+}
+.snap-in { position: absolute; inset: 0; overflow: hidden; transform: scale(1.04); }
+.gh { position: absolute; inset: 2px; border: 2px solid var(--cyan); opacity: 0; animation: sh-gc 9s infinite both; }
+.gh.gm { border-color: var(--magenta); animation-name: sh-gm; }
+@keyframes sh-live {
+  0% { transform: none; animation-timing-function: ease-out; }
+  34%, 40% { transform: scale(1.04); animation-timing-function: var(--soft); }
+  100% { transform: none; }
+}
+@keyframes sh-brk {
+  0%, 31% { transform: none; animation-timing-function: var(--soft); }
+  35% { transform: translate(var(--bx), var(--by)); animation-timing-function: var(--soft); }
+  46%, 100% { transform: none; }
+}
+@keyframes sh-ring {
+  0%, 33% { transform: none; animation-timing-function: var(--soft); }
+  36% { transform: scale(.92); animation-timing-function: var(--soft); }
+  42%, 100% { transform: none; }
+}
+@keyframes mt-shot {
+  0% { clip-path: inset(0 63px 0 0); animation-timing-function: var(--soft); }
+  8% { clip-path: inset(0 56px 0 0); animation-timing-function: var(--soft); }
+  16% { clip-path: inset(0 49px 0 0); animation-timing-function: var(--soft); }
+  33% { clip-path: inset(0 0 0 0); animation-timing-function: var(--soft); }
+  44% { clip-path: inset(0 56px 0 0); animation-timing-function: var(--soft); }
+  70%, 100% { clip-path: inset(0 21px 0 0); }
+}
+@keyframes sh-snap {
+  0%, 35.9% { opacity: 0; transform: none; clip-path: inset(0 round 3px); animation-timing-function: var(--soft); }
+  36% { opacity: 1; transform: none; clip-path: inset(0 round 3px); animation-timing-function: var(--soft); }
+  46% { opacity: 1; transform: none; clip-path: inset(0 round 3px); animation-timing-function: var(--soft); }
+  62%, 91% { opacity: 1; transform: translate(3%, 76.5%) scale(.17); clip-path: inset(0 round 20px); }
+  97%, 100% { opacity: 0; transform: translate(3%, 76.5%) scale(.17); clip-path: inset(0 round 20px); }
+}
+@keyframes sh-gc {
+  0%, 35.9% { opacity: 0; transform: translateX(-2px); animation-timing-function: var(--soft); }
+  36% { opacity: .9; transform: translateX(-2px); animation-timing-function: var(--soft); }
+  45% { opacity: .9; transform: none; animation-timing-function: var(--soft); }
+  48%, 100% { opacity: 0; transform: none; }
+}
+@keyframes sh-gm {
+  0%, 35.9% { opacity: 0; transform: translateX(2px); animation-timing-function: var(--soft); }
+  36% { opacity: .9; transform: translateX(2px); animation-timing-function: var(--soft); }
+  45% { opacity: .9; transform: none; animation-timing-function: var(--soft); }
+  48%, 100% { opacity: 0; transform: none; }
+}
+@keyframes sh-slot {
+  0%, 60% { opacity: 0; }
+  66%, 85% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Scroll: with JS what is below the fold comes in when reached. Without JS nothing is hidden. */
+.reveal:not(.in) { opacity: 0; }
+.reveal.in { animation: sg-rise .6s var(--soft) backwards; }
+.reveal.stagger:not(.in) { opacity: 1; }
+.reveal.stagger:not(.in) > * { opacity: 0; }
+.reveal.stagger.in { animation: none; }
+.reveal.stagger.in > * { animation: sg-rise .525s var(--soft) backwards; }
+.reveal.stagger.in > :nth-child(2) { animation-delay: .07s; }
+.reveal.stagger.in > :nth-child(3) { animation-delay: .14s; }
+.reveal.stagger.in > :nth-child(4) { animation-delay: .21s; }
+.reveal.stagger.in > :nth-child(5) { animation-delay: .28s; }
+.reveal.stagger.in > :nth-child(6) { animation-delay: .35s; }
+.reveal.stagger.in > :nth-child(n + 7) { animation-delay: .42s; }
+.is-paused, .is-paused *, .is-paused *::before, .is-paused *::after { animation-play-state: paused !important; }
+/* The visitor paused every loop with the button (class on <html> set by the shared loop toggle). */
+.loops-paused [data-loop], .loops-paused [data-loop] *, .loops-paused [data-loop] *::before, .loops-paused [data-loop] *::after { animation-play-state: paused !important; }
+
+/* Small touches */
+.btn { transition: transform .375s var(--soft), border-color .15s, background-color .15s, color .15s; }
+a.btn:hover { transform: translateY(-1px); }
+a.btn:active { transform: scale(.97); }
+.faq details[open] > p { animation: sg-rise .5s var(--soft) both; }
+.faq summary svg { transition: transform .15s ease-out; }
+
+@media (min-width: 900px) {
+  .vf::before, .vf::after { inset: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .glitch, .hero h1, .page-intro h1 { text-shadow: -1px 0 var(--fringe-c-soft), 1px 0 var(--fringe-m-soft); }
   .marker i.on, .path .cell { box-shadow: none; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal:not(.in), .reveal.stagger:not(.in) > * { opacity: 1; }
+}
+@media print {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal:not(.in), .reveal.stagger:not(.in) > * { opacity: 1; }
 }
 
 @media (forced-colors: active) {

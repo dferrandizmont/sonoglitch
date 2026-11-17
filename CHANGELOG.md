@@ -11,6 +11,10 @@ one with that format.
 
 ## Unreleased
 
+- Website: soft animations on the home page (the cover locks on like a viewfinder, live meters, and three small scenes in Features: the three readings bending the picture in turn, the photo sliding in bands to the sound level, and the shot settling into the gallery strip), all off with "reduce motion".
+- Privacy policy: it now says what happens when you email support (which services carry the message and the reply, and your rights), and the contact address is sonoglitch@mainshai.com.
+- Website: shorter cover text, correct descriptions of the screenshots, the effect and the original photo side by side, a shorter quality card with the export sizes moved to the FAQ, a navigation that shows every section on a phone, the steps to join the Google Play test, a button to pause the animations, and a privacy page with a table of contents whose tables read well on a phone.
+
 ## 0.2.0-alpha.6 · 2026-11-08
 
 - The viewfinder prepares its frames in the background, which should keep it smoother on mid-range phones, and the motion sensors read less often while the phone is still, to save battery.

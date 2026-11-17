@@ -11,6 +11,9 @@
 </div>
 </div>
 <div class="wrap">
+{% if policy_toc %}<nav class="privacy-toc" aria-label="{{ t.privacy_toc }}">
+<h2>{{ t.privacy_toc }}</h2><ul>{% for item in policy_toc %}<li><a href="#{{ item.id }}">{{ item.title }}</a></li>{% endfor %}</ul>
+</nav>{% endif %}
 <article class="policy" lang="{{ policy_lang }}">{{ policy_html }}</article>
 </div>
 {% endblock %}

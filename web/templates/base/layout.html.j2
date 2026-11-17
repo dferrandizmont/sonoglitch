@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="{{ lang }}">
 <head>{% include 'base/head.html.j2' %}<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#0D0D11"></head>
+<meta name="theme-color" content="#0D0D11">
+<script src="{{ 'site.js' | asset }}" defer></script></head>
 <body class="page-{{ page_kind }}">
 {% include 'base/skip_link.html.j2' %}
 {% block header %}{% set home = route(lang) %}<header class="site-head">
