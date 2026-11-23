@@ -1,5 +1,6 @@
 id = "sonoglitch"
 domain = "sonoglitch.mainshai.com"
+version = "1.0.0"
 languages = ["en", "es"]
 default_language = "en"
 brand = "#6E5AA8"
