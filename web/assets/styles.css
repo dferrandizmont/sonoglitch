@@ -350,6 +350,30 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
 .store.soon { border-style: dashed; border-color: var(--edge); color: var(--text-2); }
 .store.soon .st { border-color: var(--edge); color: var(--text-2); }
 
+/* Android card: the APK row and the Play badge share one row of two equal cells (the card, not the viewport, decides:
+   below 360 px of content width they stack as before). Both cells have the same border, height and centred content; the
+   badge image itself is untouched, only its link gets the cell frame. */
+.platform { container-type: inline-size; }
+.store-row { display: grid; gap: var(--gap); }
+@container (min-width: 360px) {
+  .store-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
+  .store-row .store {
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 12px;
+    text-align: center;
+  }
+  .store-row .store .l { justify-content: center; }
+  .store-row .store-link {
+    align-self: stretch;
+    justify-content: center;
+    margin: 0;
+    border: 1px solid var(--edge-ui);
+  }
+  .store-row .store-link:hover { border-color: var(--accent); }
+}
+
 .note { color: var(--text-2); margin-top: 16px; font-size: 15px; }
 
 /* Closed test on Google Play: three steps under the Android store links. */
@@ -745,7 +769,6 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
   :root { --gutter: 32px; }
   .actions { flex-direction: row; flex-wrap: wrap; gap: 12px; }
   .readings { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .platforms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .feat { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .mail { flex-direction: row; align-items: center; justify-content: space-between; }
   .foot-top { flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; }
@@ -757,6 +780,11 @@ a.store:hover { border-color: var(--accent); color: var(--text); }
   /* The table is wide enough here to hold its first column in place while the rest scrolls. */
   .policy th:first-child, .policy td:first-child { position: sticky; left: 0; z-index: 1; }
   .policy td:first-child { background: var(--surface); }
+}
+
+/* Two download cards side by side only when each is wide enough for the two-cell Android row. */
+@media (min-width: 1024px) {
+  .platforms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* Three readings do not fit side by side below ~700 px: their cells pushed the page sideways. */

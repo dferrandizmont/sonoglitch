@@ -11,6 +11,8 @@ test builds, and 1.0.0 is the first regular version.
 
 ## Unreleased
 
+- Website: the APK on GitHub and Google Play sit side by side in the Android downloads.
+
 ## 1.0.0 · 2026-11-23
 
 - Sonoglitch now has a new Google Play listing and Android package (`es.sonoglitch.android`) and is in an open test that anyone can join from the Play listing. Anyone using the old test app or an older GitHub APK installs the new one and uninstalls the old one; photos stay in the gallery and only settings are lost. Play and GitHub builds keep sharing one signature.

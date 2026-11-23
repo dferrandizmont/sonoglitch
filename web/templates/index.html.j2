@@ -44,12 +44,14 @@
 {% for platform, kinds, note in [('android', ['apk', 'play'], c.android_note), ('ios', ['app_store', 'testflight'], c.ios_note)] %}
 <div class="card platform">
 <div class="card-head"><h3>{{ t[platform] }}</h3><span class="mono">{{ note }}</span></div>
+{% if platform == 'android' %}<div class="store-row">{% endif %}
 {% for item in site.downloads if item.kind in kinds %}
 {% if item.kind == 'play' and item.state != 'soon' %}{{ download(item, t, lang) }}
 {% elif item.state == 'soon' %}<div class="store soon"><span class="l">{{ t[item.kind] }}</span><span class="st">{{ t[item.state] }}</span></div>
 {% else %}<a class="store" href="{{ item.url }}"><span class="l">{{ icon_down }}{{ t[item.kind] }}</span><span class="st">{{ t[item.state] }}</span></a>
 {% endif %}
 {% endfor %}
+{% if platform == 'android' %}</div>{% endif %}
 {% if platform == 'android' %}{% if site.closed_test is defined %}{% include 'base/closed_test.html.j2' %}<p class="sub">{{ c.closed_test_note }}</p>{% endif %}{% endif %}
 {% if platform == 'ios' %}<p class="sub">{{ c.ios_text }}</p>{% endif %}
 </div>
