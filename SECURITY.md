@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Only the latest alpha release is supported for security fixes. Earlier alphas and unreleased branches may contain known issues. Alpha builds are experimental; a supported version is not a guarantee of device validation.
+Only the latest release is supported for security fixes. Earlier releases and unreleased branches may contain known issues. A supported version is not a guarantee of device validation.
 
 ## Report a vulnerability privately
 

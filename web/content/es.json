@@ -2,7 +2,7 @@
   "name": "Sonoglitch",
   "title": "Sonoglitch · Una cámara moldeada por el sonido, la luz y el movimiento",
   "description": "Cámara gratuita y de código abierto para Android: el sonido, la luz y el movimiento que te rodean deforman la foto. Sin anuncios, sin cuentas y funciona sin conexión.",
-  "eyebrow": "App de cámara · Android 10+ · Alfa temprana",
+  "eyebrow": "App de cámara · Android 10+",
   "headline": "Una cámara moldeada por el sonido, la luz y el movimiento",
   "intro": "Una cámara creativa para Android: el sonido, la luz y el movimiento transforman la imagen en directo. Elige un estilo, haz la foto y compártela.",
   "key_facts": "Gratis · Sin anuncios · Sin cuentas · Funciona sin conexión · Código abierto",
@@ -24,12 +24,12 @@
       "text": "Marca cuánto se mueve la imagen y las estelas que deja."
     }
   ],
-  "download_intro": "De momento, Android 10 (API 29) o posterior, en prueba cerrada en Google Play o como APK en GitHub; iOS todavía no está publicado. La app está en una fase alfa temprana, y aún falta probar la compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo.",
+  "download_intro": "Android 10 (API 29) o posterior; en prueba abierta en Google Play o como APK en GitHub; iOS todavía no está publicado. El comportamiento de la cámara y el rendimiento pueden variar según el dispositivo.",
   "android_note": "Android 10 o posterior",
   "closed_test_note": "Usa la misma cuenta de Google en los tres pasos.",
   "ios_note": "Aún no publicada",
   "ios_text": "La versión para iPhone aún no está disponible.",
-  "apk_note": "Cada versión de prueba es un APK con su propio archivo .sha256, para que puedas comprobarlo antes de instalarlo.",
+  "apk_note": "Cada versión es un APK con su propio archivo .sha256, para que puedas comprobarlo antes de instalarlo.",
   "apk_howto": "Cómo instalarlo",
   "shots_hint": "Desliza en horizontal",
   "screenshot_captions": {
@@ -159,7 +159,7 @@
     },
     {
       "question": "¿En qué móviles funciona?",
-      "answer": "En móviles con Android 10 (API 29) o posterior. Es una alfa temprana, así que aún falta probar la compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo."
+      "answer": "En móviles con Android 10 (API 29) o posterior. El comportamiento de la cámara y el rendimiento pueden variar según el dispositivo."
     },
     {
       "question": "¿Qué resolución puedo exportar?",
@@ -167,15 +167,15 @@
     },
     {
       "question": "¿Está en Google Play o en la App Store?",
-      "answer": "En Google Play hay una prueba cerrada en la que puede entrar cualquiera, e iOS aún no está publicado. No está previsto publicarla en F-Droid: el APK está en GitHub."
+      "answer": "Sonoglitch está en prueba abierta en Google Play y como APK en GitHub. iOS aún no está publicado, y no está previsto publicarla en F-Droid."
     },
     {
-      "question": "¿Cómo me uno a la prueba de Google Play?",
-      "answer": "Sigue los tres pasos de la sección Descargas, siempre con la misma cuenta de Google: únete al grupo sonoglitch-testers, acepta la prueba en Google Play e instala Sonoglitch. Mantenla instalada al menos 14 días. La versión de Google Play y el APK de GitHub comparten firma: puedes pasar de una a otra sin desinstalar."
+      "question": "¿Puedo pasar de la app de Google Play al APK de GitHub?",
+      "answer": "Sí. A partir de la 1.0.0, la app de Google Play y el APK de GitHub comparten una firma, así que cualquiera de las dos actualiza a la otra. Las versiones anteriores a la 1.0.0 (y la app de prueba antigua) usan el paquete antiguo (es.sonoglitch.app): instala la nueva y desinstala la antigua; solo se pierden sus ajustes y tus fotos siguen en la galería."
     },
     {
       "question": "¿Cómo instalo el APK?",
-      "answer": "Abre la página de versiones en GitHub, elige la versión de prueba más reciente y descarga sonoglitch-<versión>.apk con su archivo .sha256. Comprueba el APK con ese hash, instálalo permitiendo aplicaciones de origen desconocido y mira la versión en Ajustes > Acerca de. Algunas versiones de prueba están firmadas con la clave de depuración. Si Android indica que las firmas no coinciden al actualizar, desinstala la versión instalada e instala la nueva."
+      "answer": "Abre la página de versiones en GitHub, elige la versión más reciente y descarga sonoglitch-<versión>.apk con su archivo .sha256. Comprueba el APK con ese hash, instálalo permitiendo aplicaciones de origen desconocido y mira la versión en Ajustes > Acerca de. Las versiones anteriores a la 1.0.0 usan el paquete antiguo (es.sonoglitch.app): desinstálalas después de instalar la nueva."
     }
   ],
   "mail_label": "¿Sigues con dudas?",
@@ -187,5 +187,5 @@
     { "value": "420", "unit": "lx" },
     { "value": "0.70", "unit": "m/s²" }
   ],
-  "privacy_date": "2026-11-16"
+  "privacy_date": "2026-11-20"
 }

@@ -2,7 +2,7 @@
   "name": "Sonoglitch",
   "title": "Sonoglitch · A camera shaped by sound, light and motion",
   "description": "A free, open source camera app for Android: the sound, light and movement around you distort the photo. No ads, no account, works offline.",
-  "eyebrow": "Camera app · Android 10+ · Early alpha",
+  "eyebrow": "Camera app · Android 10+",
   "headline": "A camera shaped by sound, light and motion",
   "intro": "A creative camera for Android: sound, light and motion transform the image live. Choose a style, take a photo and share it.",
   "key_facts": "Free · No ads · No account · Works offline · Open source",
@@ -24,12 +24,12 @@
       "text": "Sets how much the picture moves and the trails it leaves."
     }
   ],
-  "download_intro": "Android 10 (API 29) or newer for now, as a closed test on Google Play or as an APK on GitHub; iOS is not released yet. The app is at an early alpha stage, and device compatibility, performance and image quality still need testing.",
+  "download_intro": "Android 10 (API 29) or newer; in open testing on Google Play, or as an APK on GitHub; iOS is not released yet. Camera behaviour and performance may vary by device.",
   "android_note": "Android 10 or newer",
   "closed_test_note": "Use the same Google account in all three steps.",
   "ios_note": "Not released yet",
   "ios_text": "The iPhone version is not available yet.",
-  "apk_note": "Each test build is an APK with its own .sha256 file, so you can check it before installing.",
+  "apk_note": "Each release is an APK with its own .sha256 file, so you can check it before installing.",
   "apk_howto": "How to install it",
   "shots_hint": "Scroll sideways",
   "screenshot_captions": {
@@ -159,7 +159,7 @@
     },
     {
       "question": "Which phones can run it?",
-      "answer": "Android phones with Android 10 (API 29) or newer. It is an early alpha, so device compatibility, performance and image quality still need testing."
+      "answer": "Android phones with Android 10 (API 29) or newer. Camera behaviour and performance may vary by device."
     },
     {
       "question": "What resolution can I export?",
@@ -167,15 +167,15 @@
     },
     {
       "question": "Is it on Google Play or the App Store?",
-      "answer": "Google Play has a closed test that anyone can join, and iOS is not released yet. Sonoglitch is not planned for F-Droid: the APK is on GitHub."
+      "answer": "Sonoglitch is in open testing on Google Play and as an APK on GitHub. iOS is not released yet, and Sonoglitch is not planned for F-Droid."
     },
     {
-      "question": "How do I join the Google Play test?",
-      "answer": "Follow the three steps in the Download section, always with the same Google account: join the sonoglitch-testers group, accept the test on Google Play and install Sonoglitch. Keep it installed for at least 14 days. The Play build and the GitHub APK share one signature, so you can switch between them without uninstalling."
+      "question": "Can I switch between the Google Play app and the GitHub APK?",
+      "answer": "Yes. From 1.0.0 on, the Google Play app and the GitHub APK share one signature, so either updates the other. Builds older than 1.0.0 (and the old Play test app) use the old package (es.sonoglitch.app): install the new one and uninstall the old one; only its settings are lost, and your photos stay in the gallery."
     },
     {
       "question": "How do I install the APK?",
-      "answer": "Open the releases page on GitHub, pick the newest prerelease and download sonoglitch-<version>.apk with its .sha256 file. Check the APK against that hash, install it allowing unknown apps and check the version in Settings > About. Some prereleases are signed with the debug key. If Android reports a signature mismatch when updating, uninstall the installed build and install the new one."
+      "answer": "Open the releases page on GitHub, pick the newest release and download sonoglitch-<version>.apk with its .sha256 file. Check the APK against that hash, install it allowing unknown apps and check the version in Settings > About. Builds older than 1.0.0 use the old package (es.sonoglitch.app): uninstall them after installing the new one."
     }
   ],
   "mail_label": "Still stuck?",
@@ -187,5 +187,5 @@
     { "value": "420", "unit": "lx" },
     { "value": "0.70", "unit": "m/s²" }
   ],
-  "privacy_date": "2026-11-16"
+  "privacy_date": "2026-11-20"
 }

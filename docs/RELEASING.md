@@ -30,11 +30,11 @@ Qué número sube (decidido el 27-oct-2026):
 |---|---|---|
 | Arreglos y retoques | **patch** | 0.1.1 → 0.1.2 |
 | Funciones nuevas | **minor** | 0.1.x → 0.2.0 |
-| Salida a producción en las tiendas | **major** | → 1.0.0 |
-| Si ya está en producción: cambios grandes | **major** | 1.x → 2.0.0 |
+| Primera versión en las tiendas (prueba abierta de Play) | **major** | → 1.0.0 |
+| Si ya está en las tiendas: cambios grandes | **major** | 1.x → 2.0.0 |
 
-Hasta ahora las versiones fueron `0.1.0-alpha.N` (con `N` igual al build); la `0.1.0-alpha.21` es la última con ese
-formato y la siguiente ya sigue esta tabla.
+Hasta ahora las versiones fueron `0.1.0-alpha.N` y `0.2.0-alpha.N` (con `N` igual al build): fueron builds de prueba y
+la `1.0.0` es la primera versión normal.
 
 - **Vías rápidas, cada versión probada:** GitHub Releases (APK de Android) y **TestFlight** (iOS).
 - **Tiendas, versiones agrupadas:** **Google Play** y **App Store** reciben varias juntas, nunca mientras la anterior
@@ -125,7 +125,7 @@ Tests: `python -m unittest discover -s tool/publish` (Windows, PowerShell). They
 
 ### Release flow: test privately first, then publish
 
-1. Commit `chore: release`, bump `pubspec.yaml` and `CHANGELOG.md`, and create the tag `vX.Y.Z` in the private repository. Push the commit and the tag there (no workflow runs), build the APK locally with the upload key and publish it as a private prerelease, as described in [GitHub releases](#github-releases).
+1. Commit `chore: release`, bump `pubspec.yaml` and `CHANGELOG.md`, and create the tag `vX.Y.Z` in the private repository. Push the commit and the tag there (no workflow runs), build the APK locally with the upload key and publish it as a private release (build de prueba), as described in [GitHub releases](#github-releases).
 2. Install that APK on a phone and test it (it carries the upload key signature, so it updates over the previous one).
 3. Only if it is good, run `tool/publish/publish_public.ps1 -Tag vX.Y.Z` (first with `-DryRun`). The public workflow builds the public release from the snapshot of the same tree.
 4. Add the row to the register of uploads in *Versionado y trazabilidad*.
@@ -155,9 +155,9 @@ the image to this fixed app-private path. PNG content is accepted even though
 the destination filename ends in `.jpg`:
 
 ```sh
-adb push "photo.jpg" /sdcard/Android/data/es.sonoglitch.app/files/screenshot_source.jpg
-adb shell am force-stop es.sonoglitch.app
-adb shell monkey -p es.sonoglitch.app -c android.intent.category.LAUNCHER 1
+adb push "photo.jpg" /sdcard/Android/data/es.sonoglitch.android/files/screenshot_source.jpg
+adb shell am force-stop es.sonoglitch.android
+adb shell monkey -p es.sonoglitch.android -c android.intent.category.LAUNCHER 1
 ```
 
 Settings shows whether the photo source was selected at startup and its path.
@@ -166,7 +166,7 @@ on the long side, about 30 fps); capture, result and compare use the same photo
 with the real effects. EXIF is baked into the pixels once, and landscape photos
 stay landscape. Still captures retain the source resolution before the normal
 4096-pixel still decode/export limits. Flipping keeps the same photo. Remove
-the file with `adb shell rm /sdcard/Android/data/es.sonoglitch.app/files/screenshot_source.jpg`
+the file with `adb shell rm /sdcard/Android/data/es.sonoglitch.android/files/screenshot_source.jpg`
 and restart to restore the camera. Without the screenshot define or the file,
 the normal camera is used. On iOS the fixed filename is in the app Documents
 directory instead (copy it into the simulator app container).
@@ -207,11 +207,11 @@ Then create `android/key.properties` (ignored by git) with `storeFile` (an absol
 ### Each release
 
 ```sh
-flutter build appbundle --release --build-name=0.1.0 --build-number=N \
-  --dart-define=APP_VERSION=0.1.0-alpha.N
+flutter build appbundle --release --build-name=1.0.0 --build-number=27 \
+  --dart-define=APP_VERSION=1.0.0
 ```
 
-Do **not** pass `DONATION_URL`. Upload `build/app/outputs/bundle/release/app-release.aab` in Play Console, enrolling in Play App Signing on the first upload. Use the internal or closed testing track first. At the time of writing, a new personal developer account must run a closed test with at least 12 testers for 14 days before it can publish to production; check the requirement in Play Console.
+Do **not** pass `DONATION_URL`. Upload `build/app/outputs/bundle/release/app-release.aab` in Play Console, enrolling in Play App Signing on the first upload. Use the internal testing track first, then open testing, production later. The new Play app (`es.sonoglitch.android`) is created in an account exempt from the closed test, so no 12-tester/14-day closed test is needed.
 
 ### Store listing
 
@@ -231,4 +231,4 @@ Sonoglitch is not published on F-Droid (decided on 2026-11-08): it ships on Goog
 
 ## GitHub releases
 
-In the public repository, push a `v*` tag (`publish_public.ps1` does it). The [workflow](../.github/workflows/release.yml) builds, signs with the repository secrets and publishes the APK with its checksum, including the Ko-fi link. In the private repository a tag push does not build (see [GitHub Actions in each repository](#github-actions-in-each-repository)); build locally with the same command and `--build-number=N`, copy the APK to `sonoglitch-<version>.apk`, write its checksum with `sha256sum`, and create the release with `gh release create v<version> <apk> <checksum> --target main --prerelease` (use `--prerelease` for every alpha). A local build without `android/key.properties` is signed with the debug key, which is only acceptable for private test builds; stable releases must use the real key.
+In the public repository, push a `v*` tag (`publish_public.ps1` does it). The [workflow](../.github/workflows/release.yml) builds, signs with the repository secrets and publishes the APK with its checksum, including the Ko-fi link. In the private repository a tag push does not build (see [GitHub Actions in each repository](#github-actions-in-each-repository)); build locally with the same command and `--build-number=N`, copy the APK to `sonoglitch-<version>.apk`, write its checksum with `sha256sum`, and create the release with `gh release create v<version> <apk> <checksum> --target main` (add `--prerelease` only for versions with `-alpha`/`-beta`/`-rc`). A local build without `android/key.properties` is signed with the debug key, which is only acceptable for private test builds; stable releases must use the real key.

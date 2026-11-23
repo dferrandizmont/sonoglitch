@@ -3,17 +3,21 @@
 What changes in each version of Sonoglitch, newest first, written for the people who use the app. The "Unreleased"
 section is filled with every change and becomes the next version on the day it ships.
 
-Numbering: the last number grows with fixes (0.1.1 → 0.1.2), the middle one with new features (→ 0.2.0) and 1.0.0 will
-be the production release in the stores. Every version is published on
+Numbering: the last number grows with fixes (0.1.1 → 0.1.2), the middle one with new features (→ 0.2.0) and 1.0.0 is
+the first regular version. Every version is published on
 [GitHub](https://github.com/dferrandizmont/sonoglitch/releases) and TestFlight; Google Play and the App Store receive
-several together, so numbers can be skipped. Until now versions were called 0.1.0-alpha.N; 0.1.0-alpha.21 is the last
-one with that format.
+several together, so numbers can be skipped. Until now versions were called 0.1.0-alpha.N and 0.2.0-alpha.N: those were
+test builds, and 1.0.0 is the first regular version.
 
 ## Unreleased
 
+## 1.0.0 · 2026-11-23
+
+- Sonoglitch now has a new Google Play listing and Android package (`es.sonoglitch.android`) and is in an open test that anyone can join from the Play listing. Anyone using the old test app or an older GitHub APK installs the new one and uninstalls the old one; photos stay in the gallery and only settings are lost. Play and GitHub builds keep sharing one signature.
 - Website: soft animations on the home page (the cover locks on like a viewfinder, live meters, and three small scenes in Features: the three readings bending the picture in turn, the photo sliding in bands to the sound level, and the shot settling into the gallery strip), all off with "reduce motion".
+- Privacy policy (20 November 2026): support replies are now sent through Resend, with open and click tracking turned off (no tracking pixel, links left unchanged); Resend keeps a copy of each reply and its sending log for 30 days. Brevo, which added a tracking pixel and rewrote links, was only ever used for the owner's test emails; the policy explains what remains there and when it is deleted.
 - Privacy policy: it now says what happens when you email support (which services carry the message and the reply, and your rights), and the contact address is sonoglitch@mainshai.com.
-- Website: shorter cover text, correct descriptions of the screenshots, the effect and the original photo side by side, a shorter quality card with the export sizes moved to the FAQ, a navigation that shows every section on a phone, the steps to join the Google Play test, a button to pause the animations, and a privacy page with a table of contents whose tables read well on a phone.
+- Website: shorter cover text, correct descriptions of the screenshots, the effect and the original photo side by side, a shorter quality card with the export sizes moved to the FAQ, a navigation that shows every section on a phone, a button to pause the animations, and a privacy page with a table of contents whose tables read well on a phone.
 
 ## 0.2.0-alpha.6 · 2026-11-08
 

@@ -34,8 +34,8 @@ Write-Host ("SHA-256: " + (Get-FileHash $aab -Algorithm SHA256).Hash)
 $manifest = Get-ChildItem -Recurse -Path 'build\app\intermediates\merged_manifests\release' -Filter AndroidManifest.xml -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($manifest) {
   Write-Host ''
-  Write-Host 'Merged manifest (must show es.sonoglitch.app, CAMERA and RECORD_AUDIO only, no INTERNET):'
+  Write-Host 'Merged manifest (must show es.sonoglitch.android, CAMERA and RECORD_AUDIO only, no INTERNET):'
   Select-String -Path $manifest.FullName -Pattern 'package=|uses-permission|versionCode' | ForEach-Object { '  ' + $_.Line.Trim() }
 }
 Write-Host ''
-Write-Host "Upload this file in Play Console -> Testing -> Closed testing -> Create new release (versionCode $code)."
+Write-Host "Upload this file in Play Console -> Test and release (internal testing or production) -> Create new release (versionCode $code)."

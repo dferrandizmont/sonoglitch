@@ -21,7 +21,7 @@ Check camera and microphone grant/deny/revocation, continuing without microphone
 
 ## Checklist for the first Mac session
 
-1. The bundle identifier is now `es.sonoglitch.app` (Runner and RunnerTests), the same as the Android application id. Set your Apple team in Xcode (Runner > Signing & Capabilities) and register that id.
+1. The bundle identifier is now `es.sonoglitch.app` (Runner and RunnerTests) (the Android application id is `es.sonoglitch.android` since 1.0.0). Set your Apple team in Xcode (Runner > Signing & Capabilities) and register that id.
 2. `flutter pub get`, `cd ios && pod install`, then `flutter run` on a real iPhone (the camera does not work in the simulator).
 3. Expected platform gaps, all with Dart fallbacks, to confirm on the device: no native spectrum (bass, mid, treble, rhythm and spectral tilt stay neutral, only the noise level works), no ambient-lux channel (light comes from the camera image), no native JPEG encoder (JPEG export goes through the Dart path; check quality and memory at 12 to 24 MP), and the compass and barometer of the optional context line (`NSMotionUsageDescription` is not declared: see Info.plist before enabling the barometer on iOS).
 4. Verify the items listed above (permissions, orientation, mirroring, background/foreground, Save to the Photos album, Share), then record the results here.

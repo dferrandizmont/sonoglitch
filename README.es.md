@@ -23,41 +23,25 @@ foto, elige el recorte y la composición, y guárdala en la galería o compárte
 ## Descargas
 
 <p>
-  <a href="https://play.google.com/apps/testing/es.sonoglitch.app"><img src="https://img.shields.io/badge/Google_Play-Beta-414141?logo=googleplay&amp;style=for-the-badge" alt="Beta en Google Play"></a>
+  <a href="https://play.google.com/store/apps/details?id=es.sonoglitch.android"><img src="https://img.shields.io/badge/Google_Play-Disponible_en-414141?logo=googleplay&amp;style=for-the-badge" alt="Disponible en Google Play"></a>
   <a href="https://github.com/dferrandizmont/sonoglitch/releases"><img src="https://img.shields.io/badge/Disponible_en-GitHub-181717?logo=github&amp;style=for-the-badge" alt="Disponible en GitHub"></a>
 </p>
 
-Android 10 (API 29) o posterior, en prueba cerrada en Google Play y con
-versiones de prueba en GitHub; iOS todavía no está publicado. La app está en una
-fase alfa temprana. Aún falta probar la
-compatibilidad, el rendimiento y la calidad de imagen en cada dispositivo.
-
-<details>
-<summary>Únete a la beta de Google Play</summary>
-
-1. Únete al grupo de testers: [sonoglitch-testers](https://groups.google.com/g/sonoglitch-testers). Con tu cuenta de Google, pulsa «Unirse al grupo».
-2. Acepta la prueba: [play.google.com/apps/testing/es.sonoglitch.app](https://play.google.com/apps/testing/es.sonoglitch.app).
-3. Instala la app desde Google Play. Se actualizará sola.
-
-Quédate 14 días: Google exige 12 testers durante 14 días antes de publicarla.
-La versión de Google Play y el APK de GitHub comparten firma: puedes pasar de
-una a otra sin desinstalar.
-Comentarios: sonoglitch@mainshai.com.
-
-</details>
+Android 10 (API 29) o posterior; en prueba abierta en Google Play y como APK en
+GitHub; iOS todavía no está publicado. El comportamiento de la cámara y el
+rendimiento pueden variar según el dispositivo.
 
 <details>
 <summary>Instala el APK desde GitHub</summary>
 
-1. Abre la [página de versiones](https://github.com/dferrandizmont/sonoglitch/releases) y elige la prerelease más reciente.
+1. Abre la [página de versiones](https://github.com/dferrandizmont/sonoglitch/releases) y elige la versión más reciente.
 2. Descarga `sonoglitch-<versión>.apk` y su archivo `.sha256`.
 3. Comprueba el APK antes de instalarlo: `sha256sum -c sonoglitch-<versión>.apk.sha256` en Linux, `shasum -a 256 -c sonoglitch-<versión>.apk.sha256` en macOS o `Get-FileHash sonoglitch-<versión>.apk -Algorithm SHA256` en Windows, comparado con el hash del archivo `.sha256`.
 4. Instálalo en el móvil, permitiendo aplicaciones de origen desconocido.
 5. Comprueba la versión en **Ajustes > Acerca de**.
 
-Algunas prereleases están firmadas con la clave de depuración en lugar de la
-clave de publicación. Si el instalador no deja actualizar la app que ya tienes,
-las firmas no coinciden: desinstala esa versión e instala esta otra.
+El APK de GitHub y la app de Play comparten una firma a partir de la 1.0.0, así que cualquiera de las
+dos actualiza a la otra. Las versiones anteriores a la 1.0.0 (y la app de prueba antigua) usan el paquete antiguo (es.sonoglitch.app): instala la nueva y desinstala la antigua; solo se pierden los ajustes, tus fotos siguen en la galería.
 </details>
 
 ## Capturas
@@ -116,8 +100,9 @@ servidores.
 
 ## Novedades
 
-**0.2.0-alpha.6** (2026-11-08): después de hacer una foto puedes probarla en los demás estilos y quedarte con el que
-más te guste, y el visor prepara los fotogramas en segundo plano.
+**1.0.0** (2026-11-23): Sonoglitch pasa a una ficha nueva de Google Play y a un paquete Android nuevo
+(`es.sonoglitch.android`), en una prueba abierta en la que puede entrar cualquiera. Si tienes la app de prueba antigua
+o un APK anterior, instala la nueva y desinstala la antigua: las fotos siguen en la galería y solo se pierden los ajustes.
 
 Consulta el [CHANGELOG.md](CHANGELOG.md) o las [versiones](https://github.com/dferrandizmont/sonoglitch/releases).
 

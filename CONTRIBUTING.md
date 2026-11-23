@@ -1,6 +1,6 @@
 # Contributing to Sonoglitch
 
-Sonoglitch is in early development, with pre-release alpha builds only. Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the implemented design. The [Spanish product specification](docs/SPEC.es.md) contains goals as well as current behavior; verify changes against the code. Every change the users notice goes into the [changelog](CHANGELOG.md) in the same commit, and the [releasing guide](docs/RELEASING.md) explains how the three channels differ.
+Sonoglitch ships 1.0.0 as its first regular version. Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the implemented design. The [Spanish product specification](docs/SPEC.es.md) contains goals as well as current behavior; verify changes against the code. Every change the users notice goes into the [changelog](CHANGELOG.md) in the same commit, and the [releasing guide](docs/RELEASING.md) explains how the three channels differ.
 
 Follow the [code of conduct](CODE_OF_CONDUCT.md). Use the [security policy](SECURITY.md) to report vulnerabilities privately rather than opening a public issue with sensitive details. iOS work must account for the unverified Mac/device checks in [iOS status](docs/IOS_STATUS.md).
 
@@ -40,7 +40,7 @@ For a run with diagnostics enabled by default and an explicit displayed
 version:
 
 ```sh
-flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=APP_VERSION=0.2.0-alpha.6
+flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=APP_VERSION=1.0.0
 ```
 
 To start with reproducible manual controls in `noise,light,motion` order:
@@ -52,7 +52,7 @@ flutter run --dart-define=SONOGLITCH_DEBUG=true --dart-define=SONOGLITCH_MANUAL=
 To build a local APK:
 
 ```sh
-flutter build apk --release --target-platform android-arm64,android-x64 --dart-define=APP_VERSION=0.2.0-alpha.6
+flutter build apk --release --target-platform android-arm64,android-x64 --dart-define=APP_VERSION=1.0.0
 ```
 
 The output is `build/app/outputs/flutter-apk/app-release.apk`; the key it is

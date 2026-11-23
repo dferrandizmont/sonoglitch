@@ -37,7 +37,7 @@ from pathlib import Path
 #   android.permission.READ_EXTERNAL_STORAGE: removed by the app manifest with
 #   `tools:node="remove"`, because the app saves through the media store and
 #   needs API 29.
-# - es.sonoglitch.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION: a signature
+# - es.sonoglitch.android.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION: a signature
 #   permission that AndroidX Core declares for the app itself, so that its
 #   runtime broadcast receivers cannot be reached by other apps. It grants
 #   nothing and has no network effect.
@@ -45,7 +45,7 @@ ALLOWED_PERMISSIONS = frozenset(
     {
         'android.permission.CAMERA',
         'android.permission.RECORD_AUDIO',
-        'es.sonoglitch.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION',
+        'es.sonoglitch.android.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION',
     }
 )
 

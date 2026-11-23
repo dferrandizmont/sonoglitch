@@ -13,7 +13,7 @@ class ScreenshotPhotoSource {
 
   static const fileName = 'screenshot_source.jpg';
   static const androidAdbPath =
-      '/sdcard/Android/data/es.sonoglitch.app/files/$fileName';
+      '/sdcard/Android/data/es.sonoglitch.android/files/$fileName';
   static const inactiveStatus = 'Photo source inactive; $androidAdbPath';
   static const _description = CameraDescription(
     name: 'Screenshot photo',

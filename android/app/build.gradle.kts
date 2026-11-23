@@ -19,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "es.sonoglitch.app"
+        applicationId = "es.sonoglitch.android"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // Android 10: the gallery is written through the media store, with no
