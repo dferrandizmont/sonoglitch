@@ -50,7 +50,7 @@
 {% else %}<a class="store" href="{{ item.url }}"><span class="l">{{ icon_down }}{{ t[item.kind] }}</span><span class="st">{{ t[item.state] }}</span></a>
 {% endif %}
 {% endfor %}
-{% if platform == 'android' %}{% if site.closed_test %}{% include 'base/closed_test.html.j2' %}<p class="sub">{{ c.closed_test_note }}</p>{% endif %}{% endif %}
+{% if platform == 'android' %}{% if site.closed_test is defined %}{% include 'base/closed_test.html.j2' %}<p class="sub">{{ c.closed_test_note }}</p>{% endif %}{% endif %}
 {% if platform == 'ios' %}<p class="sub">{{ c.ios_text }}</p>{% endif %}
 </div>
 {% endfor %}
